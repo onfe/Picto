@@ -4,16 +4,21 @@
   "description": "A picture based chat service.",
   "main": "picto.js",
   "scripts": {
+    "start": "node picto.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/onfe/Picto.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Onfe x Simpleton",
+  "license": "UNLICENSED",
   "bugs": {
     "url": "https://github.com/onfe/Picto/issues"
   },
-  "homepage": "https://github.com/onfe/Picto#readme"
+  "homepage": "https://github.com/onfe/Picto#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "ws": "^5.1.1"
+  }
 }
