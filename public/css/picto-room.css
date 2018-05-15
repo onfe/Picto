@@ -1,0 +1,132 @@
+:root {
+  --c-pastel-orange: #E97778;
+  --c-pastel-green: #89C7B6;
+  --c-pastel-yellow: #EFC57E;
+  --c-pastel-purple: #AD84C7;
+  --c-pastel-blue: #7998C9;
+
+  --c-pastel-orange-d: #B64445;
+  --c-pastel-green-d: #569483;
+  --c-pastel-yellow-d: #CCA24B;
+  --c-pastel-purple-d: #7A5194;
+  --c-pastel-blue-d: #466596;
+
+  --c-grey-l: #A0A0A0;
+  --c-grey: #707070;
+  --c-grey-d: #404040;
+
+  --c-almost-black: #202020;
+  --c-almost-white: #EAEAEA;
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+.msg {
+  display: block;
+  width: calc(100% - 12px);
+  max-height: 5rem;
+  min-height: 3rem;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  margin: 4px;
+  overflow: hidden;
+  font-family: 'SevenFive';
+  font-size: 12px;
+  font-weight: normal;
+  background: #fff;
+  background-image:
+    linear-gradient(rgba(0,0,0,.3) 1px, transparent 0);
+  background-size: 100% 22px;
+  border-color: var(--c-grey-d);
+}
+
+.msg-current {
+
+}
+
+.msg.system {
+  min-height: 1.5rem;
+  background: var(--c-grey);
+  color: var(--c-almost-white);
+}
+
+.msg-text {
+  padding: 0.5rem;
+}
+
+.msg-history {
+  display: block;
+  padding: 0;
+  margin: 0;
+  background: #ddd;
+  width: 100%;
+}
+
+.msg-auth {
+  display: inline-block;
+  padding: 4px;
+  border-bottom-right-radius: 4px;
+  border-bottom: 2px solid #ccc;
+  border-right: 2px solid #ccc;
+  color: #fff;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 12px;
+  background: var(--c-grey);
+  border-color: var(--c-grey-d);
+}
+
+.msg.orange .msg-auth {
+  background: var(--c-pastel-orange);
+  border-color: var(--c-pastel-orange-d);
+}
+
+.msg.orange {
+  border-color: var(--c-pastel-orange-d);
+}
+
+.msg.green .msg-auth {
+  background: var(--c-pastel-green);
+  border-color: var(--c-pastel-green-d);
+}
+
+.msg.green {
+  border-color: var(--c-pastel-green-d);
+}
+
+.msg.yellow .msg-auth {
+  background: var(--c-pastel-yellow);
+  border-color: var(--c-pastel-yellow-d);
+}
+
+.msg.yellow {
+  border-color: var(--c-pastel-yellow-d);
+}
+
+.msg.purple .msg-auth {
+  background: var(--c-pastel-purple);
+  border-color: var(--c-pastel-purple-d);
+}
+
+.msg.purple {
+  border-color: var(--c-pastel-purple-d);
+}
+
+.msg.blue .msg-auth {
+  background: var(--c-pastel-blue);
+  border-color: var(--c-pastel-blue-d);
+}
+
+.msg.blue {
+  border-color: var(--c-pastel-blue-d);
+}
+
+
+
+@font-face {
+  font-family: 'SevenFive';
+  src: url('/css/font/Code 7x5.ttf');
+}
