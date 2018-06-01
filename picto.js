@@ -28,7 +28,7 @@ app.get('/api/', function (req, res) {
 
 
 app.listen(8000, function () {
-  console.log('Example app listening on port 8000!')
+  console.log('Picto listening on port 8000')
 })
 
 wss.on('connection', function (ws) {
