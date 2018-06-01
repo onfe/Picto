@@ -9,40 +9,59 @@
 </head>
 <body>
   <div class="container">
-    <div class="top-sidebar">
-
-    </div>
-    <ul class="msg-history">
-      <div class="msg system">
-        <div class="msg-text">
-          Welcome to Picto!
+    <div class="upper">
+      <ul class="sidebar sidebar-top">
+        <img src="/img/icn/back.svg" />
+        <img src="/img/icn/signal.svg" />
+      </ul>
+      <ul class="content msg-history">
+        <div class="msg orange">
+          <span class="msg-auth">Tiger</span>
         </div>
-      </div>
-      <div class="msg blue">
-        <span class="msg-auth">Penguin</span>
-      </div>
-      <div class="msg orange">
-        <span class="msg-auth">Elephant</span>
-      </div>
-      <div class="msg yellow">
-        <span class="msg-auth">Giraffe</span>
-      </div>
-      <div class="msg green">
-        <span class="msg-auth">Frog</span>
-      </div>
-      <div class="msg purple">
-        <span class="msg-auth">Butterfly</span>
-      </div>
-    </ul>
-    <hr />
-    <div class="workarea">
-      <div class="msg msg-current blue">
-        <span class="msg-auth">Penguin</span>
-      </div>
-      <div class="keyboard">
+        <div class="msg blue">
+          <span class="msg-auth">Penguin</span>
+        </div>
+        <div class="msg system">
+          <div class="msg-text">
+            Welcome to Picto!
+          </div>
+        </div>
+      </ul>
+    </div>
+    <div class="lower">
+      <ul class="sidebar sidebar-bottom">
+        <br />
+        <img id="pencil" class="tool draw" src="/img/icn/pencil.svg" />
+        <img id="eraser" class="tool draw" src="/img/icn/eraser.svg" />
+        <img id="small" class="tool size" src="/img/icn/small.svg" />
+        <img id="big" class="tool size" src="/img/icn/big.svg" />
+      </ul>
+      <div class="content workspace">
+        <br />
+        <div class="msg msg-current blue">
+          <canvas resize id="canvas-compose"></canvas>
+          <span class="msg-auth">Penguin</span>
+        </div>
+        <div class="keyboard-container">
+          <div class="keyboard">
 
+          </div>
+          <div class="msg-control">
+            <img class="control send" src="/img/icn/upload.svg" />
+            <img class="control get" src="/img/icn/download.svg" />
+            <img class="control clear" src="/img/icn/clear.svg" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/js/paper-full.min.js"></script>
+
+  <script src="/js/chat/main.js"></script>
+  <script src="/js/chat/socket.js"></script>
+  <script src="/js/chat/compose.js" type="text/paperscript" canvas="canvas-compose"></script>
+
 </body>
 </html>

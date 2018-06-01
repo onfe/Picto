@@ -1,0 +1,236 @@
+// ----- Colours -----
+
+// Pastels
+$pastel-orange: #E97777;
+$pastel-green: #89C7B6;
+$pastel-yellow: #EFC57E;
+$pastel-purple: #AD84C7;
+$pastel-blue: #7998C9;
+
+$pastel-orange-d: desaturate(darken( $pastel-orange, 20% ), 20%);
+$pastel-green-d: desaturate(darken( $pastel-green, 20% ), 20%);
+$pastel-yellow-d: desaturate(darken( $pastel-yellow, 20% ), 20%);
+$pastel-purple-d: desaturate(darken( $pastel-purple, 20% ), 20%);
+$pastel-blue-d: desaturate(darken( $pastel-blue, 20% ), 20%);
+
+$grey: #808080;
+$grey-d: darken( $grey, 20%);
+$grey-l: lighten( $grey, 20% );
+
+$almost-white: #F0F0F0;
+
+// Dimensions
+
+$sidebar-width: 2rem;
+$message-aspect: 3;
+$msg-width: calc(calc(100vw - #{$sidebar-width}) - 8px);
+$msg-height: calc(#{$msg-width} / #{$message-aspect});
+$lower-height: calc(calc( #{$msg-height} * 2 ) + calc(1rem + 12px));
+
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+// Reset
+
+html, body, ul, ol {
+  margin:  0;
+  padding: 0;
+}
+
+// Border Box FTW
+
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+// Structure
+
+.container {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: $sidebar-width;
+  background: #fff;
+  border-right: 1px solid $almost-white;
+}
+
+.content {
+  width: 100%;
+}
+
+.upper, .lower {
+  display: flex;
+}
+
+.upper {
+  height: calc( 100% - #{$lower-height} )
+}
+
+.lower {
+  height: $lower-height;
+}
+
+// Basic Message styles
+
+.msg {
+  width: $msg-width;
+  height: $msg-height;
+
+  position: relative;
+
+  margin: 4px;
+
+  background-image: linear-gradient(rgba(0,0,0,.3) 1px, transparent 0);
+  background-size: 100% 2em;
+  border: 2px solid $grey-d;
+  border-radius: 4px;
+  overflow: hidden;
+
+  flex-shrink: 0;
+
+  font-family: 'Nineteen Ninety Three';
+
+  &.orange {
+    border-color: $pastel-orange-d;
+    .msg-auth {
+      background-color: $pastel-orange;
+    }
+  }
+
+  &.green {
+    border-color: $pastel-green-d;
+    .msg-auth {
+      background-color: $pastel-green;
+    }
+  }
+
+  &.yellow {
+    border-color: $pastel-yellow-d;
+    .msg-auth {
+      background-color: $pastel-yellow;
+    }
+  }
+
+  &.purple {
+    border-color: $pastel-purple-d;
+    .msg-auth {
+      background-color: $pastel-purple;
+    }
+  }
+
+  &.blue {
+    border-color: $pastel-blue-d;
+    .msg-auth {
+      background-color: $pastel-blue;
+    }
+  }
+
+  &.system {
+    height: auto;
+    background: $grey;
+  }
+}
+
+.msg-text {
+  color: #FFF;
+  padding: 0.25rem;
+}
+
+.msg-auth {
+  padding: 0.25rem;
+  background: $grey;
+  border-bottom: 2px solid transparent;
+  border-right: 2px solid transparent;
+  border-color: inherit;
+  border-bottom-right-radius: 4px;
+  color: #fff;
+}
+
+.msg-history {
+  flex-direction: column-reverse;
+  display: flex;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  // Dirty 'Hide the scrollbar' trick.
+  margin-right: -20px;
+  padding-right: 20px;
+}
+
+// Sidebar Styles
+.sidebar img {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0.25rem;
+  margin: 0.25rem;
+}
+
+.tool {
+  background: $almost-white;
+  border-radius: 4px;
+}
+
+.tool.selected {
+  background: $grey-l;
+}
+
+// Keyboard
+.keyboard {
+  width: calc( #{$msg-width} - calc(2.5rem + 4px));
+  height: $msg-height;
+  background: $almost-white;
+  border-radius: 4px;
+}
+
+.keyboard-container {
+  display: flex;
+  width: auto;
+  margin: 4px;
+  margin-top: 0;
+}
+
+.msg-control {
+  margin-left: 4px;
+  width: 2.5rem;
+  overflow: none;
+  height: $msg-height;
+  border-radius: 4px;
+  border: 2px solid $grey-l
+}
+
+.msg-control .control {
+  display: block;
+  height: calc(#{$msg-height / 3});
+  width: inherit;
+  padding: 0.5rem;
+}
+
+// Canvas
+#canvas-compose {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+#canvas-export {
+  // Width and height hardcoded in HTML;
+  // Must follow aspect ratio as in JS.
+  display: none;
+}
+
+
+// Fonts
+
+@font-face {
+    font-family: 'Nineteen Ninety Three';
+    src: url('/css/font/Nineteen Ninety Three.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
