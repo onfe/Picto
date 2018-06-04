@@ -1,9 +1,25 @@
-var ws = new WebSocket('ws://127.0.0.1:40510');
+var ws = new WebSocket('ws://' + window.location.hostname + ':40510');
 var username = 'onfe'
+var auth = false;
 
 ws.onopen = function () {
   console.log('Connected to Picto! Listening for Messages...')
   sendJoin();
+}
+
+ws.onmessage = function (msg) {
+  pl = JSON.parse(msg.data);
+
+  console.log(pl);
+
+  if (pl.type === 'joinresponse') {
+    auth = pl.payload.auth;
+  }
+
+  if (pl.type === 'message') {
+    messageRecieved(pl.payload); // back to main.js
+  }
+
 }
 
 function sendJoin() {
@@ -13,20 +29,21 @@ function sendJoin() {
 
 function sendMessage(msg) {
   var pl = {
-    'msgcont': msg,
+    msgCont: msg,
   }
   send('message', pl);
 }
 
 function send(type, payload) {
   var msg = {
-    'type': type,
-    'time': new Date(),
-    'server': 'fakeserverID',
-    'user': username,
-    'auth': false,
-    'payload': payload
+    type: type,
+    time: new Date(),
+    room: 'fakeRoomID',
+    name: username,
+    auth: auth,
+    payload: payload
   }
   var out = JSON.stringify(msg);
   ws.send(out);
+  console.log(out);
 }
