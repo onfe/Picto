@@ -154,6 +154,12 @@ html {
   color: #fff;
 }
 
+.msg canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
 .msg-history {
   flex-direction: column-reverse;
   display: flex;
@@ -212,18 +218,6 @@ html {
   padding: 0.5rem;
 }
 
-// Canvas
-#canvas-compose {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-}
-
-#canvas-export {
-  // Width and height hardcoded in HTML;
-  // Must follow aspect ratio as in JS.
-  display: none;
-}
 
 
 // Fonts

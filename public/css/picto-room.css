@@ -118,6 +118,12 @@ html {
   color: #fff;
 }
 
+.msg canvas {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
 .msg-history {
   flex-direction: column-reverse;
   display: flex;
@@ -171,16 +177,6 @@ html {
   height: calc(calc(calc(calc(100vw - 2rem) - 8px) / 3)/3);
   width: inherit;
   padding: 0.5rem;
-}
-
-#canvas-compose {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-}
-
-#canvas-export {
-  display: none;
 }
 
 @font-face {
