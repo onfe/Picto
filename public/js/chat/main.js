@@ -1,5 +1,7 @@
 var currentTool = 'pencil';
 var currentSize = 'small';
+var emptyLine = 'A'.repeat(32);
+
 $('#' + currentTool).addClass('selected');
 $('#' + currentSize).addClass('selected');
 
@@ -22,8 +24,6 @@ $('.control.clear').on('click', function () {
 $('.control.send').on('click', function () {
   var msgCont = getContent(); // from compose.js
 
-  var emptyLine = 'A'.repeat(32);
-
   for (var line = 0; line < msgCont.length; line++) {
     var currLine = msgCont[line];
     var encLine = base64Encode(currLine);
@@ -39,11 +39,43 @@ $('.control.send').on('click', function () {
   // We now have a nicely array with base64 (slimmed edition) encoded values.
   msgCont = msgCont.join('');
 
-
-  console.log(msgCont);
-
   sendMessage(msgCont) // from socket.js
 })
+
+function messageRecieved(pl) {
+  var sender = pl.sender;
+  var content = pl.msgCont;
+  var colour = pl.colour;
+  var msgID = pl.msgID;
+
+  var expanded = ''
+
+  for (var i = 0; i < content.length; i++) {
+    var char = content[i]
+    if (char === '!') {
+      expanded += emptyLine;
+    } else {
+      expanded += char;
+    }
+  }
+
+  var msgBin = base64Decode(expanded);
+
+  $('.msg-history').prepend('<div id="msg-' + msgID + '"class="msg ' + colour + '" data-pixel="' + expanded + '"><canvas resize></canvas><span class="msg-auth">' + sender + '</span></div>')
+}
+
+function base64Decode(st) {
+  var out = '';
+  var base64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=';
+  for (var i = 0; i < st.length; i++) {
+    var char = st[i];
+    var num = base64List.indexOf(char);
+    var bin = num.toString(2);
+    var final = ('000000' + bin).slice(-6); // ensure is 6 chars
+    out += final;
+  }
+  return out;
+}
 
 function base64Encode(st) {
   var out = '';
@@ -52,7 +84,7 @@ function base64Encode(st) {
   for (var c = 0; c < chunks.length; c++) {
     var num = parseInt(chunks[c], 2) // Binary string to decimal integer.
     var char = base64List[num];
-    out += char;
+    out += char.toString(2);
 
   }
   return out;
