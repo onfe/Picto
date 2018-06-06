@@ -1,13 +1,15 @@
 "use strict"; // Force ES6 and strict mode.
 
+// Require express for static files, etc.
 var express = require('express')
 var app = express()
 var path = require('path')
 
+// Require and setup WebSockets
 var WebSocket = require('ws')
 var wss = new WebSocket.Server({port: 40510})
 
-
+// Require custom modules
 var Client = require('./req/client')
 var Room = require('./req/room')
 var Socket = require('./req/socket')
@@ -31,7 +33,6 @@ app.get('/api/', function (req, res) {
   }
   return res.send({roomCode: req.query.roomCode, available: avail})
 })
-
 
 app.listen(8000, function () {
   console.log('Picto listening on port 8000')
@@ -78,17 +79,11 @@ function findRoomByID(id) {
 
 function messageHandler(pl) {
 
-  var senderName = pl.name;
-  var senderAuth = pl.auth;
-  var senderRoom = pl.room;
-
-  var result = token.verify(senderAuth, senderName, senderRoom);
-  if (!result) {
+  var verified = token.verify(pl.auth, pl.name, pl.room);
+  if (!verified) {
     console.log('unauthorised')
-    return
+    return;
   }
-
-
 
   var plOut = {
     msgCont: pl.payload.msgCont,
