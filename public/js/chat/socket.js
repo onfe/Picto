@@ -20,6 +20,8 @@ ws.onmessage = function (msg) {
     messageRecieved(pl.payload); // back to main.js
   }
 
+  if (pl.type === 'sent')
+    msgSent(pl.payload) // back to main.js
 }
 
 function sendJoin() {
