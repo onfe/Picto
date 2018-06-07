@@ -10,10 +10,17 @@ module.exports = class Socket {
   send(type, payload) {
     var msg = {
       type: type,
-      time: Date.now(),
+      time: new Date(),
       payload: payload
     }
-    this._ws.send(JSON.stringify(msg))
+    if (this.isAlive) {
+      try {
+        this._ws.send(JSON.stringify(msg))
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
     console.log('SENT: ', msg)
   }
 
