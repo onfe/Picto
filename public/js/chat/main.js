@@ -57,6 +57,10 @@ $('.control.send').on('click', function () {
   sendMessage(msgCont) // from socket.js
 })
 
+function joined(colour) {
+  $('.msg-current').addClass(colour)
+}
+
 function messageRecieved(pl) {
   var sender = pl.sender;
   var content = pl.msgCont;
@@ -76,7 +80,24 @@ function messageRecieved(pl) {
 
   var msgBin = base64Decode(expanded);
 
-  $('.msg-history').prepend('<div id="msg-' + msgID + '"class="msg ' + colour + '" data-pixel="' + expanded + '"><canvas resize></canvas><span class="msg-auth">' + sender + '</span></div>')
+  var scrollBefore = $('#msg-hist').scrollTop()
+
+  $('.msg-history').prepend('<div id="msg-' + msgID + '"class="msg ' + colour + '" data-pixel="' + expanded + '"><canvas resize id="canv-' + msgID + '"></canvas><span class="msg-auth">' + sender + '</span></div>')
+  setTimeout(function () {
+    drawMsg(msgBin, 'canv-' + msgID)
+  }, 5); // wait for the DOM to update and size the canvas before drawing to it.
+
+  var scrollAfter = $('#msg-hist').scrollTop()
+
+  $('#msg-hist').scrollTop(scrollBefore) // reset the autoscroll
+
+  $('#msg-hist').animate({scrollTop: scrollAfter}, 300)
+
+}
+
+function msgSent(pl) {
+  isSending = false;
+  clearCanvas(); // fom compose.js
 }
 
 function base64Decode(st) {

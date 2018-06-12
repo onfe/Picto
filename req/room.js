@@ -1,11 +1,14 @@
 "use strict"; // Force ES6 and strict mode.
 
+var Utils = require('./utils')
+
 module.exports = class Room {
   constructor(id) {
     this._id = id;
     this._clients = [];
     this.created = Date.now();
     this._lastUpdate = Date.now();
+    this._colours = ['orange', 'green', 'yellow', 'purple', 'blue'];
   }
 
   get clients() {
@@ -22,27 +25,30 @@ module.exports = class Room {
   }
 
   addClient(c) {
-    this._clients.push(c);
+    this.clients.push(c);
+    var randomNum = Utils.getRandomInt(0, this._colours.length - 1)
+    c.colour = this._colours[randomNum];
+    this._colours.splice(randomNum, 1);
   }
 
   broadcast(type, pl) {
-    for (var c = 0; c < this._clients.length; c++) {
-      var client = this._clients[c]
-      console.log(client)
+    for (var c = 0; c < this.clients.length; c++) {
+      var client = this.clients[c]
 
       if (client.isAlive) {
         client.send(type, pl)
-        console.log('msg')
       }
     }
     this.refresh()
   }
 
   cleanDeadClients() {
-    for (var i = 0; i < this._clients.length; i++) {
-      var client = this._clients[i];
+    for (var i = 0; i < this.clients.length; i++) {
+      var client = this.clients[i];
       if (!client.isAlive) {
-        this._clients.splice(i, 1);
+        var client = this.clients[i]
+        this._colours.push[client.colour]
+        this.clients.splice(i, 1);
       }
     }
   }

@@ -101,10 +101,24 @@ wss.on('connection', function (ws) {
     console.log('RECIEVED: ', pl)
 
     if (pl.type === 'joinrequest') {
-      var auth = token.create(pl.name, pl.room)
-      var cli = new Client(pl.name, ws, auth);
-      rooms[0].addClient( cli ); // FORCE ROOM 0
-      cli.send('joinresponse', {auth: cli.auth})
+      var roomOK = checkRoom(pl.room)
+      if (!roomOK.available || roomOK.full) {
+        var cli = new Client(pl.name, ws, false)
+        var msg = {auth: false, room: false};
+      } else {
+        var room = findRoomByID(pl.room)
+        var userOK = checkUsername(room, pl.name)
+        if (userOK.available) {
+          // everything is good, let's join!
+          var auth = Token.create(pl.name, pl.room)
+          var cli = new Client(pl.name, ws, auth);
+          room.addClient(cli);
+
+          var msg = {auth: cli.auth, room: room.id, colour: cli.colour}
+        }
+      }
+
+      cli.send('joinresponse', msg)
     }
 
     if (pl.type === 'message') {
@@ -128,23 +142,91 @@ function findRoomByID(id) {
   return rooms.find(finder, id)
 }
 
+function findClientByName(room, name) {
+  function finder(client) {
+    if (client.name === this) {
+      return client
+    }
+  }
+  console.log(room)
+  return room.clients.find(finder, name)
+}
+
+function checkRoom(roomid) {
+  var room = findRoomByID(roomid)
+  if (room) {
+
+    let full = !(room.clients.length < maxClients)
+
+    var msg = {
+      room: room.id,
+      numCli: room.clients.length,
+      available: true,
+      full: full,
+    }
+
+  } else {
+    var msg = {
+      room: roomid,
+      available: false,
+    }
+  }
+  return msg;
+}
+
+function checkUsername(room, name) {
+  var client = findClientByName(room, name)
+
+  var available = true;
+  var reason = '';
+
+  if (client) { // client already exists with this name.
+    available = false;
+    reason = 'nametaken';
+  }
+
+  if (name.length > maxNameLength) {
+    available = false;
+    reason = 'namelength';
+  }
+
+  var msg = {
+    room: room.id,
+    name: name,
+    available: available,
+    reason: reason,
+  }
+
+  return msg;
+}
+
 function messageHandler(pl) {
 
-  var verified = token.verify(pl.auth, pl.name, pl.room);
+  var verified = Token.verify(pl.auth, pl.name, pl.room);
   if (!verified) {
     console.log('unauthorised')
     return;
   }
 
+  var room = findRoomByID(pl.room);
+  if (!room) {
+    console.log('roomfailure')
+    return;
+  };
+  var client = findClientByName(room, pl.name)
+  if (!client) {
+    console.log('clientfailure')
+    return;
+  }
+
   var plOut = {
     msgCont: pl.payload.msgCont,
-    sender: senderName,
-    colour: 'orange',
+    sender: pl.name,
+    colour: client.colour,
     msgID: randomHex()
   }
 
-  var roomID = pl.room;
-  var room = findRoomByID(roomID);
+  client.send('sent', { msgID: plOut.msgID }) // message sent response
   room.broadcast('message', plOut);
   room.cleanDeadClients();
 }

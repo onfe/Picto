@@ -1,6 +1,8 @@
 var ws = new WebSocket('ws://' + window.location.hostname + ':40510');
-var username = 'onfe'
 var auth = false;
+
+var path = location.pathname.split('/')
+var roomCode = path[path.length - 2]
 
 ws.onopen = function () {
   console.log('Connected to Picto! Listening for Messages...')
@@ -14,6 +16,7 @@ ws.onmessage = function (msg) {
 
   if (pl.type === 'joinresponse') {
     auth = pl.payload.auth;
+    joined(pl.payload.colour)
   }
 
   if (pl.type === 'message') {
@@ -40,7 +43,7 @@ function send(type, payload) {
   var msg = {
     type: type,
     time: new Date(),
-    room: 'fakeRoomID',
+    room: roomCode,
     name: username,
     auth: auth,
     payload: payload

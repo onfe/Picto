@@ -11,7 +11,6 @@ module.exports = class Client {
   }
 
   send(type, payload) {
-    console.log('msg at client')
     this.socket.send(type, payload);
   }
 

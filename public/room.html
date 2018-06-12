@@ -14,7 +14,7 @@
         <img src="/img/icn/back.svg" />
         <img src="/img/icn/signal.svg" />
       </ul>
-      <ul class="content msg-history">
+      <ul id="msg-hist" class="content msg-history">
         <div class="msg system">
           <div class="msg-text">
             Welcome to Picto!
@@ -32,9 +32,9 @@
       </ul>
       <div class="content workspace">
         <br />
-        <div class="msg msg-current blue">
-          <canvas resize id="canvas-compose"></canvas>
-          <span class="msg-auth">Penguin</span>
+        <div class="msg msg-current">
+          <canvas id="canvas-compose"></canvas>
+          <span class="msg-auth self">Penguin</span>
         </div>
         <div class="keyboard-container">
           <div class="keyboard">
