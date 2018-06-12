@@ -2,8 +2,22 @@ var currentTool = 'pencil';
 var currentSize = 'small';
 var emptyLine = 'A'.repeat(32);
 
-$('#' + currentTool).addClass('selected');
-$('#' + currentSize).addClass('selected');
+var username = Cookies.get("user");
+if (!username) {
+  location.href = "/";
+}
+Cookies.remove("user")
+
+$(window).on('load', function () { // when everything has loaded, hide the loader and show the chat.
+  $('.loader').addClass('hide');
+
+});
+
+$(function () {
+  $('#' + currentTool).addClass('selected');
+  $('#' + currentSize).addClass('selected');
+  $('.msg-auth.self').html(username)
+});
 
 $('.tool.draw').on('click', function () {
   $('.tool.draw').removeClass('selected');
@@ -22,6 +36,7 @@ $('.control.clear').on('click', function () {
 })
 
 $('.control.send').on('click', function () {
+
   var msgCont = getContent(); // from compose.js
 
   for (var line = 0; line < msgCont.length; line++) {
