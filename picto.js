@@ -14,34 +14,85 @@ var Client = require('./req/client')
 var Room = require('./req/room')
 var Socket = require('./req/socket')
 
-var token = require('./req/token')
+var Token = require('./req/token')
+
+var maxClients = 8;
+var maxNameLength = 12;
+
+var maxRooms = 8;
 
 
 
 app.use(express.static('public'))
 
-app.get('/room/:roomcode', function (req, res) {
-  return res.send(req.params)
+app.get('/room/:roomcode/', function (req, res) {
+  var roomCheck = checkRoom(req.params.roomcode)
+  if (roomCheck.available) {
+    if (!roomCheck.full) {
+      res.sendFile(__dirname + "/public/room.html")
+    } else {
+      res.redirect('/#room-full')
+    }
+  } else {
+    res.redirect('/#room-not-available')
+  }
 })
 
-app.get('/api/', function (req, res) {
-  console.log(req.query)
-  if (req.query.roomCode == 'abc') {
-    var avail = true
-  } else {
-    var avail = false
+app.get('/join/:roomcode/', function (req, res) {
+  res.sendFile(__dirname + "/public/join.html")
+});
+
+app.get('/api/:type/', function (req, res) {
+  switch (req.params.type) {
+
+    case "room":
+      var msg = checkRoom(req.query.room)
+      res.send(msg)
+      break;
+
+    case "username":
+      var room = findRoomByID(req.query.room);
+      if (!room) {
+        res.status(400).send();
+      } else {
+        var msg = checkUsername(room, req.query.name)
+        res.send(msg);
+      }
+      break;
+
+    case "createroom":
+      if (rooms.length < maxRooms) {
+        var newroom = new Room(randomHex());
+        var msg = {
+          created: true,
+          room: newroom.id,
+        }
+        rooms.push(newroom)
+        console.log(rooms);
+      } else {
+        msg = {
+          created: false,
+        }
+      }
+
+      res.send(msg);
+      break;
+
+    default:
+      res.status(400).send();
+      break;
   }
-  return res.send({roomCode: req.query.roomCode, available: avail})
 })
 
 app.listen(8000, function () {
-  console.log('Picto listening on port 8000')
+  console.log('Picto listening on port 8000');
 })
 
 
-
+// CREATE THE ROOMS LIST
 var rooms = [];
-rooms.push(new Room('fakeRoomID'));
+// VERY IMPORTANT - DO. NOT. ACCIDENTLY. DELETE.
+// (AND THEN SPEND HALF AN HOUR WORRYING ABOUT ALL THE ERRORS)
 
 wss.on('connection', function (ws) {
   ws.on('message', function (msg) {
