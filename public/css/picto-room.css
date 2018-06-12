@@ -179,6 +179,48 @@ html {
   padding: 0.5rem;
 }
 
+.loader {
+  font-size: 2rem;
+  font-family: 'Nineteen Ninety Three';
+  color: #606060;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: colour 5s infinite;
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  background: #eee;
+}
+
+.loader.hide {
+  display: none;
+}
+
+@keyframes colour {
+  0% {
+    color: #E97777;
+  }
+  20% {
+    color: #EFC57E;
+  }
+  40% {
+    color: #89C7B6;
+  }
+  60% {
+    color: #7998C9;
+  }
+  80% {
+    color: #AD84C7;
+  }
+  100% {
+    color: #E97777;
+  }
+}
+
 @font-face {
   font-family: 'Nineteen Ninety Three';
   src: url("/css/font/Nineteen Ninety Three.woff") format("woff");
