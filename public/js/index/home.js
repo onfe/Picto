@@ -1,3 +1,8 @@
+var path = location.pathname.split('/')
+var roomCode = path[path.length - 1]
+console.log(roomCode)
+
+
 $(function () {
   $("#join").on('click', function() {
     // Get code from input box
@@ -5,7 +10,7 @@ $(function () {
 
     // Perform server side initial validation
     $.ajax({
-      url: "http://" + window.location.hostname + ":" + window.location.port + "/api/room/",
+      url: "http://" + window.location.host + "/api/room/",
       data: {room: code},
     }).done( validateJoin );
   });
@@ -25,7 +30,7 @@ function validateJoin(e) {
     return
   }
   console.log('ok')
-  location.href = "/room/" + e.room + "/";
+  location.href = "/join/" + e.room + "/";
 };
 
 function validateCreate(e) {
@@ -33,5 +38,5 @@ function validateCreate(e) {
     return
   }
   console.log('ok')
-  location.href = "/room/" + e.room + "/";
+  location.href = "/join/" + e.room + "/";
 }
