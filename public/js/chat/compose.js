@@ -120,9 +120,15 @@ function onMouseDrag(event) {
   lastPoint = event.point;
 }
 
-function onMouseUp(event) {
-  // Nothing here
-}
+// function onMouseUp(event) {
+//   // Nothing here
+// }
+//
+// function onResize(event) {
+//   var perX = view.size.width / width;
+//   var perY = view.size.height / height;
+//   var perAvg = (perX + perY) / 2
+// }
 
 window.clearCanvas = function () {
   for (var x = 0; x < pixels.length; x++) {
