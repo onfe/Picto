@@ -142,15 +142,7 @@ function findRoomByID(id) {
   return rooms.find(finder, id)
 }
 
-function findClientByName(room, name) {
-  function finder(client) {
-    if (client.name === this) {
-      return client
-    }
-  }
-  console.log(room)
-  return room.clients.find(finder, name)
-}
+// Moved to Room.findClient()
 
 function checkRoom(roomid) {
   var room = findRoomByID(roomid)
@@ -175,7 +167,7 @@ function checkRoom(roomid) {
 }
 
 function checkUsername(room, name) {
-  var client = findClientByName(room, name)
+  var client = room.findClient(name)
 
   var available = true;
   var reason = '';
@@ -213,7 +205,7 @@ function messageHandler(pl) {
     console.log('roomfailure')
     return;
   };
-  var client = findClientByName(room, pl.name)
+  var client = room.findClient(pl.name)
   if (!client) {
     console.log('clientfailure')
     return;

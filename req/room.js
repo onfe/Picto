@@ -6,8 +6,8 @@ module.exports = class Room {
   constructor(id) {
     this._id = id;
     this._clients = [];
-    this.created = Date.now();
-    this._lastUpdate = Date.now();
+    this.created = new Date();
+    this._lastUpdate = new Date();
     this._colours = ['orange', 'green', 'yellow', 'purple', 'blue'];
   }
 
@@ -20,7 +20,7 @@ module.exports = class Room {
   }
 
   refresh() {
-    this._lastUpdate = Date.now();
+    this._lastUpdate = new Date();
     return this._lastUpdate;
   }
 
@@ -51,6 +51,16 @@ module.exports = class Room {
         this.clients.splice(i, 1);
       }
     }
+  }
+
+  findClient(name) {
+    function finder(client) {
+      if (client.name === this) {
+        return client
+      }
+    }
+    console.log(room)
+    return this.clients.find(finder, name)
   }
 
 }
