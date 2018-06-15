@@ -10,23 +10,22 @@ var WebSocket = require('ws')
 var wss = new WebSocket.Server({port: 40510})
 
 // Require custom modules
+var Picto = require('./req/picto')
 var Client = require('./req/client')
-var Room = require('./req/room')
-var Socket = require('./req/socket')
 
 var Token = require('./req/token')
-
-var maxClients = 8;
-var maxNameLength = 12;
+var Utils = require('./req/utils')
 
 var maxRooms = 8;
 
-
+// CREATE THE EVERYTHING CLASS
+var picto = new Picto()
+// VERY IMPORTANT - DO. NOT. ACCIDENTLY. DELETE.
 
 app.use(express.static('public'))
 
 app.get('/room/:roomcode/', function (req, res) {
-  var roomCheck = checkRoom(req.params.roomcode)
+  var roomCheck = picto.checkRoom(req.params.roomcode)
   if (roomCheck.available) {
     if (!roomCheck.full) {
       res.sendFile(__dirname + "/public/room.html")
@@ -46,29 +45,28 @@ app.get('/api/:type/', function (req, res) {
   switch (req.params.type) {
 
     case "room":
-      var msg = checkRoom(req.query.room)
+      var msg = picto.checkRoom(req.query.room)
       res.send(msg)
       break;
 
     case "username":
-      var room = findRoomByID(req.query.room);
+      var room = picto.findRoom(req.query.room);
       if (!room) {
         res.status(400).send();
       } else {
-        var msg = checkUsername(room, req.query.name)
+        var msg = room.checkUsername(req.query.name)
         res.send(msg);
       }
       break;
 
     case "createroom":
-      if (rooms.length < maxRooms) {
-        var newroom = new Room(randomHex());
+      if (picto.rooms.length < maxRooms) {
+        var newroom = picto.createRoom();
         var msg = {
           created: true,
           room: newroom.id,
         }
-        rooms.push(newroom)
-        console.log(rooms);
+        console.log(picto.rooms);
       } else {
         msg = {
           created: false,
@@ -89,11 +87,6 @@ app.listen(8000, function () {
 })
 
 
-// CREATE THE ROOMS LIST
-var rooms = [];
-// VERY IMPORTANT - DO. NOT. ACCIDENTLY. DELETE.
-// (AND THEN SPEND HALF AN HOUR WORRYING ABOUT ALL THE ERRORS)
-
 wss.on('connection', function (ws) {
   ws.on('message', function (msg) {
     var pl = JSON.parse(msg)
@@ -101,13 +94,13 @@ wss.on('connection', function (ws) {
     console.log('RECIEVED: ', pl)
 
     if (pl.type === 'joinrequest') {
-      var roomOK = checkRoom(pl.room)
+      var roomOK = picto.checkRoom(pl.room)
       if (!roomOK.available || roomOK.full) {
         var cli = new Client(pl.name, ws, false)
         var msg = {auth: false, room: false};
       } else {
-        var room = findRoomByID(pl.room)
-        var userOK = checkUsername(room, pl.name)
+        var room = picto.findRoom(pl.room)
+        var userOK = room.checkUsername(pl.name)
         if (userOK.available) {
           // everything is good, let's join!
           var auth = Token.create(pl.name, pl.room)
@@ -128,69 +121,14 @@ wss.on('connection', function (ws) {
   })
 })
 
-
-function randomHex() {
-  return Math.floor(Math.random()*16777215).toString(16);
-}
-
-function findRoomByID(id) {
-  function finder(room) {
-    if (room.id === this) {
-      return room
-    }
-  }
-  return rooms.find(finder, id)
-}
+// Moved to Picto.findRoom()
 
 // Moved to Room.findClient()
 
-function checkRoom(roomid) {
-  var room = findRoomByID(roomid)
-  if (room) {
+// Moved to Picto.checkRoom()
 
-    let full = !(room.clients.length < maxClients)
+// Moved to Room.checkUsername()
 
-    var msg = {
-      room: room.id,
-      numCli: room.clients.length,
-      available: true,
-      full: full,
-    }
-
-  } else {
-    var msg = {
-      room: roomid,
-      available: false,
-    }
-  }
-  return msg;
-}
-
-function checkUsername(room, name) {
-  var client = room.findClient(name)
-
-  var available = true;
-  var reason = '';
-
-  if (client) { // client already exists with this name.
-    available = false;
-    reason = 'nametaken';
-  }
-
-  if (name.length > maxNameLength) {
-    available = false;
-    reason = 'namelength';
-  }
-
-  var msg = {
-    room: room.id,
-    name: name,
-    available: available,
-    reason: reason,
-  }
-
-  return msg;
-}
 
 function messageHandler(pl) {
 
@@ -200,7 +138,7 @@ function messageHandler(pl) {
     return;
   }
 
-  var room = findRoomByID(pl.room);
+  var room = picto.findRoom(pl.room);
   if (!room) {
     console.log('roomfailure')
     return;
@@ -215,7 +153,7 @@ function messageHandler(pl) {
     msgCont: pl.payload.msgCont,
     sender: pl.name,
     colour: client.colour,
-    msgID: randomHex()
+    msgID: Utils.randomHex()
   }
 
   client.send('sent', { msgID: plOut.msgID }) // message sent response

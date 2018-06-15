@@ -2,9 +2,9 @@
   "name": "picto",
   "version": "1.0.0",
   "description": "A picture based chat service.",
-  "main": "picto.js",
+  "main": "main.js",
   "scripts": {
-    "start": "node picto.js",
+    "start": "node main.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
