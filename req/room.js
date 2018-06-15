@@ -2,6 +2,9 @@
 
 var Utils = require('./utils')
 
+var maxClients = 8;
+var maxNameLength = 12;
+
 module.exports = class Room {
   constructor(id) {
     this._id = id;
@@ -11,12 +14,12 @@ module.exports = class Room {
     this._colours = ['orange', 'green', 'yellow', 'purple', 'blue'];
   }
 
-  get clients() {
-    return this._clients;
-  }
+  get clients() { return this._clients; }
 
-  get id() {
-    return this._id;
+  get id() { return this._id; }
+
+  get full() {
+    return !(this.clients.length < maxClients)
   }
 
   refresh() {
@@ -59,8 +62,33 @@ module.exports = class Room {
         return client
       }
     }
-    console.log(room)
     return this.clients.find(finder, name)
+  }
+
+  checkUsername(name) {
+    var client = this.findClient(name)
+
+    var available = true;
+    var reason = '';
+
+    if (client) { // client already exists with this name.
+      available = false;
+      reason = 'nametaken';
+    }
+
+    if (name.length > maxNameLength) {
+      available = false;
+      reason = 'namelength';
+    }
+
+    var msg = {
+      room: this.id,
+      name: name,
+      available: available,
+      reason: reason,
+    }
+
+    return msg;
   }
 
 }
