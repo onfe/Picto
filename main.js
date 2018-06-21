@@ -76,6 +76,16 @@ app.get('/api/:type/', function (req, res) {
       res.send(msg);
       break;
 
+    case "stats":
+      var num_cli = picto.numClients();
+      var num_rooms = picto.rooms.length;
+      var msg = {
+        numClients: num_cli,
+        numRooms: num_rooms,
+      }
+      res.send(msg);
+      break;
+
     default:
       res.status(400).send();
       break;
@@ -121,13 +131,6 @@ wss.on('connection', function (ws) {
   })
 })
 
-// Moved to Picto.findRoom()
-
-// Moved to Room.findClient()
-
-// Moved to Picto.checkRoom()
-
-// Moved to Room.checkUsername()
 
 
 function messageHandler(pl) {
