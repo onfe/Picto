@@ -1,8 +1,11 @@
 # Picto
 Picto is a web-chat app inspired by Nintendo's PictoChat.
 
+<<<<<<< HEAD
 *100% still a work in progress*
 
+=======
+>>>>>>> 56dd4ee03d8841db0697de11c99b3bc3bcda7d31
 Built on Node.js, Picto uses websockets (and ws.js on the server) to facilitate real time communication between clients.
 
 **Picto is optimised for mobile screens.** Desktop optimisation.. soon™
