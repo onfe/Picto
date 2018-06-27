@@ -1,0 +1,9 @@
+Sounds by Sound Ex Machina
+
+button.wav = Buttons/Vintage Button 01.wav
+message.wav = Selections/Beep Selection 01.wav
+
+
+Sounds by ZapSplat (https://www.zapsplat.com)
+
+bell.mp3 = https://www.zapsplat.com/music/bell-school-handheld-bell-ring-x3-gently/
