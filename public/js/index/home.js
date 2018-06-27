@@ -4,9 +4,15 @@ console.log(roomCode)
 
 
 $(function () {
+
+  $.ajax({
+    url: "http://" + window.location.host + "/api/stats/",
+    data: {}
+  }).done( stats );
+
   $("#join").on('click', function() {
     // Get code from input box
-    var code = $("#joincode").val();
+    var code = $("#join-code").val();
 
     // Perform server side initial validation
     $.ajax({
@@ -32,6 +38,11 @@ function validateJoin(e) {
   console.log('ok')
   location.href = "/join/" + e.room + "/";
 };
+
+function stats(e) {
+  $('#current-clients').html(e.numClients);
+  $('#current-rooms').html(e.numRooms)
+}
 
 function validateCreate(e) {
   if (!e.created) {
