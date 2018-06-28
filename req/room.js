@@ -10,7 +10,7 @@ module.exports = class Room {
     this._id = id;
     this._clients = [];
     this.created = new Date();
-    this._lastUpdate = new Date();
+    this.lastupdate = new Date();
     this._colours = ['orange', 'green', 'yellow', 'purple', 'blue'];
   }
 
@@ -23,8 +23,8 @@ module.exports = class Room {
   }
 
   refresh() {
-    this._lastUpdate = new Date();
-    return this._lastUpdate;
+    this.lastupdate = new Date();
+    return this.lastupdate;
   }
 
   addClient(c) {
@@ -32,9 +32,16 @@ module.exports = class Room {
     var randomNum = Utils.getRandomInt(0, this._colours.length - 1)
     c.colour = this._colours[randomNum];
     this._colours.splice(randomNum, 1);
+    // the client has been added, send a status update.
+    this.sendStatus();
+    this.broadcast('clientJoined', {
+      name: c.name
+    })
+    this.refresh();
   }
 
   broadcast(type, pl) {
+    this.refresh()
     for (var c = 0; c < this.clients.length; c++) {
       var client = this.clients[c]
 
@@ -42,7 +49,12 @@ module.exports = class Room {
         client.send(type, pl)
       }
     }
-    this.refresh()
+  }
+
+  sendStatus() {
+    this.broadcast('status', {
+      numClients: this.clients.length
+    });
   }
 
   cleanDeadClients() {
@@ -52,6 +64,10 @@ module.exports = class Room {
         var client = this.clients[i]
         this._colours.push[client.colour]
         this.clients.splice(i, 1);
+        this.broadcast('clientLeft', {
+          name: client.name
+        });
+        this.sendStatus();
       }
     }
   }

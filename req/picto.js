@@ -6,6 +6,7 @@ var Utils = require('./utils')
 module.exports = class Picto {
   constructor() {
     this.rooms = []
+    setInterval(this.refresh.bind(this), 10000);
 
   }
 
@@ -43,6 +44,28 @@ module.exports = class Picto {
       }
     }
     return msg;
+  }
+
+  numClients() {
+    var num = 0;
+    for (var i = 0; i < this.rooms.length; i++) {
+      num += this.rooms[i].clients.length
+    }
+    return num;
+  }
+
+  refresh() {
+    // if a room's last update was over x time ago, and there are no connected clients, close the room.
+    for (var i = 0; i < this.rooms.length; i++) {
+      var room = this.rooms[i];
+      // check for dead clients.
+      room.cleanDeadClients();
+      var now = new Date();
+      var sinceUpdate = now - room.lastupdate;
+      if (sinceUpdate > 30000 && room.clients.length == 0) {
+        this.rooms.splice(i, 1); // delete the room
+      }
+    }
   }
 
 
