@@ -4,7 +4,12 @@ console.log(roomCode)
 
 $(function () {
 
-  $("#roomid").html(roomCode);
+  $("#room-id").html(roomCode);
+
+  $.ajax({
+    url: "http://" + window.location.host + "/api/room/",
+    data: {room: roomCode},
+  }).done( room );
 
   $("#join").on('click', function() {
     // Get code from input box
@@ -17,6 +22,10 @@ $(function () {
     }).done( validateName );
   });
 });
+
+function room(e) {
+  $('#room-clients').html(e.numCli)
+}
 
 function validateName(e) {
   if (e.available) {
