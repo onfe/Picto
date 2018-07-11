@@ -7,7 +7,9 @@ Picto is a web-chat app inspired by Nintendo's PictoChat.
 **Picto is optimised for mobile screens.** Desktop optimisation.. soon™
 
 ## Drawing
-Using a mouse or finger, drawing is handled by Paper.js. Future updates will remove the need for the overhead of paper.js and will interact with the canvas directly in js to improve performance.
+Using a mouse or finger, drawing is handled by Paper.js.  
+~~Future updates will remove the need for the overhead of paper.js and will interact with the canvas directly in js to improve performance.~~  
+UPDATE: DONE
 
 Pixels are encoded in a base-64 like fashion for transmission and could theoretically support end-to-end encryption.
 
