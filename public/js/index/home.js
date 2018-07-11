@@ -22,7 +22,6 @@ $(function () {
   });
 
   $("#create").on('click', function() {
-    console.log('notbroken')
     // Perform server side initial validation
     $.ajax({
       url: "http://" + window.location.hostname + ":" + window.location.port + "/api/createroom/",
@@ -35,7 +34,7 @@ function validateJoin(e) {
   if (!e.available) {
     return
   }
-  console.log('ok')
+  console.log('Joining room...')
   location.href = "/join/" + e.room + "/";
 };
 
@@ -48,6 +47,6 @@ function validateCreate(e) {
   if (!e.created) {
     return
   }
-  console.log('ok')
+  console.log('Room created, joining...')
   location.href = "/join/" + e.room + "/";
 }

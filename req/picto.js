@@ -68,5 +68,9 @@ module.exports = class Picto {
     }
   }
 
+  recieve(pl) {
+    // move messagehandler code here & WS code
+  }
+
 
 }

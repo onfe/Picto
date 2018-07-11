@@ -107,4 +107,8 @@ module.exports = class Room {
     return msg;
   }
 
+  join() {
+    // move join check and stuff from main.js here
+  }
+
 }
