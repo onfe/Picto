@@ -24,6 +24,8 @@ var picto = new Picto()
 
 app.use(express.static('public'))
 
+// START API
+
 app.get('/room/:roomcode/', function (req, res) {
   var roomCheck = picto.checkRoom(req.params.roomcode)
   if (roomCheck.available) {
@@ -96,6 +98,8 @@ app.listen(8000, function () {
   console.log('Picto listening on port 8000');
 })
 
+// END API
+
 
 wss.on('connection', function (ws) {
   ws.on('message', function (msg) {
@@ -104,6 +108,9 @@ wss.on('connection', function (ws) {
     console.log('RECIEVED: ', pl)
 
     if (pl.type === 'joinrequest') {
+      // ----------------------
+      // TODO: MOVE TO ROOM.JOIN
+      // ----------------------
       var roomOK = picto.checkRoom(pl.room)
       if (!roomOK.available || roomOK.full) {
         var cli = new Client(pl.name, ws, false)
@@ -118,6 +125,9 @@ wss.on('connection', function (ws) {
           room.addClient(cli);
 
           var msg = {auth: cli.auth, room: room.id, colour: cli.colour}
+        } else {
+          var cli = new Client(pl.name, ws, false)
+          var msg = {auth: false, room: false};
         }
       }
 
@@ -132,7 +142,7 @@ wss.on('connection', function (ws) {
 })
 
 
-
+// TODO MOVE TO PICTO.messageHandler
 function messageHandler(pl) {
 
   var verified = Token.verify(pl.auth, pl.name, pl.room);
