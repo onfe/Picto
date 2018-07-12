@@ -16,3 +16,4 @@ Pixels are encoded in a base-64 like fashion for transmission and could theoreti
 ## Credits
 Code by [Onfe](https://www.onfe.co.uk)  
 Icons by [Fontawesome](https://fontawesome.com/)
+Sound Effects by [Sound Ex Machina](http://soundexmachina.com/)
