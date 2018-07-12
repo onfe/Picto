@@ -18,7 +18,7 @@ module.exports = class Base64 {
   static encode(st) {
     var out = '';
     var base64List = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-=';
-    var chunks = chunkString(st, 6);
+    var chunks = this.chunkString(st, 6);
     for (var c = 0; c < chunks.length; c++) {
       var num = parseInt(chunks[c], 2) // Binary string to decimal integer.
       var char = base64List[num];
@@ -26,5 +26,9 @@ module.exports = class Base64 {
 
     }
     return out;
+  }
+
+  static chunkString(str, length) {
+    return str.match(new RegExp('.{1,' + length + '}', 'g'));
   }
 }

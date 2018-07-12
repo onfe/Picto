@@ -1,6 +1,8 @@
 var Socket = require('./socket')
 var Sound = require('./sound')
 var Compose = require('./compose')
+var Base64 = require('./base64')
+var MessageHistory = require('./messagehistory')
 
 module.exports = class Client {
   constructor() {
@@ -18,6 +20,7 @@ module.exports = class Client {
 
     this.sock = new Socket(this.username, this.roomcode, this.recieve.bind(this))
     this.compose = new Compose();
+    this.msgHist = new MessageHistory();
 
     // ------------------------
     // SETUP UI EVENT LISTENERS
@@ -35,6 +38,10 @@ module.exports = class Client {
       this.compose.currentSize = $(e.target).attr('id')
     }.bind(this));
 
+    $('.control.send').on('click', this.messageSend.bind(this));
+    $('.control.clear').on('click', this.messageClear.bind(this));
+    $('.control.get').on('click', this.messageGet.bind(this));
+
   }
 
   recieve(pl) {
@@ -44,8 +51,7 @@ module.exports = class Client {
         this.load(pl);
         break;
       case "message":
-        console.log('message')
-        this.message(pl);
+        this.recieveMessage(pl);
         break;
       case "sent":
         // handle sent confirmation
@@ -92,7 +98,6 @@ module.exports = class Client {
         var delta = new Date() - start;
         console.log(`Assets loaded, took ${delta}ms`);
 
-
         this.ready()
       }.bind(this));
 
@@ -105,8 +110,25 @@ module.exports = class Client {
     this.Sound.join.play(); // Play the join sound.
   }
 
-  message() {
+  recieveMessage(p) {
     this.Sound.message.play();
+    var pl = p.payload
+    console.log(pl.msgID, pl.sender, pl.colour, pl.msgID)
+    this.msgHist.addMessage(pl.msgID, pl.sender, pl.colour, pl.msgCont)
+  }
+
+  messageSend() {
+    var cont = this.compose.getContent();
+    cont = Base64.encode(cont)
+    this.sock.send('message', {msgCont: cont});
+  }
+
+  messageClear() {
+    this.compose.clear();
+  }
+
+  messageGet() {
+
   }
 
 }
