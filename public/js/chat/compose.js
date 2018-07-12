@@ -24,15 +24,16 @@ module.exports = class Compose {
     this.currentTool = 'pencil';
     this.currentSize = 'small';
 
-    $(this.canvasId).on('mousedown', this.onMouseDown.bind(this));
-    $(this.canvasId).on('mouseup', this.onMouseUp.bind(this));
-    $(this.canvasId).on('mouseenter', this.onMouseEnter.bind(this));
+    $(this.canvasId).on('pointerdown', this.onMouseDown.bind(this));
+
+    $(this.canvasId).on('pointerup', this.onMouseUp.bind(this));
+
+    $(this.canvasId).on('pointerenter', this.onMouseEnter.bind(this));
 
   }
 
   onMouseDown(e) {
-    $(this.canvasId).on('mousemove', this.onMouseMove.bind(this)); // enable mousemove
-    $(this.canvasId).on('touchmove', this.onMouseMove.bind(this)); // enable mousemove
+    $(this.canvasId).on('pointermove', this.onMouseMove.bind(this)); // enable mousemove
 
     let pCoords = this.getPixel(e.offsetX, e.offsetY)
 
@@ -46,7 +47,7 @@ module.exports = class Compose {
   }
 
   onMouseUp(e) {
-    $(this.canvasId).off('mousemove'); // disable mousemove
+    $(this.canvasId).off('pointermove'); // disable mousemove
   }
 
   onMouseEnter(e) {
