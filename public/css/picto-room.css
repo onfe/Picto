@@ -118,6 +118,10 @@ html {
   color: #fff;
 }
 
+#canvas-compose {
+  touch-action: none;
+}
+
 .msg canvas {
   width: 100%;
   height: 100%;
