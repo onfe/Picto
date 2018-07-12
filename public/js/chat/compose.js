@@ -10,8 +10,6 @@ module.exports = class Compose {
     this.width = 192;
     this.height = 64;
 
-    this.resize();
-
     // Define and setup Pixel 2D array
     this.pixels = [];
     for (let x = 0; x < this.width; x++) {
@@ -20,6 +18,8 @@ module.exports = class Compose {
         this.pixels[x].push(false);
       }
     }
+
+    this.resize();
 
     this.currentTool = 'pencil';
     this.currentSize = 'small';
@@ -35,26 +35,27 @@ module.exports = class Compose {
   onMouseDown(e) {
     $(this.canvasId).on('pointermove', this.onMouseMove.bind(this)); // enable mousemove
 
+    e = this.extractOffset(e)
+
     let pCoords = this.getPixel(e.offsetX, e.offsetY)
 
     this.lastPoint = pCoords; // save the pixel coords for interpolation.
 
-    if (this.currentTool === 'pencil') {
-      this.drawPixel(pCoords[0], pCoords[1]);
-    } else if (this.currentTool === 'eraser') {
-      this.clearPixel(pCoords[0], pCoords[1])
-    }
+    this.draw(pCoords[0], pCoords[1]);
   }
 
   onMouseUp(e) {
+    e = this.extractOffset(e)
     $(this.canvasId).off('pointermove'); // disable mousemove
   }
 
   onMouseEnter(e) {
+    e = this.extractOffset(e)
     this.lastPoint = this.getPixel(e.offsetX, e.offsetY)
   }
 
   onMouseMove(e) {
+    e = this.extractOffset(e)
     let pCoords = this.getPixel(e.offsetX, e.offsetY)
     let delta = [pCoords[0] - this.lastPoint[0], pCoords[1] - this.lastPoint[1]]
 
@@ -67,12 +68,7 @@ module.exports = class Compose {
       let a = [delta[0] * pc, delta[1] * pc]
       let point = [Math.floor(a[0] + this.lastPoint[0]), Math.floor(a[1] + this.lastPoint[1])]
 
-      if (this.currentTool === 'pencil') {
-        this.drawPixel(point[0], point[1]);
-      } else if (this.currentTool === 'eraser') {
-        this.clearPixel(point[0], point[1]);
-      }
-
+      this.draw(point[0], point[1]);
     }
 
     this.lastPoint = pCoords;
@@ -80,10 +76,39 @@ module.exports = class Compose {
   }
 
   clear() {
-
+    for (var x = 0; x < this.pixels.length; x++) {
+      for (var y = 0; y < this.pixels[x].length; y++) {
+        this.clearPixel(x, y)
+      }
+    }
   }
 
-  content() {
+  getContent() {
+    var outData = '';
+    for (var x = 0; x < this.pixels.length; x++) {
+      for (var y = 0; y < this.pixels[x].length; y++) {
+        if (this.pixels[x][y]) {
+          outData += '1';
+        } else {
+          outData += '0';
+        }
+      }
+    }
+    return outData;
+  }
+
+  draw(x, y) {
+    if (this.currentTool === 'pencil') {
+      var toolFunc = this.drawPixel.bind(this)
+    } else if (this.currentTool === 'eraser') {
+      var toolFunc  = this.clearPixel.bind(this)
+    }
+
+    if (this.currentSize === 'small') {
+      toolFunc(x, y)
+    } else if (this.currentSize === 'big') {
+      this.wide(x, y, toolFunc)
+    }
 
   }
 
@@ -110,6 +135,16 @@ module.exports = class Compose {
     return [pX, pY];
   }
 
+  wide(x, y, dFunc) { // widen a stroke by drawing multiple pixels from seed pixel.
+    var stroke = 3;
+    var start = Math.floor(stroke / 2);
+    for (let pX = 0; pX < stroke; pX++) {
+      for (let pY = 0; pY < stroke; pY++) {
+        dFunc((x - start) + pX, (y - start) + pY);
+      }
+    }
+  }
+
   getPoint(x, y) {
     // Translate pixel coord to point coord
     let pX = Math.floor(x * this.perX);
@@ -127,6 +162,28 @@ module.exports = class Compose {
     }
     this.perX = width / this.width;
     this.perY = height / this.height;
+
+
+    this.redraw();
+  }
+
+  extractOffset(e) {
+    var or = e.target.getBoundingClientRect()
+    e.offsetX = e.clientX - or.left;
+    e.offsetY = e.clientY - or.top;
+    return e;
+  }
+
+  redraw() {
+    for (var x = 0; x < this.pixels.length; x++) {
+      for (var y = 0; y < this.pixels[x].length; y++) {
+        if (this.pixels[x][y]) {
+          this.drawPixel(x, y)
+        } else {
+          this.clearPixel(x, y)
+        }
+      }
+    }
   }
 
 }
