@@ -57,7 +57,7 @@ module.exports = class Client {
         // handle sent confirmation
         break;
       case "status":
-        // handle status update
+        this.recieveStatus(pl);
         break;
       default:
         break;
@@ -113,8 +113,13 @@ module.exports = class Client {
   recieveMessage(p) {
     this.Sound.message.play();
     var pl = p.payload
-    console.log(pl.msgID, pl.sender, pl.colour, pl.msgID)
     this.msgHist.addMessage(pl.msgID, pl.sender, pl.colour, pl.msgCont)
+  }
+
+  recieveStatus(p) {
+    var pl = p.payload;
+    this.msgHist.addStatus(pl.id, pl.text)
+    // also update the 'users tally';
   }
 
   messageSend() {

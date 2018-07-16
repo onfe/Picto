@@ -1,4 +1,5 @@
 var Message = require('./message')
+var Status = require('./status')
 
 module.exports = class MessageHistory {
   constructor() {
@@ -9,20 +10,28 @@ module.exports = class MessageHistory {
 
   addMessage(id, sender, colour, content) {
     // Recieve a b64 encoded message, add it to the message history and draw it.
-    var msg = new Message(id, content, sender, colour);
+    let msg = new Message(id, content, sender, colour);
     console.log(msg)
     this.messages.push(msg);
     $("#msg-hist").prepend(msg.html);
     msg.draw();
 
+    this.trim();
+
   }
 
-  addStatus() {
-    // Recieve a status update and add that to the message history
+  addStatus(id, content) {
+    let stat = new Status(id, content);
+    this.messages.push(stat);
+    $("#msg-hist").prepend(stat.html);
+
+    this.trim();
   }
 
   trim() {
-    // Remove any messages over the message limit (this.maxMessages)
-    // Keeping the message history trimmed should reduce the load on clients from dealing with bloated DOMs.
+    if (this.messages.length > this.maxMessages) {
+      this.messages[0].cleanup()
+      this.messages.splice(0, 1);
+    }
   }
 }

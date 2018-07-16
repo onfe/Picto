@@ -144,6 +144,14 @@ html {
   padding: 0.25rem;
 }
 
+.status {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  color: $grey;
+  font-size: 0.85rem;
+  padding: 0.25rem
+}
+
 .msg-auth {
   padding: 0.25rem;
   background: $grey;
