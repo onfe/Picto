@@ -23,6 +23,7 @@ html {
 }
 
 .sidebar {
+  position: relative;
   width: 2rem;
   background: #fff;
   border-right: 1px solid #F0F0F0;
@@ -238,4 +239,19 @@ html {
   src: url("/css/font/Nineteen Ninety Three.woff") format("woff");
   font-weight: normal;
   font-style: normal;
+}
+
+#msg-breadcrumbs {
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100px;
+  width: auto;
+  bottom: 0;
+}
+
+#msg-breadcrumbs .breadcrumb {
+  width: auto;
+  height: 2px;
+  background: #808080;
+  margin: 1px;
 }

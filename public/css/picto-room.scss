@@ -57,6 +57,7 @@ html {
 }
 
 .sidebar {
+  position: relative;
   width: $sidebar-width;
   background: #fff;
   border-right: 1px solid $almost-white;
@@ -282,4 +283,20 @@ html {
     src: url('/css/font/Nineteen Ninety Three.woff') format('woff');
     font-weight: normal;
     font-style: normal;
+}
+
+// message breadcrumbs in sidebar
+#msg-breadcrumbs {
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100px;
+  width: auto;
+  bottom: 0;
+
+  .breadcrumb {
+    width: auto;
+    height: 2px;
+    background: $grey;
+    margin: 1px;
+  }
 }
