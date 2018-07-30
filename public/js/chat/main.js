@@ -6,4 +6,6 @@ browserify main.js -o picto-bundle.js
 ------------------------------------------------------------------------------*/
 
 var Client = require('./client')
-window.cli = new Client(); // bind to window to allow access from console.
+
+// Create the client instance.
+window.cli = new Client();
