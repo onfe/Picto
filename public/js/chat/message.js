@@ -5,7 +5,6 @@ module.exports = class Message {
     this.id = id;
     this.data = data;
     this.databin = Base64.decode(this.data)
-    console.log(this.databin)
     this.colour = colour;
     this.auth = author;
 
