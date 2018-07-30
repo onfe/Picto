@@ -1,5 +1,6 @@
 var Message = require('./message')
 var Status = require('./status')
+var SysMessage = require('./sys-message')
 
 module.exports = class MessageHistory {
   constructor() {
@@ -24,6 +25,14 @@ module.exports = class MessageHistory {
     let stat = new Status(id, content);
     this.messages.push(stat);
     $("#msg-hist").prepend(stat.html);
+
+    this.trim();
+  }
+
+  addSysMsg(id, content) {
+    let sys = new SysMessage(id, content);
+    this.messages.push(sys);
+    $("#msg-hist").prepend(sys.html);
 
     this.trim();
   }
