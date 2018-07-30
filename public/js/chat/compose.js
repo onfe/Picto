@@ -30,6 +30,8 @@ module.exports = class Compose {
 
     $(this.canvasId).on('pointerenter', this.onMouseEnter.bind(this));
 
+    $(window).on('resize', this.resize.bind(this));
+
   }
 
   onMouseDown(e) {

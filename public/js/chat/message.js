@@ -58,4 +58,8 @@ module.exports = class Message {
 
   }
 
+  cleanup() {
+    $('#msg-' + this.id).remove()
+  }
+
 }
