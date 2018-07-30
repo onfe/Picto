@@ -33,10 +33,7 @@ module.exports = class Room {
     c.colour = this._colours[randomNum];
     this._colours.splice(randomNum, 1);
     // the client has been added, send a status update.
-    this.sendStatus();
-    this.broadcast('clientJoined', {
-      name: c.name
-    })
+    this.sendStatus(`${c.name} joined the room.`)
     this.refresh();
   }
 
@@ -51,9 +48,11 @@ module.exports = class Room {
     }
   }
 
-  sendStatus() {
+  sendStatus(text) {
     this.broadcast('status', {
-      numClients: this.clients.length
+      numClients: this.clients.length,
+      id: Utils.randomHex(),
+      text: text
     });
   }
 
@@ -64,10 +63,7 @@ module.exports = class Room {
         var client = this.clients[i]
         this._colours.push[client.colour]
         this.clients.splice(i, 1);
-        this.broadcast('clientLeft', {
-          name: client.name
-        });
-        this.sendStatus();
+        this.sendStatus(`${client.name} left the room.`);
       }
     }
   }
