@@ -1,7 +1,9 @@
-module.exports = class SysMessage {
+const MessageBase = require('./base')
+
+module.exports = class System extends MessageBase {
   constructor(id, text) {
+    super(id);
     this.text = text;
-    this.id = id;
   }
 
   get html() {
@@ -9,9 +11,5 @@ module.exports = class SysMessage {
     <div class='msg-text'>${this.text}</div>
     </div>`;
     return html;
-  }
-
-  cleanup() {
-    $('#msg-' + this.id).remove()
   }
 }

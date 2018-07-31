@@ -1,8 +1,9 @@
-var Base64 = require('./base64')
+const MessageBase = require('./base')
+const Base64 = require('../base64')
 
-module.exports = class Message {
+module.exports = class Message extends MessageBase {
   constructor(id, data, author, colour) {
-    this.id = id;
+    super(id);
     this.data = data;
     this.databin = Base64.decode(this.data)
     this.colour = colour;
@@ -44,7 +45,6 @@ module.exports = class Message {
   }
 
   resize() {
-
     let width = this.canvas.clientWidth;
     let height = this.canvas.clientHeight;
 
@@ -54,11 +54,5 @@ module.exports = class Message {
     }
     this.perX = width / this.width;
     this.perY = height / this.height;
-
   }
-
-  cleanup() {
-    $('#msg-' + this.id).remove()
-  }
-
 }

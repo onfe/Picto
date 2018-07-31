@@ -1,6 +1,6 @@
-var Message = require('./message')
-var Status = require('./status')
-var SysMessage = require('./sys-message')
+var Message = require('./message/message')
+var Status = require('./message/status')
+var SysMessage = require('./message/system')
 
 module.exports = class MessageHistory {
   constructor() {
