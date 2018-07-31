@@ -9,3 +9,10 @@ var Client = require('./client')
 
 // Create the client instance.
 window.cli = new Client();
+
+// hotkey detection
+$(document).keypress(function(e) {
+  if (e.which == 13) {
+    cli.messageSend();
+  }
+})

@@ -127,6 +127,7 @@ module.exports = class Client {
     var cont = this.compose.getContent();
     cont = Base64.encode(cont)
     this.sock.send('message', {msgCont: cont});
+    this.messageClear();
   }
 
   messageClear() {
