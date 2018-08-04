@@ -1,9 +1,0 @@
-Sounds by Sound Ex Machina
-
-button.wav = Buttons/Vintage Button 01.wav
-message.wav = Selections/Beep Selection 01.wav
-
-
-----------------------------------------
-
-bell.mp3 - Recorded by Onfe
