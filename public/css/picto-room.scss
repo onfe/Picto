@@ -248,10 +248,10 @@ html {
   top: 0;
   left: 0;
   background: #eee;
-}
 
-.loader.hide {
-  display: none;
+  &.hide {
+    display: none;
+  }
 }
 
 @keyframes colour {
@@ -299,4 +299,49 @@ html {
     background: $grey;
     margin: 1px;
   }
+}
+
+.useradd {
+  position: relative;
+}
+
+.useradd .useradd-overlay {
+  display: none;
+  z-index: 100;
+  font-family: 'Roboto';
+  font-size: 0.75rem;
+  position: absolute;
+  left: 115%;
+  top: -1.25rem;
+  height: 4.5rem;
+  padding: 0.5rem;
+  width: auto;
+  background: $almost-white;
+  border-radius: 4px;
+}
+
+.useradd.show .useradd-overlay {
+  display: block;
+}
+
+.useradd-overlay input {
+  margin-top: 0.5rem;
+  font-family: 'Roboto';
+  width: 15rem;
+  height: 2rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border: 1px solid $grey-l;
+}
+
+.useradd-overlay::after {
+    content: " ";
+    position: absolute;
+    top: 50%;
+    right: 100%; /* To the left of the tooltip */
+    margin-top: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent $almost-white transparent transparent;
 }

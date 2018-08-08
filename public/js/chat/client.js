@@ -42,6 +42,19 @@ module.exports = class Client {
     $('.control.clear').on('click', this.messageClear.bind(this));
     $('.control.get').on('click', this.messageGet.bind(this));
 
+    // Useradd Overlay
+
+    $('.useradd').on('click', function(e) {
+      $('.useradd').addClass('show');
+      $('#join-link').focus();
+      $('#join-link').select();
+      e.stopPropagation();
+    });
+
+    $(document).on('click', function(e) {
+      $('.useradd').removeClass('show');
+    })
+
   }
 
   recieve(pl) {
