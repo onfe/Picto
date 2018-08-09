@@ -149,7 +149,10 @@ module.exports = class Client {
   }
 
   messageGet() {
-
+    let srcMsg = this.msgHist.getRecent();
+    if (srcMsg.data) {
+      this.compose.load(srcMsg.databin)
+    }
   }
 
 }

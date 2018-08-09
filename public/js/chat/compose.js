@@ -188,4 +188,18 @@ module.exports = class Compose {
     }
   }
 
+  load(data) {
+    this.clear();
+    for (var y = 0; y < this.height; y++) {
+      for (var x = 0; x < this.width; x++) {
+        let ind = (x * this.height) + y;
+        if (data[ind] == 1) {
+          this.drawPixel(x, y)
+        } else {
+          this.clearPixel(x, y)
+        }
+      }
+    }
+  }
+
 }

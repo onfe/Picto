@@ -52,6 +52,13 @@ module.exports = class MessageHistory {
 
   }
 
+  getRecent() {
+    if (this.messages.length == 0) {
+      return;
+    }
+    return this.messages[this.messages.length - 1]
+  }
+
   trim() {
     if (this.messages.length > this.maxMessages) {
       this.messages[0].cleanup()
