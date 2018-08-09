@@ -65,5 +65,8 @@ typings/
 # prepos config
 prepros*.config
 
+# Browserify-Bundled JS
+*.bundle.js
+
 # dev static build
 static-build/
