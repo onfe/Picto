@@ -87,8 +87,8 @@ module.exports = class Compose {
 
   getContent() {
     var outData = '';
-    for (var x = 0; x < this.pixels.length; x++) {
-      for (var y = 0; y < this.pixels[x].length; y++) {
+    for (var x = 0; x < this.width; x++) {
+      for (var y = 0; y < this.height; y++) {
         if (this.pixels[x][y]) {
           outData += '1';
         } else {
