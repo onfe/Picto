@@ -115,6 +115,9 @@ module.exports = class Compose {
   }
 
   drawPixel(x, y) {
+    if (x > this.width || y > this.height) {
+      return;
+    }
     let start = this.getPoint(Math.floor(x), Math.floor(y));
     let sizeX = Math.ceil(this.perX);
     let sizeY = Math.ceil(this.perY);
@@ -123,6 +126,9 @@ module.exports = class Compose {
   }
 
   clearPixel(x, y) {
+    if (x > this.width || y > this.height) {
+      return;
+    }
     let start = this.getPoint(Math.floor(x), Math.floor(y));
     let sizeX = Math.ceil(this.perX);
     let sizeY = Math.ceil(this.perY);
