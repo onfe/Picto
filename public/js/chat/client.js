@@ -100,6 +100,7 @@ module.exports = class Client {
     this.colour = pl.payload.colour; // set the user's colour
     this.Sound = new Sound(); // Load all sounds async.
     this.msgHist.addSysMsg('begin', 'Welcome to Picto!');
+    $('#join-link').val(`${window.location.host}/join/${this.roomcode}/`)
 
     // Check that all non-js assets are also loaded before calling ready.
     if (document.readyState === "complete") {
