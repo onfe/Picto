@@ -5,9 +5,13 @@ var express = require('express')
 var app = express()
 var path = require('path')
 
+const server = require('http').createServer();
+server.on('request', app);
+
+
 // Require and setup WebSockets
 var WebSocket = require('ws')
-var wss = new WebSocket.Server({port: 40510})
+var wss = new WebSocket.Server({ server })
 
 // Require custom modules
 var Picto = require('./req/picto')
@@ -94,9 +98,9 @@ app.get('/api/:type/', function (req, res) {
   }
 })
 
-app.listen(8000, function () {
-  console.log('Picto listening on port 8000');
-})
+// app.listen(80, function () {
+//   console.log('Picto listening on port 80');
+// })
 
 // END API
 
@@ -173,3 +177,7 @@ function messageHandler(pl) {
   room.broadcast('message', plOut);
   room.cleanDeadClients();
 }
+
+server.listen((process.env.PORT || 80), function() {
+  console.log(`Picto started on port ${(process.env.PORT || 80)}`);
+})

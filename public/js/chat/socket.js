@@ -2,7 +2,7 @@
 
 module.exports = class Socket {
   constructor(un, rc, handler) {
-    this.ws = new WebSocket(`ws://${window.location.hostname}:40510`)
+    this.ws = new WebSocket(`ws://${window.location.hostname}:80`)
 
     this.ws.onopen = this.wsOpened.bind(this);
     this.ws.onmessage = this.messageparse.bind(this);
