@@ -19,9 +19,9 @@
   "homepage": "https://github.com/onfe/Picto#readme",
   "dependencies": {
     "express": "^4.16.3",
-    "jsonwebtoken": "^8.2.2",
-    "npm": "^6.1.0",
-    "uuid": "^3.2.1",
-    "ws": "^5.1.1"
+    "jsonwebtoken": "^8.3.0",
+    "npm": "^6.3.0",
+    "uuid": "^3.3.2",
+    "ws": "^5.2.2"
   }
 }
