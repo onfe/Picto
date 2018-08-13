@@ -12,9 +12,10 @@ module.exports = class Client {
 
     var path = location.pathname.split('/')
     this.roomcode = path[path.length - 2]; // extract roomcode from page url. need to find better way to do this.
+    this.joinLink = `${window.location.host}/join/${this.roomcode}/`;
 
     if (!this.username) { // check the username was correctly set.
-      location.href = "/";
+      location.href = this.joinLink;
       return;
     }
 
@@ -100,7 +101,7 @@ module.exports = class Client {
     this.colour = pl.payload.colour; // set the user's colour
     this.Sound = new Sound(); // Load all sounds async.
     this.msgHist.addSysMsg('begin', 'Welcome to Picto!');
-    $('#join-link').val(`${window.location.host}/join/${this.roomcode}/`)
+    $('#join-link').val(this.joinLink)
 
     // Check that all non-js assets are also loaded before calling ready.
     if (document.readyState === "complete") {
