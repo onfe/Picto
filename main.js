@@ -16,9 +16,7 @@ var wss = new WebSocket.Server({server: Server})
 // Require custom modules
 var Picto = require('./req/picto')
 var Client = require('./req/client')
-
 var Token = require('./req/token')
-var Utils = require('./req/utils')
 
 var maxRooms = 8;
 
@@ -139,7 +137,6 @@ wss.on('connection', function (ws) {
 
   })
 })
-
 
 // messageHandler() moved to picto.recieve();
 
