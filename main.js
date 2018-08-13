@@ -5,13 +5,13 @@ var express = require('express')
 var app = express()
 var path = require('path')
 
-const server = require('http').createServer();
-server.on('request', app);
-
+const Server = require('http').createServer();
+const Port = (process.env.PORT || 80)
+Server.on('request', app);
 
 // Require and setup WebSockets
 var WebSocket = require('ws')
-var wss = new WebSocket.Server({ server })
+var wss = new WebSocket.Server({server: Server})
 
 // Require custom modules
 var Picto = require('./req/picto')
@@ -98,12 +98,7 @@ app.get('/api/:type/', function (req, res) {
   }
 })
 
-// app.listen(80, function () {
-//   console.log('Picto listening on port 80');
-// })
-
 // END API
-
 
 wss.on('connection', function (ws) {
   ws.on('message', function (msg) {
@@ -139,45 +134,16 @@ wss.on('connection', function (ws) {
     }
 
     if (pl.type === 'message') {
-      messageHandler(pl)
+      picto.recieve(pl);
     }
 
   })
 })
 
 
-// TODO MOVE TO PICTO.messageHandler
-function messageHandler(pl) {
+// messageHandler() moved to picto.recieve();
 
-  var verified = Token.verify(pl.auth, pl.name, pl.room);
-  if (!verified) {
-    console.log('unauthorised')
-    return;
-  }
-
-  var room = picto.findRoom(pl.room);
-  if (!room) {
-    console.log('roomfailure')
-    return;
-  };
-  var client = room.findClient(pl.name)
-  if (!client) {
-    console.log('clientfailure')
-    return;
-  }
-
-  var plOut = {
-    msgCont: pl.payload.msgCont,
-    sender: pl.name,
-    colour: client.colour,
-    msgID: Utils.randomHex()
-  }
-
-  client.send('sent', { msgID: plOut.msgID }) // message sent response
-  room.broadcast('message', plOut);
-  room.cleanDeadClients();
-}
-
-server.listen((process.env.PORT || 80), function() {
-  console.log(`Picto started on port ${(process.env.PORT || 80)}`);
+// Finally, start the server.
+Server.listen(Port, function() {
+  console.log(`Picto started on port ${Port}`);
 })

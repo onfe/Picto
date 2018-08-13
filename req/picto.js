@@ -2,6 +2,7 @@
 
 var Room = require('./room')
 var Utils = require('./utils')
+const Token = require('./token')
 
 module.exports = class Picto {
   constructor() {
@@ -69,7 +70,25 @@ module.exports = class Picto {
   }
 
   recieve(pl) {
-    // move messagehandler code here & WS code
+    let verified = Token.verify(pl.auth, pl.name, pl.room);
+    if (!verified) { return; };
+
+    let room = this.findRoom(pl.room);
+    if (!room) { return; };
+
+    let client = room.findClient(pl.name);
+    if (!client) { return; };
+
+    var payload = {
+      msgCont: pl.payload.msgCont,
+      sender: pl.name,
+      colour: client.colour,
+      msgID: Utils.randomHex()
+    }
+
+    client.send('sent', { msgID: payload.msgID })
+    room.broadcast('message', payload);
+    room.cleanDeadClients();
   }
 
 
