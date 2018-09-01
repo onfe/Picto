@@ -201,11 +201,36 @@ html {
 }
 
 // Keyboard
+
+$keyboard-rows: 4;
+$keyboard-cols: 9;
+
+$keyboard-height: $msg-height;
+$key-height: calc(#{$keyboard-height} / #{$keyboard-rows});
+$key-padding: 0.25rem;
+$key-fontsize: calc(#{$key-height} - calc(#{$key-padding} * 2));
+
 .keyboard {
+  overflow: hidden;
   width: calc( #{$msg-width} - calc(2.5rem + 4px));
   height: $msg-height;
   background: $almost-white;
   border-radius: 4px;
+
+  display: grid;
+  grid-template-columns: repeat($keyboard-cols, 1fr);
+  grid-template-rows: repeat($keyboard-rows, 1fr);
+
+  div {
+    text-align: center;
+    justify-content: center;
+    font-family: 'Nineteen Ninety Three';
+    font-size: $key-fontsize;
+    color: $grey-d;
+    padding-top: $key-padding;
+    padding-bottom: $key-padding;
+    border: 1px solid $grey;
+  }
 }
 
 .keyboard-container {
@@ -213,6 +238,7 @@ html {
   width: auto;
   margin: 4px;
   margin-top: 0;
+  overflow: hidden;
 }
 
 .msg-control {

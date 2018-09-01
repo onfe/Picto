@@ -163,10 +163,25 @@ html {
 }
 
 .keyboard {
+  overflow: hidden;
   width: calc( calc(calc(100vw - 2rem) - 8px) - calc(2.5rem + 4px));
   height: calc(calc(calc(100vw - 2rem) - 8px) / 3);
   background: #F0F0F0;
   border-radius: 4px;
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.keyboard div {
+  text-align: center;
+  justify-content: center;
+  font-family: 'Nineteen Ninety Three';
+  font-size: calc(calc(calc(calc(calc(100vw - 2rem) - 8px) / 3) / 4) - calc(0.25rem * 2));
+  color: #4d4d4d;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border: 1px solid #808080;
 }
 
 .keyboard-container {
@@ -174,6 +189,7 @@ html {
   width: auto;
   margin: 4px;
   margin-top: 0;
+  overflow: hidden;
 }
 
 .msg-control {
