@@ -1,0 +1,77 @@
+<html>
+<head>
+<style>
+html {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.container {
+  height: 40rem;
+  width: 40rem;
+  display: flex;
+  flex-direction: row;
+}
+
+.input, .output {
+  width: 20rem;
+  padding: 0.5rem;
+}
+
+#output {
+  border-radius: 0.5rem;
+  background: #eee;
+  width: 19rem;
+  height: 39rem;
+}
+
+#gridarea {
+  width: 19rem;
+  height: 26rem;
+  background: #eee;
+  border-radius: 0.5rem;
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+}
+
+#gridarea div {
+  margin: 4px;
+  border-radius: 4px;
+  background: #fff;
+}
+
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="input">
+      <input placeholder="char" id="char" />
+      <input placeholder="width" id="width" />
+      <div id="gridarea">
+        <div>1</div>
+        <div>2</div>
+        <div>3</div>
+        <div>4</div>
+        <div>5</div>
+        <div>6</div>
+        <div>7</div>
+      </div>
+      <button id="add">Add</button>
+    </div>
+    <div class="output">
+      <div id="output">
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
