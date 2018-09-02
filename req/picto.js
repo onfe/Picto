@@ -90,6 +90,4 @@ module.exports = class Picto {
     room.broadcast('message', payload);
     room.cleanDeadClients();
   }
-
-
 }

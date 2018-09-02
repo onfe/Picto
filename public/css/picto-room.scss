@@ -203,7 +203,7 @@ html {
 // Keyboard
 
 $keyboard-rows: 4;
-$keyboard-cols: 9;
+$keyboard-cols: 10;
 
 $keyboard-height: $msg-height;
 $key-height: calc(#{$keyboard-height} / #{$keyboard-rows});
