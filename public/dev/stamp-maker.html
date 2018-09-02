@@ -26,11 +26,12 @@ body {
   padding: 0.5rem;
 }
 
-#output {
+.output {
   border-radius: 0.5rem;
   background: #eee;
   width: 19rem;
   height: 39rem;
+  overflow: scroll;
 }
 
 #gridarea {
@@ -49,29 +50,61 @@ body {
   background: #fff;
 }
 
+#gridarea div.active {
+  background: #222;
+}
+
 </style>
 </head>
 <body>
   <div class="container">
     <div class="input">
       <input placeholder="char" id="char" />
-      <input placeholder="width" id="width" />
+      <input type="number" step="1" value="5" min="1" max="5" placeholder="width" id="width" />
       <div id="gridarea">
-        <div>1</div>
-        <div>2</div>
-        <div>3</div>
-        <div>4</div>
-        <div>5</div>
-        <div>6</div>
-        <div>7</div>
+        <div id="g-btn-0-0"></div>
+        <div id="g-btn-1-0"></div>
+        <div id="g-btn-2-0"></div>
+        <div id="g-btn-3-0"></div>
+        <div id="g-btn-4-0"></div>
+        <div id="g-btn-0-1"></div>
+        <div id="g-btn-1-1"></div>
+        <div id="g-btn-2-1"></div>
+        <div id="g-btn-3-1"></div>
+        <div id="g-btn-4-1"></div>
+        <div id="g-btn-0-2"></div>
+        <div id="g-btn-1-2"></div>
+        <div id="g-btn-2-2"></div>
+        <div id="g-btn-3-2"></div>
+        <div id="g-btn-4-2"></div>
+        <div id="g-btn-0-3"></div>
+        <div id="g-btn-1-3"></div>
+        <div id="g-btn-2-3"></div>
+        <div id="g-btn-3-3"></div>
+        <div id="g-btn-4-3"></div>
+        <div id="g-btn-0-4"></div>
+        <div id="g-btn-1-4"></div>
+        <div id="g-btn-2-4"></div>
+        <div id="g-btn-3-4"></div>
+        <div id="g-btn-4-4"></div>
+        <div id="g-btn-0-5"></div>
+        <div id="g-btn-1-5"></div>
+        <div id="g-btn-2-5"></div>
+        <div id="g-btn-3-5"></div>
+        <div id="g-btn-4-5"></div>
+        <div id="g-btn-0-6"></div>
+        <div id="g-btn-1-6"></div>
+        <div id="g-btn-2-6"></div>
+        <div id="g-btn-3-6"></div>
+        <div id="g-btn-4-6"></div>
       </div>
       <button id="add">Add</button>
     </div>
     <div class="output">
-      <div id="output">
-
-      </div>
+      <pre><code id="output"></code></pre>
     </div>
   </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="stamp-maker.js"></script>
 </body>
 </html>
