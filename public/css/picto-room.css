@@ -166,22 +166,28 @@ html {
   overflow: hidden;
   width: calc( calc(calc(100vw - 2rem) - 8px) - calc(2.5rem + 4px));
   height: calc(calc(calc(100vw - 2rem) - 8px) / 3);
-  background: #F0F0F0;
-  border-radius: 4px;
+  background: #fff;
   display: grid;
-  grid-template-columns: repeat(9, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   grid-template-rows: repeat(4, 1fr);
 }
 
-.keyboard div {
+.keyboard .key {
   text-align: center;
-  justify-content: center;
+  vertical-align: middle;
+  line-height: 100%;
   font-family: 'Nineteen Ninety Three';
-  font-size: calc(calc(calc(calc(calc(100vw - 2rem) - 8px) / 3) / 4) - calc(0.25rem * 2));
+  padding: 0.25rem;
+  font-size: 1rem;
   color: #4d4d4d;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
-  border: 1px solid #808080;
+  background: #F0F0F0;
+  border: 1px solid #fff;
+  border-radius: 4px;
+}
+
+.keyboard .space {
+  grid-column-start: 2;
+  grid-column-end: span 8;
 }
 
 .keyboard-container {

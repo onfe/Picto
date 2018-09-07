@@ -205,31 +205,32 @@ html {
 $keyboard-rows: 4;
 $keyboard-cols: 10;
 
-$keyboard-height: $msg-height;
-$key-height: calc(#{$keyboard-height} / #{$keyboard-rows});
-$key-padding: 0.25rem;
-$key-fontsize: calc(#{$key-height} - calc(#{$key-padding} * 2));
-
 .keyboard {
   overflow: hidden;
   width: calc( #{$msg-width} - calc(2.5rem + 4px));
   height: $msg-height;
-  background: $almost-white;
-  border-radius: 4px;
+  background: #fff;
 
   display: grid;
   grid-template-columns: repeat($keyboard-cols, 1fr);
   grid-template-rows: repeat($keyboard-rows, 1fr);
 
-  div {
+  .key {
     text-align: center;
-    justify-content: center;
+    vertical-align: middle;
+    line-height: 100%;
     font-family: 'Nineteen Ninety Three';
-    font-size: $key-fontsize;
+    padding: 0.25rem;
+    font-size: 1rem;
     color: $grey-d;
-    padding-top: $key-padding;
-    padding-bottom: $key-padding;
-    border: 1px solid $grey;
+    background: $almost-white;
+    border: 1px solid #fff;
+    border-radius: 4px;
+  }
+
+  .space {
+    grid-column-start: 2;
+    grid-column-end: span 8;
   }
 }
 
