@@ -36,10 +36,10 @@ module.exports = class MessageHistory {
     var histHeight = $('#msg-hist').height()
     var scrollHeight = $("#msg-hist")[0].scrollHeight;
     if ((scrollHeight - (scrollBefore + histHeight)) <= 10) { // if the message history is not focused on the most recent messages (+ tolerance), do not scroll.
-      console.log(scrollHeight, scrollBefore, scrollHeight)
+      // console.log(scrollHeight, scrollBefore, scrollHeight)
       var willScroll = true;
     }
-    console.log(willScroll);
+    // console.log(willScroll);
 
     $("#msg-hist").prepend(msg.html); // add message html
 
