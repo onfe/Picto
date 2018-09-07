@@ -12,7 +12,7 @@ module.exports = class Client {
 
     var path = location.pathname.split('/')
     this.roomcode = path[path.length - 2]; // extract roomcode from page url. need to find better way to do this.
-    this.joinLink = `${window.location.host}/join/${this.roomcode}/`;
+    this.joinLink = `http://${window.location.host}/join/${this.roomcode}`;
 
     if (!this.username) { // check the username was correctly set.
       location.href = this.joinLink;
