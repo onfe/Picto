@@ -1,12 +1,40 @@
-module.export = class Keyboard {
-  constructor() {
+module.exports = class Keyboard {
+  constructor(dcb) {
+    this.loadLayer(0);
+    this.keyCallback = dcb;
 
+    $('.key').on('click', function(e) {
+      var keyidx = $(e.target).attr('data-keyidx')
+      if (!keyidx) {
+        if ($(e.target).hasClass('space')) {
+          var keytype = "space"
+        } else if ($(e.target).hasClass('bkspace')) {
+          var keytype = "bkspace"
+        }
+        var data = false;
+      } else {
+        var keytype = "char";
+        var data = keydata[this.currentLayer].chars[keyidx]
+      }
+
+      this.keyCallback(keytype, data)
+
+    }.bind(this));
+  }
+
+  loadLayer(l) {
+    this.currentLayer = l;
+    var layer = keydata[l];
+    console.log('KBD - Loading Layer ' + l + ': ' + layer.name);
+    for (let c = 0; c < layer.chars.length; c++) {
+      let char = layer.chars[c];
+      $('.key.idx-' + c).html(char.char)
+    }
   }
 }
 
-const keydata = {
+const keydata = [
   {
-    layer: 0,
     name: 'qwerty',
     chars: [
       {
@@ -401,6 +429,20 @@ const keydata = {
           "#"
         ]
       },
+      {
+        "char": "?",
+        "width": "5",
+        "height": 7,
+        "data": [
+          ".###.",
+          "#...#",
+          "....#",
+          "...#.",
+          "..#..",
+          ".....",
+          "..#.."
+        ]
+      },
     ]
   }
-}
+]

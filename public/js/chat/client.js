@@ -3,6 +3,7 @@ var Sound = require('./sound')
 var Compose = require('./compose')
 var Base64 = require('./base64')
 var MessageHistory = require('./messagehistory')
+var Keyboard = require('./keyboard')
 
 module.exports = class Client {
   constructor() {
@@ -22,6 +23,7 @@ module.exports = class Client {
     this.sock = new Socket(this.username, this.roomcode, this.recieve.bind(this))
     this.compose = new Compose();
     this.msgHist = new MessageHistory();
+    this.keyboard = new Keyboard(function(a){})
 
     // ------------------------
     // SETUP UI EVENT LISTENERS
