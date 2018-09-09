@@ -9,6 +9,9 @@ module.exports = class Compose {
 
     this.width = 192;
     this.height = 64;
+    this.cursorStart = [16, 2];
+    this.stampSpace = 2;
+    this.lineSpace = 8;
 
     // Define and setup Pixel 2D array
     this.pixels = [];
@@ -31,6 +34,8 @@ module.exports = class Compose {
     $(this.canvasId).on('pointerenter', this.onMouseEnter.bind(this));
 
     $(window).on('resize', this.resize.bind(this));
+
+    setTimeout(this.clear.bind(this), 500);
 
   }
 
@@ -83,6 +88,9 @@ module.exports = class Compose {
         this.clearPixel(x, y)
       }
     }
+    // reset the cursor to the top of the screen
+    this.lastPoint[0] = this.cursorStart[0];
+    this.lastPoint[1] = this.cursorStart[1];
   }
 
   getContent() {
@@ -205,6 +213,31 @@ module.exports = class Compose {
           this.clearPixel(x, y)
         }
       }
+    }
+  }
+
+  // The stamp add-on
+  stamp(stamp) {
+    var cursor = this.lastPoint;
+    if ((cursor[0] + stamp.width) >= this.width) {
+      // if the cursor + stamp width > drawing window width, start a newline.
+      cursor[0] = 2;
+      cursor[1] += this.lineSpace;
+    }
+    for (let y = 0; y < stamp.height; y++) {
+      for (let x = 0; x < stamp.width; x++) {
+        if (stamp.data[y][x] == '#') {
+          var px = x + cursor[0];
+          var py = y + cursor[1];
+          this.drawPixel(px, py);
+        }
+      }
+    }
+    // update the cursor ready for next stamp.
+    this.lastPoint[0] = cursor[0] + this.stampSpace + stamp.width;
+    if (this.lastPoint[0] >= this.width) {
+      this.lastPoint[0] = 2;
+      this.lastPoint[1] += this.lineSpace;
     }
   }
 
