@@ -23,7 +23,7 @@ module.exports = class Client {
     this.sock = new Socket(this.username, this.roomcode, this.recieve.bind(this))
     this.compose = new Compose();
     this.msgHist = new MessageHistory();
-    this.keyboard = new Keyboard(function(a){})
+    this.keyboard = new Keyboard(this.compose.stamp.bind(this.compose))
 
     // ------------------------
     // SETUP UI EVENT LISTENERS
