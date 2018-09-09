@@ -1,12 +1,15 @@
 # Picto
-Picto is a web-chat app inspired by Nintendo's PictoChat, running on Node.js
-
+Picto is a web-chat app inspired by Nintendo's PictoChat, running on Node.js  
+The project aims to bring the joy of Nintendo's PictoChat to any device capable
+of running a modern web browser (HTML5 & JS ES6).
 
 **Picto is optimised for mobile screens.** Desktop optimisation.. soon™
 
 ## Using Picto
 Using a mouse or finger, your scribbles are translated into pixel art using JavaScript.  
 By interacting directly with the canvas API (no library) drawing is kept fluid and smooth.
+
+Keyboard and stamps are coming soon.
 
 ### Invites
 Friends can be invited to your room with a single link, no sign-up required.
@@ -23,7 +26,7 @@ Install dependencies with `npm install`.
 Build the client with browserify.
 ```
 cd public/js/chat/
-browserify main.js -o picto-bundle.js
+browserify main.js -o pictoclient.bundle.js
 ```
 
 Then, just type `npm start`.
