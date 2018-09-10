@@ -127,6 +127,22 @@ html {
   color: #fff;
 }
 
+.msg-auth.self {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
 #canvas-compose {
   touch-action: none;
 }
@@ -279,9 +295,9 @@ html {
 #msg-breadcrumbs {
   display: flex;
   flex-direction: column-reverse;
-  height: 100px;
+  height: calc( calc(100vh - calc(calc( calc(calc(calc(100vw - 2rem) - 8px) / 3) * 2 ) + calc(1rem + 12px))) - 6rem);
   width: auto;
-  bottom: 0;
+  padding: 0.25rem;
 }
 
 #msg-breadcrumbs .breadcrumb {
@@ -289,6 +305,30 @@ html {
   height: 2px;
   background: #808080;
   margin: 1px;
+}
+
+#msg-breadcrumbs .breadcrumb.orange {
+  background-color: #E97777;
+}
+
+#msg-breadcrumbs .breadcrumb.green {
+  background-color: #89C7B6;
+}
+
+#msg-breadcrumbs .breadcrumb.yellow {
+  background-color: #EFC57E;
+}
+
+#msg-breadcrumbs .breadcrumb.purple {
+  background-color: #AD84C7;
+}
+
+#msg-breadcrumbs .breadcrumb.blue {
+  background-color: #7998C9;
+}
+
+#msg-breadcrumbs .breadcrumb.system {
+  background-color: #4d4d4d;
 }
 
 .useradd {

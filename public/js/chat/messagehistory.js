@@ -13,6 +13,7 @@ module.exports = class MessageHistory {
     // Recieve a b64 encoded message, add it to the message history and draw it.
     let msg = new Message(id, content, sender, colour);
     this.add(msg)
+    $('#msg-breadcrumbs').prepend(`<a class="breadcrumb ${colour}"></a>`)
 
     msg.draw(); // draw the message
   }
@@ -20,11 +21,13 @@ module.exports = class MessageHistory {
   addStatus(id, content) {
     let stat = new Status(id, content);
     this.add(stat)
+    $('#msg-breadcrumbs').prepend(`<a class="breadcrumb"></a>`)
   }
 
   addSysMsg(id, content) {
     let sys = new SysMessage(id, content);
     this.add(sys)
+    $('#msg-breadcrumbs').prepend(`<a class="breadcrumb system"></a>`)
   }
 
   add(msg) {
@@ -63,6 +66,9 @@ module.exports = class MessageHistory {
     if (this.messages.length > this.maxMessages) {
       this.messages[0].cleanup()
       this.messages.splice(0, 1);
+    }
+    if ($('.breadcrumb').length > this.maxMessages) {
+      $('.breadcrumb').last().remove();
     }
   }
 }

@@ -336,15 +336,39 @@ $keyboard-cols: 10;
 #msg-breadcrumbs {
   display: flex;
   flex-direction: column-reverse;
-  height: 100px;
+  height: calc( calc(100vh - #{$lower-height}) - 6rem);
   width: auto;
-  bottom: 0;
+  padding: 0.25rem;
 
   .breadcrumb {
     width: auto;
     height: 2px;
     background: $grey;
     margin: 1px;
+
+    &.orange {
+      background-color: $pastel-orange;
+    }
+
+    &.green {
+      background-color: $pastel-green;
+    }
+
+    &.yellow {
+      background-color: $pastel-yellow;
+    }
+
+    &.purple {
+      background-color: $pastel-purple;
+    }
+
+    &.blue {
+      background-color: $pastel-blue;
+    }
+
+    &.system {
+      background-color: $grey-d;
+    }
   }
 }
 
