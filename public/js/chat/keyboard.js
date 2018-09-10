@@ -5,7 +5,7 @@ module.exports = class Keyboard {
     this.loadLayer(0);
     this.keyCallback = dcb;
 
-    $('.key').on('click', function(e) {
+    $('.key').on('pointerdown', function(e) {
       var keyidx = $(e.target).attr('data-keyidx')
       if (!keyidx) { return; }
       var layer = KeyboardMap[this.currentLayer];
