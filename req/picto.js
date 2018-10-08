@@ -21,7 +21,7 @@ module.exports = class Picto {
   }
 
   createRoom() {
-    var id = Utils.randomHex()
+    var id = Utils.shortHex()
     var newroom = new Room(id)
     this.rooms.push(newroom)
     return newroom;
