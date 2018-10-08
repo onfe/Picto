@@ -345,6 +345,7 @@ $keyboard-cols: 10;
     height: 2px;
     background: $grey;
     margin: 1px;
+    border-radius: 1px;
 
     &.orange {
       background-color: $pastel-orange;
