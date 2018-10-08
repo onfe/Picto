@@ -1,6 +1,6 @@
-var path = location.pathname.split('/')
-var roomCode = path[path.length - 2]
-console.log(roomCode)
+var path = location.pathname.endsWith('/') ? location.pathname.slice(0, -1) : location.pathname;
+path = path.split('/')
+var roomCode = path[path.length - 1]
 
 $(function () {
 
