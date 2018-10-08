@@ -1,17 +1,23 @@
 // ----- Colours -----
 
 // Pastels
-$pastel-orange: #E97777;
+$pastel-orange: #FFC694;
 $pastel-green: #89C7B6;
 $pastel-yellow: #EFC57E;
 $pastel-purple: #AD84C7;
 $pastel-blue: #7998C9;
+$pastel-pink: #CF8EA4;
+$pastel-teal: #008DAB;
+$pastel-red: #E97777;
 
 $pastel-orange-d: desaturate(darken( $pastel-orange, 20% ), 20%);
 $pastel-green-d: desaturate(darken( $pastel-green, 20% ), 20%);
 $pastel-yellow-d: desaturate(darken( $pastel-yellow, 20% ), 20%);
 $pastel-purple-d: desaturate(darken( $pastel-purple, 20% ), 20%);
 $pastel-blue-d: desaturate(darken( $pastel-blue, 20% ), 20%);
+$pastel-pink-d: desaturate(darken( $pastel-pink, 20% ), 20%);
+$pastel-red-d: desaturate(darken( $pastel-red, 20% ), 20%);
+$pastel-teal-d: desaturate(darken( $pastel-teal, 20%), 20%);
 
 $grey: #808080;
 $grey-d: darken( $grey, 20%);
@@ -131,6 +137,27 @@ html {
     border-color: $pastel-blue-d;
     .msg-auth {
       background-color: $pastel-blue;
+    }
+  }
+
+  &.pink {
+    border-color: $pastel-pink-d;
+    .msg-auth {
+      background-color: $pastel-pink;
+    }
+  }
+
+  &.red {
+    border-color: $pastel-red-d;
+    .msg-auth {
+      background-color: $pastel-red;
+    }
+  }
+
+  &.teal {
+    border-color: $pastel-teal-d;
+    .msg-auth {
+      background-color: $pastel-teal;
     }
   }
 
@@ -366,6 +393,19 @@ $keyboard-cols: 10;
     &.blue {
       background-color: $pastel-blue;
     }
+
+    &.pink {
+      background-color: $pastel-pink;
+    }
+
+    &.red {
+      background-color: $pastel-red;
+    }
+
+    &.teal {
+      background-color: $pastel-red;
+    }
+
 
     &.system {
       background-color: $grey-d;

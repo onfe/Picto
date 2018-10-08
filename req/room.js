@@ -11,7 +11,7 @@ module.exports = class Room {
     this._clients = [];
     this.created = new Date();
     this.lastupdate = new Date();
-    this._colours = ['orange', 'green', 'yellow', 'purple', 'blue'];
+    this._colours = ['orange', 'green', 'yellow', 'purple', 'blue', 'red', 'pink', 'teal'];
   }
 
   get clients() { return this._clients; }

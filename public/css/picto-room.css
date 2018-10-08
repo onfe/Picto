@@ -60,11 +60,11 @@ html {
 }
 
 .msg.orange {
-  border-color: #be3c3c;
+  border-color: #ea9143;
 }
 
 .msg.orange .msg-auth {
-  background-color: #E97777;
+  background-color: #FFC694;
 }
 
 .msg.green {
@@ -97,6 +97,30 @@ html {
 
 .msg.blue .msg-auth {
   background-color: #7998C9;
+}
+
+.msg.pink {
+  border-color: #956273;
+}
+
+.msg.pink .msg-auth {
+  background-color: #CF8EA4;
+}
+
+.msg.red {
+  border-color: #be3c3c;
+}
+
+.msg.red .msg-auth {
+  background-color: #E97777;
+}
+
+.msg.teal {
+  border-color: #07343e;
+}
+
+.msg.teal .msg-auth {
+  background-color: #008DAB;
 }
 
 .msg.system {
@@ -266,7 +290,7 @@ html {
 
 @keyframes colour {
   0% {
-    color: #E97777;
+    color: #FFC694;
   }
   20% {
     color: #EFC57E;
@@ -281,7 +305,7 @@ html {
     color: #AD84C7;
   }
   100% {
-    color: #E97777;
+    color: #FFC694;
   }
 }
 
@@ -309,7 +333,7 @@ html {
 }
 
 #msg-breadcrumbs .breadcrumb.orange {
-  background-color: #E97777;
+  background-color: #FFC694;
 }
 
 #msg-breadcrumbs .breadcrumb.green {
@@ -326,6 +350,18 @@ html {
 
 #msg-breadcrumbs .breadcrumb.blue {
   background-color: #7998C9;
+}
+
+#msg-breadcrumbs .breadcrumb.pink {
+  background-color: #CF8EA4;
+}
+
+#msg-breadcrumbs .breadcrumb.red {
+  background-color: #E97777;
+}
+
+#msg-breadcrumbs .breadcrumb.teal {
+  background-color: #E97777;
 }
 
 #msg-breadcrumbs .breadcrumb.system {
