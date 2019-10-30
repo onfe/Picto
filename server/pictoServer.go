@@ -28,12 +28,6 @@ const (
 	ClientPingPeriod = ClientTimeout / 10
 )
 
-func serveHomepage(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		http.ServeFile(w, r, "index.html")
-	}
-}
-
 func serveWs(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name, hasName := r.Form["name"]
@@ -73,7 +67,8 @@ var roomManager RoomManager
 func main() {
 	roomManager = newRoomManager(MaxRooms)
 
-	http.HandleFunc("/", serveHomepage)
+	fs := http.FileServer(http.Dir("../client/dist"))
+	http.Handle("/", fs)
 	http.HandleFunc("/ws", serveWs)
 
 	log.Fatal(http.ListenAndServe(Address, nil))
