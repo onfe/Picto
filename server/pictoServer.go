@@ -1,8 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -28,8 +29,6 @@ const (
 )
 
 func serveHomepage(w http.ResponseWriter, r *http.Request) {
-	fmt.Println(r.Method)
-
 	if r.Method == "GET" {
 		http.ServeFile(w, r, "index.html")
 	}
@@ -38,28 +37,32 @@ func serveHomepage(w http.ResponseWriter, r *http.Request) {
 func serveWs(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name, hasName := r.Form["name"]
-	room, hasRoom := r.Form["room"]
+	roomID, hasRoom := r.Form["room"]
 	if hasName {
 		if !hasRoom {
 			newRoom := roomManager.createRoom()
-			client, err := newClient(w, r, newRoom, 0, name[0])
+			client, err := newClient(w, r, newRoom, name[0])
 			if err != nil {
-				fmt.Println("Failed to create websocket:", err)
+				log.Println("Failed to create websocket:", err)
 				return
 			}
-			newRoom.addClient(client)
-			fmt.Println("Created room", newRoom.id)
+			newRoom.addClient(&client)
+			log.Println("Created room", newRoom.id, "for client with name:", client.name)
 		} else {
-			if room, roomExists := roomManager.rooms[room[0]]; roomExists {
-				client, err := newClient(w, r, &room, 0, name[0])
+			if room, roomExists := roomManager.rooms[roomID[0]]; roomExists {
+				client, err := newClient(w, r, &room, name[0])
 				if err != nil {
-					fmt.Println("Failed to create websocket:", err)
+					log.Println("Failed to create websocket:", err)
 					return
 				}
-				room.addClient(client)
-				fmt.Println("Added client to room", room.id)
+				nameFreeInRoom := room.addClient(&client)
+				if !nameFreeInRoom {
+					log.Println("Someone tried to join room ID"+roomID[0], "with name '"+client.name+"' but someone already claimed it.")
+				} else {
+					log.Println("Added client '"+client.name+"' (ID"+strconv.Itoa(client.id)+") to room", roomID[0])
+				}
 			} else {
-				fmt.Println("Room doesn't exist.")
+				log.Println("Client with name '" + name[0] + "' tried to join a room doesn't exist.")
 			}
 		}
 	}
@@ -73,5 +76,5 @@ func main() {
 	http.HandleFunc("/", serveHomepage)
 	http.HandleFunc("/api/ws", serveWs)
 
-	http.ListenAndServe(Address, nil)
+	log.Fatal(http.ListenAndServe(Address, nil))
 }

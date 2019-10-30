@@ -20,17 +20,17 @@ func newRoomManager(maxRooms int) RoomManager {
 	}
 }
 
-func (rm RoomManager) createRoom() *Room {
+func (rm *RoomManager) createRoom() *Room {
 	newRoomID := strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
 	for _, hasKey := rm.rooms[newRoomID]; hasKey || newRoomID == ""; {
 		newRoomID = strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
 	}
-	newRoom := newRoom(newRoomID, MaxRoomSize)
+	newRoom := newRoom(rm, newRoomID, MaxRoomSize)
 	rm.rooms[newRoom.id] = newRoom
 	return &newRoom
 }
 
-func (rm RoomManager) destroyRoom(roomID string) {
+func (rm *RoomManager) destroyRoom(roomID string) {
 	room := rm.rooms[roomID]
 	delete(rm.rooms, roomID)
 	rm.roomCount--
