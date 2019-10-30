@@ -12,11 +12,13 @@ const actions = {
     const sock = new WebSocket(`ws://${window.location.host}/ws?name=${name}`);
     commit("setSock", sock)
     sock.onmessage = e => console.log(e);
-
+    window._sock = sock
     sock.onopen = s => {
       console.log(s)
       sock.send("Hello")
       sock.send("World")
+
+      setTimeout(() => sock.send("aiii"), 1000)
     };
   }
 };
