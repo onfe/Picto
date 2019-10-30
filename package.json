@@ -1,0 +1,16 @@
+{
+  "name": "picto",
+  "version": "0.0.1",
+  "scripts": {
+    "postinstall": "npm --prefix ./client install ./client && cd ./client && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onfe/Picto.git"
+  },
+  "author": "PedantiCat x Onfe",
+  "bugs": {
+    "url": "https://github.com/onfe/Picto/issues"
+  },
+  "homepage": "https://github.com/onfe/Picto#readme"
+}
