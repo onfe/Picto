@@ -17,3 +17,5 @@
 ### Go Patch ###
 /vendor/
 /Godeps/
+
+server
