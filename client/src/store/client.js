@@ -1,15 +1,17 @@
-import router from "../router";
-
-const axios = require("axios");
+import axios from "../services/axios";
 
 const state = {
   socket: null,
-  username: '' || sessionStorage.getItem('client/username'),
+  username: "" || sessionStorage.getItem("client/username")
 };
 
 const getters = {};
 
-const actions = {};
+const actions = {
+  join: (s, name) => {
+    axios({ url: "/api/ws", data: name, method: "POST" })
+  }
+};
 
 const mutations = {};
 
