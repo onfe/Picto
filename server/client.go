@@ -1,7 +1,9 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -24,11 +26,11 @@ type Client struct {
 	lastPong    time.Time
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, name string) (Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, id int, name string) (Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
-		id:          0,
+		id:          id,
 		parentRoom:  parentRoom,
 		name:        name,
 		ws:          ws,
@@ -56,14 +58,19 @@ func (c *Client) sendLoop() {
 		select {
 		case message, ok := <-c.sendBuffer:
 			if !ok {
-				c.destroy()
+				return
 			}
 			err = c.send(websocket.TextMessage, message)
+			if err != nil {
+				log.Println("Failed to distribute message to '"+c.name+"' in room ID"+c.parentRoom.id+", error:", err)
+			} else {
+				log.Println("Distributed message to '"+c.name+"' in room ID"+c.parentRoom.id+":", message)
+			}
 		case <-ticker.C:
 			err = c.send(websocket.PingMessage, nil)
 		}
 		if err != nil {
-			c.destroy()
+			return
 		}
 	}
 }
@@ -96,11 +103,13 @@ func (c *Client) recieveLoop() {
 
 func (c *Client) recieve(m Message) {
 	if time.Since(c.lastMessage) > MinMessageInterval {
+		log.Println("Recieved message from '"+c.name+"' (ID"+strconv.Itoa(c.id)+") in room ID"+c.parentRoom.id+":", m.body)
 		c.parentRoom.distributeMessage(m)
 	}
 }
 
 func (c *Client) destroy() {
+	log.Println("Lost connection to client '" + c.name + "' of room ID" + c.parentRoom.id)
 	c.send(websocket.CloseMessage, []byte{})
 	return
 }

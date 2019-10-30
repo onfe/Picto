@@ -46,7 +46,6 @@ func (r *Room) addClient(c *Client) bool {
 			}
 		}
 		r.clients[len(r.clients)] = c
-		r.clients[len(r.clients)-1].id = len(r.clients) - 1
 		return true
 	}
 	return false
@@ -68,7 +67,7 @@ func (r *Room) distributeMessage(m Message) {
 	r.messageCache.push(m)
 	for _, client := range r.clients {
 		if client.id != m.senderID {
-			client.send(websocket.TextMessage, m.body)
+			client.sendBuffer <- m.body
 		}
 	}
 }

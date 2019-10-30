@@ -41,7 +41,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 	if hasName {
 		if !hasRoom {
 			newRoom := roomManager.createRoom()
-			client, err := newClient(w, r, newRoom, name[0])
+			client, err := newClient(w, r, newRoom, 0, name[0])
 			if err != nil {
 				log.Println("Failed to create websocket:", err)
 				return
@@ -50,7 +50,7 @@ func serveWs(w http.ResponseWriter, r *http.Request) {
 			log.Println("Created room", newRoom.id, "for client with name:", client.name)
 		} else {
 			if room, roomExists := roomManager.rooms[roomID[0]]; roomExists {
-				client, err := newClient(w, r, &room, name[0])
+				client, err := newClient(w, r, &room, len(room.clients), name[0])
 				if err != nil {
 					log.Println("Failed to create websocket:", err)
 					return
