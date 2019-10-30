@@ -24,11 +24,11 @@ type Client struct {
 	lastPong    time.Time
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, id int, name string) (Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, name string) (Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
-		id:          id,
+		id:          0,
 		parentRoom:  parentRoom,
 		name:        name,
 		ws:          ws,
