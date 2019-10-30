@@ -74,7 +74,7 @@ func main() {
 	roomManager = newRoomManager(MaxRooms)
 
 	http.HandleFunc("/", serveHomepage)
-	http.HandleFunc("/api/ws", serveWs)
+	http.HandleFunc("/ws", serveWs)
 
 	log.Fatal(http.ListenAndServe(Address, nil))
 }

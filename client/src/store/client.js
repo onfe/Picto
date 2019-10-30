@@ -1,4 +1,4 @@
-import axios from "../services/axios";
+// import axios from "../services/axios";
 
 const state = {
   socket: null,
@@ -8,12 +8,24 @@ const state = {
 const getters = {};
 
 const actions = {
-  join: (s, name) => {
-    axios({ url: "/api/ws", data: name, method: "POST" })
+  join: ({ commit }, name) => {
+    const sock = new WebSocket(`ws://${window.location.host}/ws?name=${name}`);
+    commit("setSock", sock)
+    sock.onmessage = e => console.log(e);
+
+    sock.onopen = s => {
+      console.log(s)
+      sock.send("Hello")
+      sock.send("World")
+    };
   }
 };
 
-const mutations = {};
+const mutations = {
+  setSock: (state, sock) => {
+    state.socket = sock;
+  }
+};
 
 const authentication = {
   namespaced: true,
