@@ -2,6 +2,7 @@
   "name": "picto",
   "version": "0.0.1",
   "scripts": {
+    "heroku-prebuild": "npm install -g @vue/cli",
     "postinstall": "npm --prefix ./client install ./client && cd ./client && npm run build"
   },
   "repository": {
