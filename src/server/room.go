@@ -13,22 +13,23 @@ type Room struct {
 	ID           string
 	Name         string
 	Clients      map[int]*Client
+	ClientCount  int
 	MaxClients   int
 	MessageCache *CircularQueue
 	LastUpdate   time.Time
 }
 
-func newRoom(manager *RoomManager, roomID string, maxClients int) Room {
+func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 	r := Room{
 		ID:           roomID,
 		Name:         "Picto Room",
 		Clients:      make(map[int]*Client),
+		ClientCount:  0,
 		MaxClients:   maxClients,
 		MessageCache: newCircularQueue(ChatHistoryLen),
 		LastUpdate:   time.Now(),
 	}
-
-	return r
+	return &r
 }
 
 func (r *Room) addClient(c *Client) bool {
@@ -45,6 +46,7 @@ func (r *Room) addClient(c *Client) bool {
 				c.send(websocket.TextMessage, m.Body)
 			}
 		}
+		r.ClientCount++
 		r.Clients[len(r.Clients)] = c
 		return true
 	}
@@ -56,6 +58,7 @@ func (r *Room) removeClient(clientID int) {
 	r.LastUpdate = time.Now()
 	client := r.Clients[clientID]
 	delete(r.Clients, clientID)
+	r.ClientCount--
 	client.destroy()
 	if len(r.Clients) == 0 {
 		r.manager.destroyRoom(r.ID)
