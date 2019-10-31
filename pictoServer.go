@@ -3,7 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
-	"server"
+
+	"github.com/onfe/Picto/src/server"
 )
 
 var roomManager server.RoomManager
