@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/onfe/Picto/src/server"
 )
@@ -18,5 +19,10 @@ func main() {
 	http.HandleFunc("/ws", roomManager.ServeWs)
 	http.HandleFunc("/api/", roomManager.ServeAPI)
 
-	log.Fatal(http.ListenAndServe(server.Address, nil))
+	address := ":8080"
+	if os.Getenv("GO_ENV") == "PRODUCTION" {
+		address = ":80"
+	}
+
+	log.Fatal(http.ListenAndServe(address, nil))
 }

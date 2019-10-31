@@ -3,8 +3,6 @@ package server
 import "time"
 
 const (
-	//Address = Server address.
-	Address = ":8080"
 	//MaxRooms = maximum amount of rooms the server may have at any one time
 	MaxRooms = 10
 	//MaxRoomSize = Max size of default room.
