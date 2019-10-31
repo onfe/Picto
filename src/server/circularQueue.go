@@ -1,4 +1,4 @@
-package main
+package server
 
 //CircularQueue is a circular queue
 type CircularQueue struct {
