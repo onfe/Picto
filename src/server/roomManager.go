@@ -7,14 +7,14 @@ import (
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms     map[string]Room `json:"Rooms"`
-	MaxRooms  int             `json:"MaxRooms"`
-	RoomCount int             `json:"RoomCount"`
+	Rooms     map[string]*Room `json:"Rooms"`
+	MaxRooms  int              `json:"MaxRooms"`
+	RoomCount int              `json:"RoomCount"`
 }
 
 func NewRoomManager(MaxRooms int) RoomManager {
 	return RoomManager{
-		Rooms:     make(map[string]Room, MaxRooms),
+		Rooms:     make(map[string]*Room, MaxRooms),
 		MaxRooms:  MaxRooms,
 		RoomCount: 0,
 	}
@@ -28,7 +28,7 @@ func (rm *RoomManager) createRoom() *Room {
 	newRoom := newRoom(rm, newRoomID, MaxRoomSize)
 	rm.Rooms[newRoom.ID] = newRoom
 	rm.RoomCount++
-	return &newRoom
+	return newRoom
 }
 
 func (rm *RoomManager) destroyRoom(roomID string) {

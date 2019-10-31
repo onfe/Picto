@@ -23,7 +23,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			log.Println("Created room", newRoom.ID, "for client with name:", client.Name)
 		} else {
 			if room, roomExists := rm.Rooms[roomID[0]]; roomExists {
-				client, err := newClient(w, r, &room, len(room.Clients), name[0])
+				client, err := newClient(w, r, room, len(room.Clients), name[0])
 				if err != nil {
 					log.Println("Failed to create websocket:", err)
 					return
