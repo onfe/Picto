@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"log"
@@ -17,26 +17,26 @@ var upgrader = websocket.Upgrader{
 
 //Client is a struct that contains all of the info about a client.
 type Client struct {
-	id          int
+	ID          int
 	parentRoom  *Room
-	name        string
+	Name        string
 	ws          *websocket.Conn
 	sendBuffer  chan []byte
-	lastMessage time.Time
-	lastPong    time.Time
+	LastMessage time.Time
+	LastPong    time.Time
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, id int, name string) (Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, id int, name string) (*Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
-		id:          id,
+		ID:          id,
 		parentRoom:  parentRoom,
-		name:        name,
+		Name:        name,
 		ws:          ws,
 		sendBuffer:  make(chan []byte, 256),
-		lastMessage: time.Now(),
-		lastPong:    time.Now(),
+		LastMessage: time.Now(),
+		LastPong:    time.Now(),
 	}
 
 	if err == nil {
@@ -44,7 +44,7 @@ func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, id int,
 		go c.recieveLoop()
 	}
 
-	return c, err
+	return &c, err
 }
 
 func (c *Client) sendLoop() {
@@ -62,9 +62,9 @@ func (c *Client) sendLoop() {
 			}
 			err = c.send(websocket.TextMessage, message)
 			if err != nil {
-				log.Println("Failed to distribute message to '"+c.name+"' in room ID"+c.parentRoom.id+", error:", err)
+				log.Println("Failed to distribute message to '"+c.Name+"' in room ID"+c.parentRoom.ID+", error:", err)
 			} else {
-				log.Println("Distributed message to '"+c.name+"' in room ID"+c.parentRoom.id+":", message)
+				log.Println("Distributed message to '"+c.Name+"' in room ID"+c.parentRoom.ID+":", message)
 			}
 		case <-ticker.C:
 			err = c.send(websocket.PingMessage, nil)
@@ -88,6 +88,7 @@ func (c *Client) recieveLoop() {
 	c.ws.SetReadLimit(MaxMessageSize)
 	c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
 	c.ws.SetPongHandler(func(string) error {
+		c.LastPong = time.Now()
 		c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
 		return nil
 	})
@@ -97,19 +98,19 @@ func (c *Client) recieveLoop() {
 		if err != nil {
 			break
 		}
-		c.recieve(newMessage(message, c.id))
+		c.recieve(newMessage(message, c.ID))
 	}
 }
 
 func (c *Client) recieve(m Message) {
-	if time.Since(c.lastMessage) > MinMessageInterval {
-		log.Println("Recieved message from '"+c.name+"' (ID"+strconv.Itoa(c.id)+") in room ID"+c.parentRoom.id+":", m.body)
+	if time.Since(c.LastMessage) > MinMessageInterval {
+		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.parentRoom.ID+":", m.Body)
 		c.parentRoom.distributeMessage(m)
 	}
 }
 
 func (c *Client) destroy() {
-	log.Println("Lost connection to client '" + c.name + "' of room ID" + c.parentRoom.id)
+	log.Println("Lost connection to client '" + c.Name + "' of room ID" + c.parentRoom.ID)
 	c.send(websocket.CloseMessage, []byte{})
 	return
 }
