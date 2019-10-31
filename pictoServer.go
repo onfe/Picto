@@ -8,16 +8,12 @@ import (
 
 var roomManager server.RoomManager
 
-func serveHomepage(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
-		http.ServeFile(w, r, "index.html")
-	}
-}
-
 func main() {
 	roomManager = server.NewRoomManager(server.MaxRooms)
 
-	http.HandleFunc("/", serveHomepage)
+	fs := http.FileServer(http.Dir("../client/dist"))
+	http.Handle("/", fs)
+
 	http.HandleFunc("/ws", roomManager.ServeWs)
 	http.HandleFunc("/api/", roomManager.ServeAPI)
 

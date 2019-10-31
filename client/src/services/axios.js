@@ -1,7 +1,5 @@
 const axs = require("axios");
 
-const axios = axs.create({
-  baseURL: window.location.protocol + window.location.host
-});
+const axios = axs.create({});
 
 export default axios
