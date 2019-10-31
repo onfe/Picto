@@ -14,7 +14,11 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	roomID, hasRoom := r.Form["room"]
 	if hasName {
 		if !hasRoom {
-			newRoom := rm.createRoom()
+			newRoom, err := rm.createRoom()
+			if err != nil {
+				log.Println("Failed to create room:", err)
+				return
+			}
 			client, err := newClient(w, r, newRoom, 0, name[0])
 			if err != nil {
 				log.Println("Failed to create websocket:", err)
@@ -56,7 +60,11 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 		switch method[0] {
 		case "get_state":
-			response, err = json.Marshal(rm)
+			if !rm.prod {
+				response, err = json.Marshal(rm)
+			} else {
+				response, err = json.Marshal("This method is not available in prod.")
+			}
 		case "get_room_ids":
 			roomIDs := make([]string, 0, len(rm.Rooms))
 			for roomID, _ := range rm.Rooms {

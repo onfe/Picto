@@ -12,7 +12,9 @@ import (
 var roomManager server.RoomManager
 
 func main() {
-	roomManager = server.NewRoomManager(server.MaxRooms)
+	_, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
+
+	roomManager = server.NewRoomManager(server.MaxRooms, prod)
 
 	fs := http.FileServer(http.Dir("client/dist"))
 	http.Handle("/", fs)
@@ -22,7 +24,7 @@ func main() {
 	address := ":8080"
 	if port, production := os.LookupEnv("PORT"); production {
 		address = ":" + port
-		if _, exists := os.LookupEnv("API_TOKEN"); exists {
+		if prod {
 			http.HandleFunc("/api/", roomManager.ServeAPI)
 		} else {
 			http.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
