@@ -1,1 +1,1 @@
-web: pictoServer
+web: ./pictoServer
