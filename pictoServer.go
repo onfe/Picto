@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"os"
@@ -12,29 +11,21 @@ import (
 var roomManager server.RoomManager
 
 func main() {
-	_, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
-
-	roomManager = server.NewRoomManager(server.MaxRooms, prod)
+	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
+	if prod {
+		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod")
+	} else {
+		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev")
+	}
 
 	fs := http.FileServer(http.Dir("client/dist"))
 	http.Handle("/", fs)
-
 	http.HandleFunc("/ws", roomManager.ServeWs)
+	http.HandleFunc("/api/", roomManager.ServeAPI)
 
 	address := ":8080"
-	if port, production := os.LookupEnv("PORT"); production {
-		address = ":" + port
-		if prod {
-			http.HandleFunc("/api/", roomManager.ServeAPI)
-		} else {
-			http.HandleFunc("/api/", func(w http.ResponseWriter, r *http.Request) {
-				w.Header().Set("Content-Type", "application/json")
-				response, _ := json.Marshal("This feature has been disabled.")
-				w.Write(response)
-			})
-		}
-	} else {
-		http.HandleFunc("/api/", roomManager.ServeAPI)
+	if prod {
+		address = ":" + os.Getenv("PORT")
 	}
 
 	log.Fatal(http.ListenAndServe(address, nil))

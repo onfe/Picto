@@ -51,8 +51,9 @@ func (c *Client) sendLoop() {
 	defer func() {
 		ticker.Stop()
 		log.Println("Send loop cut connection to client '" + c.Name + "' of room ID" + c.room.ID)
-		c.destroy()
+		c.room.removeClient(c.ID)
 	}()
+
 	for {
 		var err error
 		select {
@@ -60,15 +61,18 @@ func (c *Client) sendLoop() {
 			if !ok {
 				return
 			}
+
 			err = c.send(websocket.TextMessage, message)
 			if err != nil {
 				log.Println("Failed to distribute message to '"+c.Name+"' in room ID"+c.room.ID+", error:", err)
 			} else {
 				log.Println("Distributed message to '"+c.Name+"' in room ID"+c.room.ID+":", message)
 			}
+
 		case <-ticker.C:
 			err = c.send(websocket.PingMessage, nil)
 		}
+
 		if err != nil {
 			return
 		}
@@ -83,7 +87,7 @@ func (c *Client) send(messageType int, payload []byte) error {
 func (c *Client) recieveLoop() {
 	defer func() {
 		log.Println("Recieve loop cut connection to client '" + c.Name + "' of room ID" + c.room.ID)
-		c.destroy()
+		c.room.removeClient(c.ID)
 	}()
 
 	c.ws.SetReadLimit(MaxMessageSize)
@@ -112,8 +116,4 @@ func (c *Client) recieve(m Message) {
 
 func (c *Client) closeConnection() {
 	c.send(websocket.CloseMessage, []byte{})
-}
-
-func (c *Client) destroy() {
-	c.room.removeClient(c.ID)
 }

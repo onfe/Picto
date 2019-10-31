@@ -4,7 +4,6 @@ import (
 	"errors"
 	"log"
 	"math/rand"
-	"os"
 	"strconv"
 )
 
@@ -14,20 +13,17 @@ type RoomManager struct {
 	MaxRooms  int              `json:"MaxRooms"`
 	RoomCount int              `json:"RoomCount"`
 	apiToken  string
-	prod      bool
+	Mode      string
 }
 
 //NewRoomManager creates a new room manager.
-func NewRoomManager(MaxRooms int, prod bool) RoomManager {
+func NewRoomManager(MaxRooms int, apiToken string, Mode string) RoomManager {
 	r := RoomManager{
 		Rooms:     make(map[string]*Room, MaxRooms),
 		MaxRooms:  MaxRooms,
 		RoomCount: 0,
-		apiToken:  "dev",
-		prod:      prod,
-	}
-	if token, exists := os.LookupEnv("API_TOKEN"); exists {
-		r.apiToken = token
+		apiToken:  apiToken,
+		Mode:      Mode,
 	}
 	return r
 }
@@ -38,9 +34,11 @@ func (rm *RoomManager) createRoom() (*Room, error) {
 		for _, hasKey := rm.Rooms[newRoomID]; hasKey || newRoomID == ""; {
 			newRoomID = strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
 		}
+
 		newRoom := newRoom(rm, newRoomID, MaxRoomSize)
 		rm.Rooms[newRoom.ID] = newRoom
 		rm.RoomCount++
+
 		return newRoom, nil
 	}
 	return nil, errors.New("Reached MaxRooms Limit.")
@@ -48,8 +46,11 @@ func (rm *RoomManager) createRoom() (*Room, error) {
 
 func (rm *RoomManager) destroyRoom(roomID string) {
 	log.Println("Destroying room ID" + roomID)
+
 	room := rm.Rooms[roomID]
+
 	delete(rm.Rooms, roomID)
 	rm.RoomCount--
+
 	room.destroy()
 }

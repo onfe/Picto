@@ -95,6 +95,6 @@ func (r *Room) distributeMessage(m Message) {
 
 func (r *Room) destroy() {
 	for _, client := range r.Clients {
-		client.destroy()
+		client.closeConnection()
 	}
 }
