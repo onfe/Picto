@@ -44,17 +44,25 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 //ServeAPI handles API calls.
 func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	r.ParseForm()
-	method, _ := r.Form["method"]
 
-	switch method[0] {
-	case "get_state":
-		response, err := json.Marshal(rm)
-		if err == nil {
+	if token, tokenSupplied := r.Form["token"]; tokenSupplied && token[0] == rm.apiToken {
+		w.Header().Set("Content-Type", "application/json")
+
+		method, _ := r.Form["method"]
+		switch method[0] {
+		case "get_state":
+			response, err := json.Marshal(rm)
+			if err == nil {
+				log.Println(string(response))
+				w.Write(response)
+			}
+		default:
+			response, _ := json.Marshal("Unrecognised API method")
 			log.Println(string(response))
 			w.Write(response)
 		}
+	} else {
+		log.Println("An attempt to query the API was made with an invalid token:", token[0])
 	}
 }

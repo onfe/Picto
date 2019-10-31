@@ -2,6 +2,7 @@ package server
 
 import (
 	"math/rand"
+	"os"
 	"strconv"
 )
 
@@ -10,15 +11,21 @@ type RoomManager struct {
 	Rooms     map[string]*Room `json:"Rooms"`
 	MaxRooms  int              `json:"MaxRooms"`
 	RoomCount int              `json:"RoomCount"`
+	apiToken  string
 }
 
 //NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int) RoomManager {
-	return RoomManager{
+	r := RoomManager{
 		Rooms:     make(map[string]*Room, MaxRooms),
 		MaxRooms:  MaxRooms,
 		RoomCount: 0,
+		apiToken:  "dev",
 	}
+	if token, exists := os.LookupEnv("API_TOKEN"); exists {
+		r.apiToken = token
+	}
+	return r
 }
 
 func (rm *RoomManager) createRoom() *Room {
