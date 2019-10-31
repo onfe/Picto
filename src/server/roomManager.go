@@ -12,6 +12,7 @@ type RoomManager struct {
 	RoomCount int              `json:"RoomCount"`
 }
 
+//NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int) RoomManager {
 	return RoomManager{
 		Rooms:     make(map[string]*Room, MaxRooms),

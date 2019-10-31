@@ -7,6 +7,7 @@ import (
 	"strconv"
 )
 
+//ServeWs serves a websocket to the client.
 func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	name, hasName := r.Form["name"]
@@ -41,6 +42,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//ServeAPI handles API calls.
 func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

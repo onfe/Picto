@@ -9,14 +9,14 @@ import (
 
 //Room is a struct that holds all the info about a singular picto room.
 type Room struct {
-	manager      *RoomManager `json:"-"`
-	ID           string
-	Name         string
-	Clients      map[int]*Client
-	ClientCount  int
-	MaxClients   int
-	MessageCache *CircularQueue
-	LastUpdate   time.Time
+	manager      *RoomManager
+	ID           string          `json:"ID"`
+	Name         string          `json:"Name"`
+	Clients      map[int]*Client `json:"Clients"`
+	ClientCount  int             `json:"ClientCount"`
+	MaxClients   int             `json:"MaxClients"`
+	MessageCache *CircularQueue  `json:"MessageCache"`
+	LastUpdate   time.Time       `json:"LastUpdate"`
 }
 
 func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
