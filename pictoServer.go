@@ -20,8 +20,8 @@ func main() {
 	http.HandleFunc("/ws", roomManager.ServeWs)
 
 	address := ":8080"
-	if os.Getenv("GO_ENV") == "PRODUCTION" {
-		address = ":80"
+	if port, production := os.LookupEnv("PORT"); production {
+		address = ":" + port
 		if _, exists := os.LookupEnv("API_TOKEN"); exists {
 			http.HandleFunc("/api/", roomManager.ServeAPI)
 		} else {
