@@ -50,18 +50,30 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
 		method, _ := r.Form["method"]
+
+		var response []byte
+		var err error
+
 		switch method[0] {
 		case "get_state":
-			response, err := json.Marshal(rm)
-			if err == nil {
-				log.Println(string(response))
-				w.Write(response)
+			response, err = json.Marshal(rm)
+		case "get_room_ids":
+			roomIDs := make([]string, 0, len(rm.Rooms))
+			for roomID, _ := range rm.Rooms {
+				roomIDs = append(roomIDs, roomID)
 			}
+			response, err = json.Marshal(roomIDs)
 		default:
-			response, _ := json.Marshal("Unrecognised API method")
-			log.Println(string(response))
-			w.Write(response)
+			response, err = json.Marshal("Unrecognised API method")
 		}
+
+		if err != nil {
+			response, _ = json.Marshal(err)
+		}
+
+		log.Println(method[0]+":", string(response))
+		w.Write(response)
+
 	} else {
 		log.Println("An attempt to query the API was made with an invalid token:", token[0])
 	}

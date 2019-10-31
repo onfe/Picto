@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"math/rand"
 	"os"
 	"strconv"
@@ -40,6 +41,7 @@ func (rm *RoomManager) createRoom() *Room {
 }
 
 func (rm *RoomManager) destroyRoom(roomID string) {
+	log.Println("Destroying room ID" + roomID)
 	room := rm.Rooms[roomID]
 	delete(rm.Rooms, roomID)
 	rm.RoomCount--

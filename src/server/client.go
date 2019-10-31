@@ -51,6 +51,7 @@ func (c *Client) sendLoop() {
 	ticker := time.NewTicker(ClientPingPeriod)
 	defer func() {
 		ticker.Stop()
+		log.Println("Send loop lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
 		c.destroy()
 	}()
 	for {
@@ -82,6 +83,7 @@ func (c *Client) send(messageType int, payload []byte) error {
 
 func (c *Client) recieveLoop() {
 	defer func() {
+		log.Println("Recieve loop lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
 		c.destroy()
 	}()
 
@@ -109,8 +111,10 @@ func (c *Client) recieve(m Message) {
 	}
 }
 
-func (c *Client) destroy() {
-	log.Println("Lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
+func (c *Client) closeConnection() {
 	c.send(websocket.CloseMessage, []byte{})
-	return
+}
+
+func (c *Client) destroy() {
+	c.room.removeClient(c.ID)
 }

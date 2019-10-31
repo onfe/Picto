@@ -21,6 +21,7 @@ type Room struct {
 
 func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 	r := Room{
+		manager:      manager,
 		ID:           roomID,
 		Name:         "Picto Room",
 		Clients:      make(map[int]*Client),
@@ -54,14 +55,19 @@ func (r *Room) addClient(c *Client) bool {
 }
 
 func (r *Room) removeClient(clientID int) {
-	log.Println("Room:", r.ID, "removed client:", clientID, ":", r.Clients[clientID].Name)
-	r.LastUpdate = time.Now()
-	client := r.Clients[clientID]
-	delete(r.Clients, clientID)
-	r.ClientCount--
-	client.destroy()
-	if len(r.Clients) == 0 {
-		r.manager.destroyRoom(r.ID)
+	if r.Clients[clientID] != nil {
+		log.Println("Room ID"+r.ID, "('"+r.Name+"') removed client:", clientID, "('"+r.Clients[clientID].Name+"')")
+
+		r.LastUpdate = time.Now()
+
+		client := r.Clients[clientID]
+		client.closeConnection()
+		delete(r.Clients, clientID)
+		r.ClientCount--
+
+		if len(r.Clients) == 0 {
+			r.manager.destroyRoom(r.ID)
+		}
 	}
 }
 
