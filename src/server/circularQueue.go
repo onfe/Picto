@@ -2,24 +2,24 @@ package server
 
 //CircularQueue is a circular queue
 type CircularQueue struct {
-	queue     []interface{}
-	headIndex int
+	Queue     []interface{}
+	HeadIndex int
 	len       int
 }
 
-func newCircularQueue(len int) CircularQueue {
-	return CircularQueue{
-		queue:     make([]interface{}, len),
-		headIndex: 0,
+func newCircularQueue(len int) *CircularQueue {
+	return &CircularQueue{
+		Queue:     make([]interface{}, len),
+		HeadIndex: -1,
 		len:       len,
 	}
 }
 
 func (c *CircularQueue) push(x interface{}) {
-	c.queue[c.headIndex] = x
-	c.headIndex = (c.headIndex + 1) % c.len
+	c.HeadIndex = (c.HeadIndex + 1) % c.len
+	c.Queue[c.HeadIndex] = x
 }
 
 func (c *CircularQueue) getAll() []interface{} {
-	return c.queue
+	return c.Queue
 }

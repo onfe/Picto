@@ -104,7 +104,7 @@ func (c *Client) recieveLoop() {
 
 func (c *Client) recieve(m Message) {
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.parentRoom.ID+":", m.body)
+		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.parentRoom.ID+":", m.Body)
 		c.parentRoom.distributeMessage(m)
 	}
 }

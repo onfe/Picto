@@ -14,7 +14,7 @@ type Room struct {
 	Name         string
 	Clients      map[int]*Client
 	MaxClients   int
-	MessageCache CircularQueue
+	MessageCache *CircularQueue
 	LastUpdate   time.Time
 }
 
@@ -42,7 +42,7 @@ func (r *Room) addClient(c *Client) bool {
 		for _, M := range r.MessageCache.getAll() {
 			if M != nil {
 				m := M.(Message)
-				c.send(websocket.TextMessage, m.body)
+				c.send(websocket.TextMessage, m.Body)
 			}
 		}
 		r.Clients[len(r.Clients)] = c
@@ -66,8 +66,8 @@ func (r *Room) distributeMessage(m Message) {
 	r.LastUpdate = time.Now()
 	r.MessageCache.push(m)
 	for _, client := range r.Clients {
-		if client.ID != m.senderID {
-			client.sendBuffer <- m.body
+		if client.ID != m.SenderID {
+			client.sendBuffer <- m.Body
 		}
 	}
 }

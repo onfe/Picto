@@ -2,13 +2,13 @@ package server
 
 //Message contains everything the server needs to know about the message
 type Message struct {
-	senderID int
-	body     []byte
+	SenderID int
+	Body     []byte
 }
 
-func newMessage(message []byte, senderID int) Message {
+func newMessage(Body []byte, SenderID int) Message {
 	return Message{
-		senderID: senderID,
-		body:     message,
+		SenderID: SenderID,
+		Body:     Body,
 	}
 }
