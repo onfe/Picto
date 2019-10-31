@@ -1,2 +1,4 @@
 *.exe
 pictoServer
+
+/pkg
