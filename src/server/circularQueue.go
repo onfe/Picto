@@ -2,8 +2,8 @@ package server
 
 //CircularQueue is a circular queue
 type CircularQueue struct {
-	Queue     []interface{}
-	HeadIndex int
+	Queue     []interface{} `json:"Queue"`
+	HeadIndex int           `json:"HeadIndex"`
 	len       int
 }
 

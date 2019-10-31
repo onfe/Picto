@@ -17,21 +17,21 @@ var upgrader = websocket.Upgrader{
 
 //Client is a struct that contains all of the info about a client.
 type Client struct {
-	ID          int
-	parentRoom  *Room
-	Name        string
+	room        *Room
+	ID          int    `json:"ID"`
+	Name        string `json:"Name"`
 	ws          *websocket.Conn
 	sendBuffer  chan []byte
-	LastMessage time.Time
-	LastPong    time.Time
+	LastMessage time.Time `json:"LastMessage"`
+	LastPong    time.Time `json:"LastPong"`
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, parentRoom *Room, id int, name string) (*Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, room *Room, id int, name string) (*Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
 		ID:          id,
-		parentRoom:  parentRoom,
+		room:        room,
 		Name:        name,
 		ws:          ws,
 		sendBuffer:  make(chan []byte, 256),
@@ -62,9 +62,9 @@ func (c *Client) sendLoop() {
 			}
 			err = c.send(websocket.TextMessage, message)
 			if err != nil {
-				log.Println("Failed to distribute message to '"+c.Name+"' in room ID"+c.parentRoom.ID+", error:", err)
+				log.Println("Failed to distribute message to '"+c.Name+"' in room ID"+c.room.ID+", error:", err)
 			} else {
-				log.Println("Distributed message to '"+c.Name+"' in room ID"+c.parentRoom.ID+":", message)
+				log.Println("Distributed message to '"+c.Name+"' in room ID"+c.room.ID+":", message)
 			}
 		case <-ticker.C:
 			err = c.send(websocket.PingMessage, nil)
@@ -104,13 +104,13 @@ func (c *Client) recieveLoop() {
 
 func (c *Client) recieve(m Message) {
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.parentRoom.ID+":", m.Body)
-		c.parentRoom.distributeMessage(m)
+		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.room.ID+":", m.Body)
+		c.room.distributeMessage(m)
 	}
 }
 
 func (c *Client) destroy() {
-	log.Println("Lost connection to client '" + c.Name + "' of room ID" + c.parentRoom.ID)
+	log.Println("Lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
 	c.send(websocket.CloseMessage, []byte{})
 	return
 }
