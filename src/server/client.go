@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -18,7 +17,7 @@ var upgrader = websocket.Upgrader{
 //Client is a struct that contains all of the info about a client.
 type Client struct {
 	room        *Room
-	ID          int    `json:"ID"`
+	ID          string `json:"ID"`
 	Name        string `json:"Name"`
 	ws          *websocket.Conn
 	sendBuffer  chan []byte
@@ -26,13 +25,13 @@ type Client struct {
 	LastPong    time.Time `json:"LastPong"`
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, room *Room, id int, name string) (*Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, room *Room, ID string, Name string) (*Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
-		ID:          id,
+		ID:          ID,
 		room:        room,
-		Name:        name,
+		Name:        Name,
 		ws:          ws,
 		sendBuffer:  make(chan []byte, 256),
 		LastMessage: time.Now(),
@@ -51,7 +50,7 @@ func (c *Client) sendLoop() {
 	ticker := time.NewTicker(ClientPingPeriod)
 	defer func() {
 		ticker.Stop()
-		log.Println("Send loop lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
+		log.Println("Send loop cut connection to client '" + c.Name + "' of room ID" + c.room.ID)
 		c.destroy()
 	}()
 	for {
@@ -83,7 +82,7 @@ func (c *Client) send(messageType int, payload []byte) error {
 
 func (c *Client) recieveLoop() {
 	defer func() {
-		log.Println("Recieve loop lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
+		log.Println("Recieve loop cut connection to client '" + c.Name + "' of room ID" + c.room.ID)
 		c.destroy()
 	}()
 
@@ -106,7 +105,7 @@ func (c *Client) recieveLoop() {
 
 func (c *Client) recieve(m Message) {
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.room.ID+":", m.Body)
+		log.Println("Recieved message from '"+c.Name+"' (ID:"+c.ID+") in room ID"+c.room.ID+":", string(m.Body))
 		c.room.distributeMessage(m)
 	}
 }

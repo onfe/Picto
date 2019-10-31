@@ -1,7 +1,10 @@
 package server
 
 import (
+	"errors"
 	"log"
+	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -10,13 +13,13 @@ import (
 //Room is a struct that holds all the info about a singular picto room.
 type Room struct {
 	manager      *RoomManager
-	ID           string          `json:"ID"`
-	Name         string          `json:"Name"`
-	Clients      map[int]*Client `json:"Clients"`
-	ClientCount  int             `json:"ClientCount"`
-	MaxClients   int             `json:"MaxClients"`
-	MessageCache *CircularQueue  `json:"MessageCache"`
-	LastUpdate   time.Time       `json:"LastUpdate"`
+	ID           string             `json:"ID"`
+	Name         string             `json:"Name"`
+	Clients      map[string]*Client `json:"Clients"`
+	ClientCount  int                `json:"ClientCount"`
+	MaxClients   int                `json:"MaxClients"`
+	MessageCache *CircularQueue     `json:"MessageCache"`
+	LastUpdate   time.Time          `json:"LastUpdate"`
 }
 
 func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
@@ -24,7 +27,7 @@ func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 		manager:      manager,
 		ID:           roomID,
 		Name:         "Picto Room",
-		Clients:      make(map[int]*Client),
+		Clients:      make(map[string]*Client),
 		ClientCount:  0,
 		MaxClients:   maxClients,
 		MessageCache: newCircularQueue(ChatHistoryLen),
@@ -33,11 +36,11 @@ func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 	return &r
 }
 
-func (r *Room) addClient(c *Client) bool {
-	if len(r.Clients) < r.MaxClients {
+func (r *Room) addClient(c *Client) error {
+	if r.ClientCount < r.MaxClients {
 		for _, client := range r.Clients {
 			if client.Name == c.Name {
-				return false
+				return errors.New("Name already taken.")
 			}
 		}
 		r.LastUpdate = time.Now()
@@ -47,14 +50,23 @@ func (r *Room) addClient(c *Client) bool {
 				c.send(websocket.TextMessage, m.Body)
 			}
 		}
+
 		r.ClientCount++
-		r.Clients[len(r.Clients)] = c
-		return true
+
+		newClientID := strconv.Itoa(rand.Intn(r.MaxClients * (10 ^ 4)))
+		for _, hasKey := r.Clients[newClientID]; hasKey || newClientID == ""; {
+			newClientID = strconv.Itoa(rand.Intn(r.MaxClients * (10 ^ 4)))
+		}
+
+		r.Clients[newClientID] = c
+		r.Clients[newClientID].ID = newClientID
+
+		return nil
 	}
-	return false
+	return errors.New("Room already full.")
 }
 
-func (r *Room) removeClient(clientID int) {
+func (r *Room) removeClient(clientID string) {
 	if r.Clients[clientID] != nil {
 		log.Println("Room ID"+r.ID, "('"+r.Name+"') removed client:", clientID, "('"+r.Clients[clientID].Name+"')")
 

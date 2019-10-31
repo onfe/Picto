@@ -27,7 +27,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 		case "get_room_ids":
 			roomIDs := make([]string, 0, len(rm.Rooms))
-			for roomID, _ := range rm.Rooms {
+			for roomID := range rm.Rooms {
 				roomIDs = append(roomIDs, roomID)
 			}
 			response, err = json.Marshal(roomIDs)
