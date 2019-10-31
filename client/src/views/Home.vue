@@ -16,8 +16,8 @@ export default {
     };
   },
   methods: {
-    join(){
-      this.$store.dispatch("client/join", this.name)
+    join() {
+      this.$store.dispatch("client/join", this.name);
     }
   }
 };

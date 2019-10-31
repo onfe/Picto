@@ -7,7 +7,7 @@ export default class Socket {
     this.ws.onmessage = handle;
 
     this.username = username;
-    this.room = rc;
+    this.room = room;
     this.verified = false;
   }
 
@@ -16,13 +16,13 @@ export default class Socket {
       type,
       // time: Date.now(),
       payload
-    }
+    };
     this.ws.send(JSON.stringify(msg));
   }
 
   onOpen() {
-    console.log('Connected to Picto...');
+    console.log("Connected to Picto...");
     this.join();
-    this.send('join-request', {});
+    this.send("join-request", {});
   }
 }
