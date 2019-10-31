@@ -25,6 +25,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				response, err = json.Marshal("This method is not available in prod.")
 			}
 
+		case "get_mode":
+			response, err = json.Marshal(rm.Mode)
+
 		case "get_room_ids":
 			roomIDs := make([]string, 0, len(rm.Rooms))
 			for roomID := range rm.Rooms {
