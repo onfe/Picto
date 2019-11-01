@@ -23,6 +23,7 @@ type Client struct {
 	sendBuffer  chan []byte
 	LastMessage time.Time `json:"LastMessage"`
 	LastPong    time.Time `json:"LastPong"`
+	closeReason string
 }
 
 func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
@@ -49,6 +50,10 @@ func (c *Client) getClientDetails() string {
 		return "(Room ID" + c.room.ID + " ('" + c.room.Name + "'): Client ID" + c.ID + " ('" + c.Name + "'))"
 	}
 	return "(Roomless: Client ID" + c.ID + " ('" + c.Name + "'))"
+}
+
+func (c *Client) closeConnection(reason string) {
+	c.closeReason = reason
 }
 
 func (c *Client) sendLoop() {
@@ -79,6 +84,11 @@ func (c *Client) sendLoop() {
 
 		case <-ticker.C:
 			err = c.send(websocket.PingMessage, nil)
+			if c.closeReason != "" {
+				log.Println("Sending close message to", c.Name, "for reason:", c.closeReason)
+				c.ws.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, c.closeReason), time.Now().Add(ClientSendTimeout))
+				c.ws.Close()
+			}
 		}
 
 		if err != nil {
@@ -90,11 +100,6 @@ func (c *Client) sendLoop() {
 func (c *Client) send(messageType int, payload []byte) error {
 	c.ws.SetWriteDeadline(time.Now().Add(ClientSendTimeout))
 	return c.ws.WriteMessage(messageType, payload)
-}
-
-func (c *Client) closeConnection(reason string) {
-	log.Println("Sending close message to", c.Name, "for reason:", reason)
-	c.ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, reason))
 }
 
 func (c *Client) recieveLoop() {
