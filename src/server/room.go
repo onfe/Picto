@@ -73,7 +73,7 @@ func (r *Room) removeClient(clientID string) {
 		r.LastUpdate = time.Now()
 
 		client := r.Clients[clientID]
-		client.closeConnection()
+		client.closeConnection("Connection closed by server")
 		delete(r.Clients, clientID)
 		r.ClientCount--
 
@@ -95,6 +95,6 @@ func (r *Room) distributeMessage(m Message) {
 
 func (r *Room) destroy() {
 	for _, client := range r.Clients {
-		client.closeConnection()
+		client.closeConnection("Room closed by server.")
 	}
 }
