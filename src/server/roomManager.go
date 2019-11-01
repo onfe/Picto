@@ -30,6 +30,9 @@ func NewRoomManager(MaxRooms int, apiToken string, Mode string) RoomManager {
 
 func (rm *RoomManager) createRoom() (*Room, error) {
 	if rm.RoomCount < rm.MaxRooms {
+		//RoomCount is immediately incremented so there's little chance of two people creating rooms within a short period of time causing there to become more than MaxRooms rooms.
+		rm.RoomCount++
+
 		newRoomID := strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
 		for _, hasKey := rm.Rooms[newRoomID]; hasKey || newRoomID == ""; {
 			newRoomID = strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
@@ -37,20 +40,15 @@ func (rm *RoomManager) createRoom() (*Room, error) {
 
 		newRoom := newRoom(rm, newRoomID, MaxRoomSize)
 		rm.Rooms[newRoom.ID] = newRoom
-		rm.RoomCount++
 
 		return newRoom, nil
 	}
 	return nil, errors.New("Reached MaxRooms Limit.")
 }
 
-func (rm *RoomManager) destroyRoom(roomID string) {
+func (rm *RoomManager) closeRoom(roomID string) {
 	log.Println("Destroying room ID" + roomID)
-
-	room := rm.Rooms[roomID]
-
+	rm.Rooms[roomID].close()
 	delete(rm.Rooms, roomID)
 	rm.RoomCount--
-
-	room.destroy()
 }

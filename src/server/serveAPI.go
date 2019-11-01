@@ -37,6 +37,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 		default:
 			response, err = json.Marshal("Unrecognised API method")
+
 		}
 
 		if err != nil {

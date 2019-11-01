@@ -7,6 +7,7 @@ import (
 
 //ServeWs serves a websocket to the client.
 func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
+
 	r.ParseForm()
 	name, hasName := r.Form["name"]
 	roomID, hasRoom := r.Form["room"]
@@ -18,7 +19,8 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if !hasRoom {
+		if !hasRoom { //Client is trying to create a new room.
+
 			newRoom, err := rm.createRoom()
 			if err != nil {
 				log.Println("Failed to create room:", err)
@@ -27,14 +29,14 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			}
 
 			client.room = newRoom
-
 			newRoom.addClient(client)
 			log.Println("Created room", newRoom.ID, "for client with name:", client.Name)
 
-		} else {
+		} else { //Client is attempting to join a room.
 			if room, roomExists := rm.Rooms[roomID[0]]; roomExists {
-				err = room.addClient(client)
 
+				//Attempt to add client to the room (typically will fail if someone has already taken the name they're trying to join with)
+				err = room.addClient(client)
 				if err != nil {
 					log.Println("Someone failed to join room ID"+roomID[0], "with name '"+client.Name+"':", err)
 					client.closeConnection(err.Error())
@@ -44,7 +46,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				client.room = room
 				log.Println("Added client '"+client.Name+"' (ID:"+client.ID+") to room", roomID[0])
 
-			} else {
+			} else { //If room doesn't exist...
 				log.Println("Client with name '" + name[0] + "' tried to join a room doesn't exist.")
 				client.closeConnection("Room doesn't exist")
 			}
