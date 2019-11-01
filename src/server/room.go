@@ -67,19 +67,17 @@ func (r *Room) addClient(c *Client) error {
 }
 
 func (r *Room) removeClient(clientID string) {
-	if r.Clients[clientID] != nil {
-		log.Println("Room ID"+r.ID, "('"+r.Name+"') removed client:", clientID, "('"+r.Clients[clientID].Name+"')")
+	log.Println("Room ID"+r.ID, "('"+r.Name+"') removed client:", clientID, "('"+r.Clients[clientID].Name+"')")
 
-		r.LastUpdate = time.Now()
+	r.LastUpdate = time.Now()
 
-		client := r.Clients[clientID]
-		client.closeConnection("Connection closed by server")
-		delete(r.Clients, clientID)
-		r.ClientCount--
+	client := r.Clients[clientID]
+	client.closeConnection("Connection closed by server")
+	delete(r.Clients, clientID)
+	r.ClientCount--
 
-		if len(r.Clients) == 0 {
-			r.manager.destroyRoom(r.ID)
-		}
+	if len(r.Clients) == 0 {
+		r.manager.destroyRoom(r.ID)
 	}
 }
 

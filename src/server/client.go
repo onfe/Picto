@@ -57,7 +57,7 @@ func (c *Client) sendLoop() {
 		ticker.Stop()
 		log.Println("Send loop lost connection to client:" + c.getClientDetails())
 		if c.room != nil {
-			c.room.removeClient(c.ID)
+			c.closeConnection("Sender lost connection")
 		}
 	}()
 
@@ -106,7 +106,10 @@ func (c *Client) recieveLoop() {
 		return nil
 	})
 	c.ws.SetCloseHandler(func(code int, message string) error {
-		log.Println("Closed connection with code", code, "and message:", message)
+		log.Println("Closed connection to "+c.getClientDetails()+" with code", code, "and message:", message)
+		if c.room != nil {
+			c.room.removeClient(c.ID)
+		}
 		return nil
 	})
 
