@@ -11,7 +11,10 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
 	if token, tokenSupplied := r.Form["token"]; tokenSupplied && token[0] == rm.apiToken {
-		method, _ := r.Form["method"]
+		method, methodSupplied := r.Form["method"]
+		if !methodSupplied {
+			log.Println("An attempt to query the API was made without supplying a method with token:", token[0])
+		}
 
 		var response []byte
 		var err error
@@ -34,6 +37,19 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				roomIDs = append(roomIDs, roomID)
 			}
 			response, err = json.Marshal(roomIDs)
+
+		case "get_room_state":
+			roomID, roomIDSupplied := r.Form["roomid"]
+			if !roomIDSupplied {
+				response, err = json.Marshal("No room ID supplied.")
+			} else {
+				room, roomExists := rm.Rooms[roomID[0]]
+				if !roomExists {
+					response, err = json.Marshal("Room does not exist.")
+				} else {
+					response, err = json.Marshal(room)
+				}
+			}
 
 		default:
 			response, err = json.Marshal("Unrecognised API method")
