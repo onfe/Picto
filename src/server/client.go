@@ -30,10 +30,11 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
-		Name:        Name,
-		ws:          ws,
-		sendBuffer:  make(chan []byte, 256),
-		LastMessage: time.Now(),
+		Name:       Name,
+		ws:         ws,
+		sendBuffer: make(chan []byte, 256),
+		//LastMessage is initially set 2x before the current time, to be sure the client can immediately start sending messages.
+		LastMessage: time.Now().Add(-2 * MinMessageInterval),
 		LastPong:    time.Now(),
 	}
 
