@@ -3,7 +3,6 @@ package server
 import (
 	"log"
 	"net/http"
-	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -18,24 +17,24 @@ var upgrader = websocket.Upgrader{
 //Client is a struct that contains all of the info about a client.
 type Client struct {
 	room        *Room
-	ID          int    `json:"ID"`
+	ID          string `json:"ID"`
 	Name        string `json:"Name"`
 	ws          *websocket.Conn
 	sendBuffer  chan []byte
 	LastMessage time.Time `json:"LastMessage"`
 	LastPong    time.Time `json:"LastPong"`
+	closeReason string
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, room *Room, id int, name string) (*Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	c := Client{
-		ID:          id,
-		room:        room,
-		Name:        name,
-		ws:          ws,
-		sendBuffer:  make(chan []byte, 256),
-		LastMessage: time.Now(),
+		Name:       Name,
+		ws:         ws,
+		sendBuffer: make(chan []byte, 256),
+		//LastMessage is initially set 2x before the current time, to be sure the client can immediately start sending messages.
+		LastMessage: time.Now().Add(-2 * MinMessageInterval),
 		LastPong:    time.Now(),
 	}
 
@@ -47,30 +46,54 @@ func newClient(w http.ResponseWriter, r *http.Request, room *Room, id int, name 
 	return &c, err
 }
 
+func (c *Client) getDetails() string {
+	if c.room != nil {
+		return "(Room ID" + c.room.ID + " ('" + c.room.Name + "'): Client ID" + c.ID + " ('" + c.Name + "'))"
+	}
+	return "(Roomless: Client ID" + c.ID + " ('" + c.Name + "'))"
+}
+
+func (c *Client) closeConnection(reason string) {
+	c.closeReason = reason
+	close(c.sendBuffer)
+}
+
+//----------------------------------------------------------------------------------------------------SENDLOOP
+
 func (c *Client) sendLoop() {
-	ticker := time.NewTicker(ClientPingPeriod)
+	ticker := *time.NewTicker(ClientPingPeriod)
+
+	//When the send loop loses connection to the client or sendBuffer is closed.
 	defer func() {
 		ticker.Stop()
-		c.destroy()
+
+		log.Println("Sending close message to", c.Name, "for reason:", c.closeReason)
+		c.send(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, c.closeReason))
+		c.ws.Close()
 	}()
+
 	for {
-		var err error
 		select {
-		case message, ok := <-c.sendBuffer:
-			if !ok {
+		case message, open := <-c.sendBuffer:
+			if !open {
+				log.Println("Failed to get message from sendBuffer belonging to " + c.getDetails())
 				return
 			}
-			err = c.send(websocket.TextMessage, message)
+
+			err := c.send(websocket.TextMessage, message)
 			if err != nil {
-				log.Println("Failed to distribute message to '"+c.Name+"' in room ID"+c.room.ID+", error:", err)
-			} else {
-				log.Println("Distributed message to '"+c.Name+"' in room ID"+c.room.ID+":", message)
+				log.Println("Failed to distribute message to "+c.getDetails()+", error:", err.Error())
+				return
 			}
+
+			log.Println("Distributed message to "+c.getDetails()+":", string(message))
+
 		case <-ticker.C:
-			err = c.send(websocket.PingMessage, nil)
-		}
-		if err != nil {
-			return
+			err := c.send(websocket.PingMessage, nil)
+			if err != nil {
+				log.Println("Failed to send ping to "+c.getDetails()+", error:", err.Error())
+				return
+			}
 		}
 	}
 }
@@ -80,22 +103,40 @@ func (c *Client) send(messageType int, payload []byte) error {
 	return c.ws.WriteMessage(messageType, payload)
 }
 
-func (c *Client) recieveLoop() {
-	defer func() {
-		c.destroy()
-	}()
+//----------------------------------------------------------------------------------------------------RECIEVELOOP
 
+func (c *Client) recieveLoop() {
+	//'If a message read from the client exceeds this limit, the connection sends a close message to the peer and returns ErrReadLimit to the application'
 	c.ws.SetReadLimit(MaxMessageSize)
+
+	//If no message is recieved before this deadline, the websocket is corrupt and all future reads will return an error.
 	c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
+
+	//When a pong is recieved, the read deadline is updated.
 	c.ws.SetPongHandler(func(string) error {
 		c.LastPong = time.Now()
 		c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
 		return nil
 	})
 
+	//When a close message is recieved, the client is removed from the room (if it's in one).
+	c.ws.SetCloseHandler(func(code int, reason string) error {
+		log.Println("Closed connection to "+c.getDetails()+" with code", code, "and reason:", reason)
+		if c.closeReason == "" {
+			c.closeReason = reason
+			close(c.sendBuffer)
+		}
+		if c.room != nil {
+			c.room.removeClient(c.ID)
+		}
+		return nil
+	})
+
+	//Loops, pulling messages from the websocket.
 	for {
 		_, message, err := c.ws.ReadMessage()
 		if err != nil {
+			log.Println("Readloop got error from websocket connection and stopped:", err)
 			break
 		}
 		c.recieve(newMessage(message, c.ID))
@@ -103,14 +144,9 @@ func (c *Client) recieveLoop() {
 }
 
 func (c *Client) recieve(m Message) {
+	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from '"+c.Name+"' (ID"+strconv.Itoa(c.ID)+") in room ID"+c.room.ID+":", m.Body)
+		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body))
 		c.room.distributeMessage(m)
 	}
-}
-
-func (c *Client) destroy() {
-	log.Println("Lost connection to client '" + c.Name + "' of room ID" + c.room.ID)
-	c.send(websocket.CloseMessage, []byte{})
-	return
 }
