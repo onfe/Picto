@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"time"
 )
 
 //RoomManager is a struct that keeps track of all the picto rooms.
@@ -18,14 +19,32 @@ type RoomManager struct {
 
 //NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int, apiToken string, Mode string) RoomManager {
-	r := RoomManager{
+	rm := RoomManager{
 		Rooms:     make(map[string]*Room, MaxRooms),
 		MaxRooms:  MaxRooms,
 		RoomCount: 0,
 		apiToken:  apiToken,
 		Mode:      Mode,
 	}
-	return r
+	go rm.roomMonitorLoop()
+	return rm
+}
+
+func (rm *RoomManager) roomMonitorLoop() {
+	ticker := *time.NewTicker(time.Second)
+	for {
+		select {
+		case <-ticker.C:
+			for roomID, room := range rm.Rooms {
+				if room.ClientCount == -1 {
+					log.Println("Closed empty room:", room.getDetails())
+					rm.closeRoom(roomID)
+					rm.RoomCount--
+				}
+			}
+
+		}
+	}
 }
 
 func (rm *RoomManager) createRoom() (*Room, error) {
@@ -47,8 +66,10 @@ func (rm *RoomManager) createRoom() (*Room, error) {
 }
 
 func (rm *RoomManager) closeRoom(roomID string) {
-	log.Println("Destroying room ID" + roomID)
-	rm.Rooms[roomID].close()
+	log.Println("Closing room ID" + roomID)
+	if rm.Rooms[roomID].ClientCount > 0 {
+		rm.Rooms[roomID].closeAllConnections()
+	}
 	delete(rm.Rooms, roomID)
 	rm.RoomCount--
 }

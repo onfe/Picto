@@ -82,14 +82,13 @@ func (r *Room) addClient(c *Client) error {
 func (r *Room) removeClient(clientID string) error {
 	if client, exists := r.Clients[clientID]; exists {
 		delete(r.Clients, clientID)
-		r.ClientCount--
 
 		r.LastUpdate = time.Now()
 		log.Println("Removed client:", client.getDetails())
 
-		if len(r.Clients) == 0 {
-			log.Println("Closed empty room:", r.getDetails())
-			r.manager.closeRoom(r.ID)
+		r.ClientCount--
+		if r.ClientCount == 0 {
+			r.ClientCount--
 		}
 
 		return nil
@@ -107,7 +106,7 @@ func (r *Room) distributeMessage(m Message) {
 	}
 }
 
-func (r *Room) close() {
+func (r *Room) closeAllConnections() {
 	for _, client := range r.Clients {
 		client.closeConnection("Room closed by server.")
 	}
