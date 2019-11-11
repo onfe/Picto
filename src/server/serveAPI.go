@@ -14,6 +14,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		method, methodSupplied := r.Form["method"]
 		if !methodSupplied {
 			log.Println("An attempt to query the API was made without supplying a method with token:", token[0])
+			return
 		}
 
 		var response []byte
@@ -64,7 +65,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
-	} else {
+	} else if tokenSupplied {
 		log.Println("An attempt to query the API was made with an invalid token:", token[0])
+	} else {
+		log.Println("An attempt to query the API was made without a token.")
 	}
 }
