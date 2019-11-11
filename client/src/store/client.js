@@ -8,18 +8,20 @@ const state = {
 const getters = {};
 
 const actions = {
-  join: ({ commit }, name) => {
-    const sock = new WebSocket(`ws://${window.location.host}/ws?name=${name}`);
-    commit("setSock", sock);
+  join: ({ commit }, { name, room }) => {
+    const here = window.location.host;
+    const roomarg = room ? `&room=${room}` : "";
+    const sock = new WebSocket(`ws://${here}/ws?name=${name}${roomarg}`);
+    commit("join", sock);
     window._sock = sock;
     sock.onopen = () => {
-      setTimeout(() => sock.send("aiii"), 1000);
+      console.log("Connected to picto!");
     };
   }
 };
 
 const mutations = {
-  setSock: (state, sock) => {
+  join: (state, sock) => {
     state.socket = sock;
   }
 };
