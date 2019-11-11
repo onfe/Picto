@@ -1,22 +1,19 @@
-// import axios from "../services/axios";
-
 const state = {
   socket: null,
-  username: "" || sessionStorage.getItem("client/username")
+  username: ""
 };
 
 const getters = {};
 
 const actions = {
-  join: ({ commit }, { name, room }) => {
-    const here = window.location.host;
-    const roomarg = room ? `&room=${room}` : "";
-    const sock = new WebSocket(`ws://${here}/ws?name=${name}${roomarg}`);
-    commit("join", sock);
-    window._sock = sock;
-    sock.onopen = () => {
-      console.log("Connected to picto!");
-    };
+  join: ({ dispatch }, { name, room }) => {
+    dispatch("socket/connect", { name, room }, { root: true })
+    .then(() => {
+      console.log("Connected to Picto.");
+    })
+    .catch(() => {
+      console.log("Failed to connect to Picto");
+    })
   }
 };
 
@@ -26,7 +23,7 @@ const mutations = {
   }
 };
 
-const authentication = {
+const client = {
   namespaced: true,
   state: state,
   getters: getters,
@@ -34,4 +31,4 @@ const authentication = {
   mutations: mutations
 };
 
-export default authentication;
+export default client;
