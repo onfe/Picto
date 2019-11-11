@@ -17,7 +17,7 @@ const actions = {
       sock.onmessage = m => dispatch("_onMessage", m);
       sock.onopen = res;
       sock.onerror = rej;
-    })
+    });
   },
   _onMessage: (s, pl) => {
     const now = new Date();

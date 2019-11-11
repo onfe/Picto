@@ -8,12 +8,12 @@ const getters = {};
 const actions = {
   join: ({ dispatch }, { name, room }) => {
     dispatch("socket/connect", { name, room }, { root: true })
-    .then(() => {
-      console.log("Connected to Picto.");
-    })
-    .catch(() => {
-      console.log("Failed to connect to Picto");
-    })
+      .then(() => {
+        console.log("Connected to Picto.");
+      })
+      .catch(() => {
+        console.log("Failed to connect to Picto");
+      });
   }
 };
 
