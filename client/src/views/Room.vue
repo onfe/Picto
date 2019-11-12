@@ -7,18 +7,19 @@
     <div class="edit">
       <Toolbox class="toolbox" />
       <Compose class="compose" />
-      <Stamps class="stamps" />
-      <Keyboard class="keyboard" />
+      <TextEntry class="text" />
     </div>
   </main>
 </template>
 
 <script>
 import Compose from "@/components/Compose.vue";
+import MessageHistory from "@/components/MessageHistory.vue";
 
 export default {
   components: {
-    Compose
+    Compose,
+    MessageHistory
   }
 };
 </script>
@@ -30,10 +31,6 @@ main {
   width: 100%;
   height: 100%;
 }
-
-$sidebar-width: 8vw;
-$main-width: calc(100vw - #{$sidebar-width});
-$main-height: calc(#{$main-width} / 3);
 
 .view {
   flex: 1;
@@ -50,43 +47,34 @@ $main-height: calc(#{$main-width} / 3);
 }
 
 .hist {
-  width: $main-width;
+  width: $ratio-width;
   height: 100%;
   grid-area: H;
-  background: green;
 }
 
 .edit {
   flex: 0;
   display: grid;
-  grid-template: "T C" "S K";
+  grid-template: "T C" "E E";
 }
 
 .toolbox {
   grid-area: T;
   width: $sidebar-width;
-  height: $main-height;
+  height: $ratio-height;
   background: #ccc;
 }
 
 .compose {
   grid-area: C;
-  width: $main-width;
-  height: $main-height;
-  background: pink;
+  width: $ratio-width;
+  height: $ratio-height;
 }
 
-.stamps {
-  grid-area: S;
-  width: $sidebar-width;
-  height: $main-height;
-  background: #888;
-}
-
-.keyboard {
-  grid-area: K;
-  width: $main-width;
-  height: $main-height;
+.text {
+  grid-area: E;
+  width: 100%;
+  height: 2em;
   background: orange;
 }
 </style>
