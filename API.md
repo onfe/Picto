@@ -16,8 +16,8 @@ Every message across the WebSocket must be a JSON Object, that contains the
 {
   "event": "init",
   "room": "code",
-  "token": "base64rejoincode"
-  "index": 1
+  "token": "base64rejoincode",
+  "index": 1,
   "users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", "Jordie"],
   "numUsers": 4
 }
@@ -40,5 +40,3 @@ The client
 }
 ```
 When sending from the client to the server, the `from` field is optional.
-
-### 
