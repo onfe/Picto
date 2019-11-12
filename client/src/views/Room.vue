@@ -14,7 +14,7 @@
 
 <script>
 import Compose from "@/components/Compose.vue";
-import MessageHistory from "@/components/MessageHistory.vue"
+import MessageHistory from "@/components/MessageHistory.vue";
 
 export default {
   components: {
@@ -32,10 +32,6 @@ main {
   height: 100%;
 }
 
-$sidebar-width: 8vw;
-$main-width: calc(100vw - #{$sidebar-width});
-$main-height: calc(#{$main-width} / 3);
-
 .view {
   flex: 1;
   position: relative;
@@ -51,7 +47,7 @@ $main-height: calc(#{$main-width} / 3);
 }
 
 .hist {
-  width: $main-width;
+  width: $ratio-width;
   height: 100%;
   grid-area: H;
 }
@@ -65,21 +61,20 @@ $main-height: calc(#{$main-width} / 3);
 .toolbox {
   grid-area: T;
   width: $sidebar-width;
-  height: $main-height;
+  height: $ratio-height;
   background: #ccc;
 }
 
 .compose {
   grid-area: C;
-  width: $main-width;
-  height: $main-height;
-  background: pink;
+  width: $ratio-width;
+  height: $ratio-height;
 }
 
 .text {
   grid-area: E;
   width: 100%;
-  height: $sidebar-width;
+  height: 2em;
   background: orange;
 }
 </style>

@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import client from "./client";
 import socket from "./socket";
-import messages from "./messages"
+import messages from "./messages";
 
 Vue.use(Vuex);
 
