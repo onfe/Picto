@@ -9,9 +9,11 @@ const actions = {
   join: ({ dispatch }, { name, room }) => {
     dispatch("socket/connect", { name, room }, { root: true })
       .then(() => {
+        // eslint-disable-next-line no-console
         console.log("Connected to Picto.");
       })
       .catch(() => {
+        // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
   }
