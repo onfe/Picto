@@ -89,12 +89,9 @@ class Sketchpad {
   drawPix(event) {
     this.bakeText();
 
-    var [x, y] = this.getMousePixPos(event.offsetX,event.offsetY);
+    var [x, y] = this.getMousePixPos(event.offsetX, event.offsetY);
 
-    console.log(this.imageData["data"].length)
-    console.log(event.clientX, event.clientY, x, y)
     this.imageData["data"][y * this.width + x] = this.colourIndex;
-    console.log(":",this.imageData["data"].length)
     this.setPixel(x, y, this.colourIndex);
 
     if (this.rainbowMode) {
@@ -106,7 +103,7 @@ class Sketchpad {
   }
 
   drawTo(event) {
-    var [x, y] = this.getMousePixPos(event.offsetX,event.offsetY);
+    var [x, y] = this.getMousePixPos(event.offsetX, event.offsetY);
 
     if (
       this.mousedown &&
@@ -263,11 +260,11 @@ class Sketchpad {
     this.ctx.fillRect(x, y, 1, 1);
   }
 
-  getMousePixPos(offsetX,offsetY) {
+  getMousePixPos(offsetX, offsetY) {
     return [
       Math.round((offsetX / this.canvas.clientWidth) * this.canvas.width),
       Math.round((offsetY / this.canvas.clientHeight) * this.canvas.height)
-    ]
+    ];
   }
 
   getColour(i) {
