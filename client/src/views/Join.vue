@@ -16,9 +16,6 @@ export default {
       name: ""
     };
   },
-  created() {
-    console.log(this.$route);
-  },
   methods: {
     join() {
       const room = this.$route.params.id;

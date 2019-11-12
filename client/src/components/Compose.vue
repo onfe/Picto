@@ -1,16 +1,13 @@
 <template lang="html">
-<section>
-  <div class="compose">
-    
-  </div>
-</section>
+  <section>
+    <div class="compose"></div>
+  </section>
 </template>
 
 <script>
 export default {
   name: "Compose"
-}
+};
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
