@@ -10,5 +10,14 @@ module.exports = {
       }
     },
     port: 8090
+  },
+  css: {
+    loaderOptions: {
+      sass: {
+        // @/ is an alias to src/
+        // so this assumes you have a file named `src/variables.scss`
+        prependData: `@import "~@/assets/scss/mixins";`
+      }
+    }
   }
 };
