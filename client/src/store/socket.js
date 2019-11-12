@@ -21,6 +21,7 @@ const actions = {
   },
   _onMessage: (s, pl) => {
     const now = new Date();
+    // eslint-disable-next-line no-console
     console.log(
       `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
     );
@@ -29,6 +30,7 @@ const actions = {
     // TODO: check if connected, if not, dispatch socket/reconnect
     state._socket.send(pl);
     const now = new Date();
+    // eslint-disable-next-line no-console
     console.log(
       `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
     );
