@@ -1,30 +1,29 @@
-// import axios from "../services/axios";
-
 const state = {
   socket: null,
-  username: "" || sessionStorage.getItem("client/username")
+  username: ""
 };
 
 const getters = {};
 
 const actions = {
-  join: ({ commit }, name) => {
-    const sock = new WebSocket(`ws://${window.location.host}/ws?name=${name}`);
-    commit("setSock", sock);
-    window._sock = sock;
-    sock.onopen = () => {
-      setTimeout(() => sock.send("aiii"), 1000);
-    };
+  join: ({ dispatch }, { name, room }) => {
+    dispatch("socket/connect", { name, room }, { root: true })
+      .then(() => {
+        console.log("Connected to Picto.");
+      })
+      .catch(() => {
+        console.log("Failed to connect to Picto");
+      });
   }
 };
 
 const mutations = {
-  setSock: (state, sock) => {
+  join: (state, sock) => {
     state.socket = sock;
   }
 };
 
-const authentication = {
+const client = {
   namespaced: true,
   state: state,
   getters: getters,
@@ -32,4 +31,4 @@ const authentication = {
   mutations: mutations
 };
 
-export default authentication;
+export default client;

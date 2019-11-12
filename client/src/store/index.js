@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import client from "./client";
+import socket from "./socket";
 
 Vue.use(Vuex);
 
@@ -9,6 +10,7 @@ export default new Vuex.Store({
   mutations: {},
   actions: {},
   modules: {
-    client
+    client,
+    socket
   }
 });
