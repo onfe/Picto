@@ -18,7 +18,6 @@ export default {
   },
   mounted() {
     const canv = document.getElementById("sketchpad");
-    console.log(canv);
     this.sketchpad = new Sketchpad(192, 64, canv);
     window._sketch = this.sketchpad;
   }
