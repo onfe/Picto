@@ -1,7 +1,7 @@
 const state = {
   history: [
-    {name: 'jon', data: 'ahsdald', colour: '#ffcced'},
-    {name: 'jon', data: 'ahsdald', colour: '#ffcced'}
+    { name: "jon", data: "ahsdald", colour: "#ffcced" },
+    { name: "jon", data: "ahsdald", colour: "#ffcced" }
   ]
 };
 

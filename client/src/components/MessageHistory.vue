@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import Message from "@/components/Message.vue"
+import Message from "@/components/Message.vue";
 export default {
   components: {
     Message
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -24,9 +24,10 @@ section {
   padding: 1vw;
   display: flex;
   flex-direction: column-reverse;
+  overflow-y: scroll;
 }
 
 .message {
-  margin-top: 4px;
+  margin-top: 1vw;
 }
 </style>

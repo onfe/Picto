@@ -7,8 +7,7 @@
 </template>
 
 <script>
-export default {
-}
+export default {};
 </script>
 
 <style lang="scss" scoped>
@@ -25,13 +24,13 @@ export default {
   height: 100%;
   background: #fff;
   border-radius: 4px;
-  border: 2px solid desaturate(darken( #E97777, 20% ), 20%);
+  border: 2px solid desaturate(darken(#e97777, 20%), 20%);
   overflow: hidden;
 }
 
 .author {
   padding: 4px;
-  background: #E97777;
+  background: #e97777;
   border-bottom: 2px solid transparent;
   border-right: 2px solid transparent;
   border-color: inherit;
