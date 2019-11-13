@@ -17,12 +17,12 @@ class Sketchpad {
 
     /**These events monitor if the mouse is up/down */
     this.mousedown = false;
-    this.canvas.addEventListener("mousedown", () => (this.mousedown = true));
-    this.canvas.addEventListener("mouseup", () => (this.mousedown = false));
+    this.canvas.addEventListener("pointerdown", () => (this.mousedown = true));
+    this.canvas.addEventListener("pointerup", () => (this.mousedown = false));
 
     /**Drawing events */
-    this.canvas.addEventListener("mousemove", this.drawTo.bind(this));
-    this.canvas.addEventListener("mousedown", this.drawPix.bind(this));
+    this.canvas.addEventListener("pointermove", this.drawTo.bind(this));
+    this.canvas.addEventListener("pointerdown", this.drawPix.bind(this));
     this.canvas.addEventListener("pointerleave", this.resetMousePos.bind(this));
 
     /**imageData is all the drawn pixels and baked text */
