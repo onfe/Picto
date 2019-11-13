@@ -38,5 +38,6 @@ canvas {
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
+  touch-action: none;
 }
 </style>
