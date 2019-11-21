@@ -14,29 +14,54 @@ Every message across the WebSocket must be a JSON Object, that contains the
 ### Joining a room
 ```JSON
 {
-  "event": "init",
-  "room": "code",
-  "token": "base64rejoincode",
-  "index": 1,
-  "users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", "Jordie"],
-  "numUsers": 4
+  "Event": "init",
+  "RoomID": "id",
+  "RoomName": "default",
+  "UserIndex": 1,
+  "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
+  "NumUsers": 4
 }
 ```
-`users` has length equal to the max number of users in a room. Colours are
-assigned using the modulo of the index of the user. You have the index `index`
-in the array. The `room` is the value for `/room/code` and serves as the link
-for inviting friends to the room.
+`Users` has length equal to the max number of users in a room. Colours are
+assigned using the modulo of the index of the user. You have the index 
+`UserIndex` in the array. The `RoomID` is the value for `/room/code` and serves
+as the link for inviting friends to the room.
 
-The token is used in case of the socket connection being momentarily dropped.
-The client
+### User join/leave
+
+User join:
+```JSON
+{
+  "Event":"user",
+  "UserIndex": 1,
+  "Users": ["Eddie", "Jordie", "Josho", null, null, "Martin", "Elle", null],
+  "NumUsers": 5
+}
+```
+
+User leave:
+```JSON
+{
+  "Event":"user",
+  "UserIndex": 1,
+  "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
+  "NumUsers": 4
+}
+```
 
 ### Message
 
+Server -> Client:
 ```JSON
 {
-  "event": "message",
-  "from": 3,
-  "data": "NPXkOU8..."
+  "Event": "message",
+  "UserIndex": 2,
+  "Message": "NPXkOU8..."
 }
 ```
-When sending from the client to the server, the `from` field is optional.
+Client -> Server:
+```JSON
+{
+  "Event": "message",
+  "Message": "NPXkOU8..."
+}
