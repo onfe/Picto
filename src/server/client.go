@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -135,19 +136,21 @@ func (c *Client) recieveLoop() {
 
 	//Loops, pulling messages from the websocket.
 	for {
-		_, message, err := c.ws.ReadMessage()
+		_, data, err := c.ws.ReadMessage()
 		if err != nil {
 			log.Println("Readloop got error from websocket connection and stopped:", err)
 			break
 		}
-		c.recieve(newMessage(message, c.ID))
+		var msg MessageEvent
+		json.Unmarshal(data, &msg)
+		c.recieve(newMessage(msg.Message, c.ID))
 	}
 }
 
 func (c *Client) recieve(m Message) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body))
+		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body)
 		c.room.distributeMessage(m)
 	}
 }
