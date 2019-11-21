@@ -19,7 +19,7 @@ const actions = {
       sock.onerror = rej;
     });
   },
-  _onMessage: (s, pl) => {
+  _onMessage: ({ dispatch }, pl) => {
     if (!pl.event) {
       throw "Payload does not contain event field.";
     }
@@ -28,6 +28,17 @@ const actions = {
     console.log(
       `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
     );
+
+    switch (pl.event) {
+      case "message":
+        dispatch("messages/add", pl, { root: true });
+        break;
+      case "init":
+        dispatch("client/init", pl, { root: true });
+        break;
+      default:
+        console.log(pl);
+    }
   },
   send: ({ state }, pl) => {
     // TODO: check if connected, if not, dispatch socket/reconnect
