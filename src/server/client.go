@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -17,7 +18,7 @@ var upgrader = websocket.Upgrader{
 //Client is a struct that contains all of the info about a client.
 type Client struct {
 	room        *Room
-	ID          string `json:"ID"`
+	ID          int    `json:"ID"`
 	Name        string `json:"Name"`
 	ws          *websocket.Conn
 	sendBuffer  chan []byte
@@ -48,9 +49,9 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 
 func (c *Client) getDetails() string {
 	if c.room != nil {
-		return "(Room ID" + c.room.ID + " ('" + c.room.Name + "'): Client ID" + c.ID + " ('" + c.Name + "'))"
+		return "(Room ID" + c.room.ID + " ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 	}
-	return "(Roomless: Client ID" + c.ID + " ('" + c.Name + "'))"
+	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 }
 
 func (c *Client) closeConnection(reason string) {

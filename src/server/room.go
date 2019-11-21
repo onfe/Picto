@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"math/rand"
@@ -13,13 +14,13 @@ import (
 //Room is a struct that holds all the info about a singular picto room.
 type Room struct {
 	manager      *RoomManager
-	ID           string             `json:"ID"`
-	Name         string             `json:"Name"`
-	Clients      map[string]*Client `json:"Clients"`
-	ClientCount  int                `json:"ClientCount"`
-	MaxClients   int                `json:"MaxClients"`
-	MessageCache *CircularQueue     `json:"MessageCache"`
-	LastUpdate   time.Time          `json:"LastUpdate"`
+	ID           string         `json:"ID"`
+	Name         string         `json:"Name"`
+	Clients      []*Client      `json:"Clients"`
+	ClientCount  int            `json:"ClientCount"`
+	MaxClients   int            `json:"MaxClients"`
+	MessageCache *CircularQueue `json:"MessageCache"`
+	LastUpdate   time.Time      `json:"LastUpdate"`
 }
 
 func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
@@ -27,7 +28,7 @@ func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 		manager:      manager,
 		ID:           roomID,
 		Name:         "Picto Room",
-		Clients:      make(map[string]*Client),
+		Clients:      make([]*Client, maxClients),
 		ClientCount:  0,
 		MaxClients:   maxClients,
 		MessageCache: newCircularQueue(ChatHistoryLen),
@@ -63,9 +64,10 @@ func (r *Room) addClient(c *Client) error {
 		}
 
 		//Generating an ID for the new client.
-		newClientID := strconv.Itoa(rand.Intn(r.MaxClients * (10 ^ 4)))
-		for _, hasKey := r.Clients[newClientID]; hasKey || newClientID == ""; {
-			newClientID = strconv.Itoa(rand.Intn(r.MaxClients * (10 ^ 4)))
+		newClientID := 0
+		for r.Clients[newClientID] != nil {
+			//Modulo is added just in case some fucky asynchronisation causes us to run over the end of the list.
+			newClientID = (newClientID + 1) % r.MaxClients
 		}
 
 		r.Clients[newClientID] = c
@@ -79,9 +81,10 @@ func (r *Room) addClient(c *Client) error {
 	return errors.New("Room already full.")
 }
 
-func (r *Room) removeClient(clientID string) error {
-	if client, exists := r.Clients[clientID]; exists {
-		delete(r.Clients, clientID)
+func (r *Room) removeClient(clientID int) error {
+	if r.Clients[clientID] != nil {
+		client := r.Clients[clientID]
+		r.Clients[clientID] = nil
 
 		r.LastUpdate = time.Now()
 		log.Println("Removed client:", client.getDetails())

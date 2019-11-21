@@ -3,6 +3,7 @@ package server
 import (
 	"log"
 	"net/http"
+	"strconv"
 )
 
 //ServeWs serves a websocket to the client.
@@ -44,7 +45,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				}
 
 				client.room = room
-				log.Println("Added client '"+client.Name+"' (ID:"+client.ID+") to room", roomID[0])
+				log.Println("Added client '"+client.Name+"' (ID:"+strconv.Itoa(client.ID)+") to room", roomID[0])
 
 			} else { //If room doesn't exist...
 				log.Println("Client with name '" + name[0] + "' tried to join a room doesn't exist.")
