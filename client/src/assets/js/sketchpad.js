@@ -66,6 +66,15 @@ class Sketchpad {
     this.refresh();
   }
 
+  toggleRainbowMode() {
+    this.rainbowMode = !this.rainbowMode;
+    if (this.rainbowMode) {
+      this.colourIndex = 2;
+    } else {
+      this.colourIndex = 1;
+    }
+  }
+
   /**-------------------------------------------------- Resets */
   resetMousePos() {
     this.lastMousePos = [-1, -1];
