@@ -150,8 +150,16 @@ func (c *Client) recieveLoop() {
 				var e MessageEvent
 				json.Unmarshal(data, &e)
 				c.recieve(e)
-	}
-}
+			case "Rename":
+				var e RenameEvent
+				json.Unmarshal(data, &e)
+				c.room.changeName(e.RoomName)
+				c.room.distributeEvent(RenameEvent{
+					Event:    "Rename",
+					RoomName: e.RoomName,
+				})
+			}
+		}
 	}
 }
 

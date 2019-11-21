@@ -37,6 +37,10 @@ func (r *Room) getDetails() string {
 	return "(Room ID" + r.ID + " ('" + r.Name + "'))"
 }
 
+func (r *Room) changeName(newName string) {
+	r.Name = newName
+}
+
 func (r *Room) addClient(c *Client) error {
 	if r.ClientCount < r.MaxClients {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
