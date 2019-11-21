@@ -150,7 +150,7 @@ func (c *Client) recieveLoop() {
 func (c *Client) recieve(m Message) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body)
+		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body))
 		c.room.distributeMessage(m)
 	}
 }
