@@ -63,9 +63,10 @@ func (r *Room) addClient(c *Client) error {
 
 		/*
 			The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
-			To do this, an array of strings of all the clients' usernames has to be constructed.
+			To do this, an array of strings of all the clients' usernames (including the new client's) has to be constructed.
 		*/
 		clientNames := make([]string, r.MaxClients)
+		clientNames[newClientID] = c.Name
 		for i := 0; i < r.MaxClients; i++ {
 			if r.Clients[i] != nil {
 				clientNames[i] = r.Clients[i].Name
@@ -91,9 +92,6 @@ func (r *Room) addClient(c *Client) error {
 				c.sendBuffer <- m.getEventData()
 			}
 		}
-
-		//The new client is added into the clientNames array.
-		clientNames[newClientID] = c.Name
 
 		//Now the new client is up to date, all the other clients are notified of their presence.
 		for _, cc := range r.Clients {
