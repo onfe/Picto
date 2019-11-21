@@ -146,16 +146,16 @@ func (c *Client) recieveLoop() {
 			log.Println("Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
 			switch event["Event"] {
-			case "Message":
+			case "message":
 				var e MessageEvent
 				json.Unmarshal(data, &e)
 				c.recieve(e)
-			case "Rename":
+			case "rename":
 				var e RenameEvent
 				json.Unmarshal(data, &e)
 				c.room.changeName(e.RoomName)
 				c.room.distributeEvent(RenameEvent{
-					Event:    "Rename",
+					Event:    "rename",
 					RoomName: e.RoomName,
 				})
 			}
