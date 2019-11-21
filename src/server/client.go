@@ -141,16 +141,24 @@ func (c *Client) recieveLoop() {
 			log.Println("Readloop got error from websocket connection and stopped:", err)
 			break
 		}
-		var msg MessageEvent
-		json.Unmarshal(data, &msg)
-		c.recieve(newMessage(msg.Message, c.ID))
+		event := make(map[string]interface{})
+		if _, valid := event["Event"]; !valid {
+			log.Println("Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
+		} else {
+			switch event["Event"] {
+			case "Message":
+				var e MessageEvent
+				json.Unmarshal(data, &e)
+				c.recieve(e)
+	}
+}
 	}
 }
 
-func (c *Client) recieve(m Message) {
+func (c *Client) recieve(e Event) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body))
-		c.room.distributeMessage(m)
+		log.Println("Recieved message from "+c.getDetails()+":", e.getEventType())
+		c.room.distributeEvent(e)
 	}
 }

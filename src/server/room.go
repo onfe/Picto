@@ -76,7 +76,7 @@ func (r *Room) addClient(c *Client) error {
 		//Updating the new client as to the room state with an init event.
 		initEvent, _ := json.Marshal(
 			InitEvent{
-				Event:     Event{Event: "init"},
+				Event:     "init",
 				RoomID:    r.ID,
 				RoomName:  r.Name,
 				UserIndex: newClientID,
@@ -88,7 +88,7 @@ func (r *Room) addClient(c *Client) error {
 		//Updating the new client with all the messages from the message cache.
 		for _, M := range r.MessageCache.getAll() {
 			if M != nil {
-				m := M.(Message)
+				m := M.(Event)
 				c.sendBuffer <- m.getEventData()
 			}
 		}
@@ -98,7 +98,7 @@ func (r *Room) addClient(c *Client) error {
 			if cc != nil {
 				userEvent, _ := json.Marshal(
 					UserEvent{
-						Event:     Event{Event: "user"},
+						Event:     "user",
 						UserIndex: newClientID,
 						Users:     clientNames,
 						NumUsers:  r.ClientCount,
@@ -134,13 +134,15 @@ func (r *Room) removeClient(clientID int) error {
 	return errors.New("Room does not have such a client")
 }
 
-func (r *Room) distributeMessage(m Message) {
+func (r *Room) distributeEvent(e Event) {
 	r.LastUpdate = time.Now()
-	r.MessageCache.push(m)
-	messageData := m.getEventData()
+	if e.getEventType() == "message" {
+		r.MessageCache.push(e)
+	}
+	eventData := e.getEventData()
 	for _, client := range r.Clients {
-		if client != nil && client.ID != m.SenderID {
-			client.sendBuffer <- messageData
+		if client != nil && client.ID != e.getSenderID() {
+			client.sendBuffer <- eventData
 		}
 	}
 }
