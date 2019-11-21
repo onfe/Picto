@@ -1,3 +1,5 @@
+import COLOURS from "../assets/js/colours.js";
+
 const state = {
   history: [
     { author: "onfe", data: "ahsdald", colour: "#ffcced" },
@@ -7,9 +9,22 @@ const state = {
 
 const getters = {};
 
-const actions = {};
+const actions = {
+  add: ({ rootState, commit }, pl) => {
+    const message = {
+      author: rootState.client.users[pl.UserIndex],
+      colour: COLOURS[pl.UserIndex],
+      data: pl.Message
+    }
+    commit("add", message)
+  }
+};
 
-const mutations = {};
+const mutations = {
+  add: (state, message) => {
+    state.history = [message, ...state.history];
+  }
+};
 
 const client = {
   namespaced: true,

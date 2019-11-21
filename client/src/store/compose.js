@@ -7,8 +7,8 @@ const actions = {
     const data = window._sketch.getSendableData();
     console.log({ data });
     const pl = {
-      event: "message",
-      data: data
+      Event: "message",
+      Message: data
     };
     dispatch("socket/send", pl, { root: true });
   },

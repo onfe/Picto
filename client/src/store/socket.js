@@ -20,7 +20,8 @@ const actions = {
     });
   },
   _onMessage: ({ dispatch }, pl) => {
-    if (!pl.event) {
+    pl = JSON.parse(pl.data);
+    if (!pl.Event) {
       throw "Payload does not contain event field.";
     }
     const now = new Date();
@@ -29,7 +30,7 @@ const actions = {
       `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
     );
 
-    switch (pl.event) {
+    switch (pl.Event) {
       case "message":
         dispatch("messages/add", pl, { root: true });
         break;
@@ -42,7 +43,7 @@ const actions = {
   },
   send: ({ state }, pl) => {
     // TODO: check if connected, if not, dispatch socket/reconnect
-    if (!pl.event) {
+    if (!pl.Event) {
       throw "Payload does not contain event field.";
     }
 

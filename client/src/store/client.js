@@ -26,16 +26,16 @@ const actions = {
   },
   init: ({ commit }, payload) => {
     commit("init", payload);
-    router.push({ name: "room", params: { id: payload.room } });
+    router.push(`/room/${payload.RoomID}`);
   }
 };
 
 const mutations = {
   init: (state, payload) => {
-    state.room = payload.room;
-    state.index = payload.index;
-    state.users = payload.users;
-    state.colour = COLOURS[payload.index];
+    state.room = payload.RoomID;
+    state.index = payload.UserIndex;
+    state.users = payload.Users;
+    state.colour = COLOURS[payload.UserIndex];
   }
 };
 
