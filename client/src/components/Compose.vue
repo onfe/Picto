@@ -3,7 +3,7 @@
     <div class="container">
       <Message
         :colour="this.$store.state.client.colour"
-        :author="this.$store.state.client.username"
+        :author="this.$store.getters['client/username']"
       >
         <canvas id="sketchpad"></canvas>
       </Message>

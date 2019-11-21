@@ -2,13 +2,15 @@ import router from "../router";
 import COLOURS from "../assets/js/colours.js"
 
 const state = {
-  username: "",
+  index: -1,
   colour: COLOURS[0],
   room: null,
   users: []
 };
 
-const getters = {};
+const getters = {
+  username: state => state.users[state.index] || ""
+};
 
 const actions = {
   join: ({ dispatch }, { name, room }) => {
