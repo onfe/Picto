@@ -23,14 +23,8 @@ func (e InitEvent) getEventData() []byte {
 	data, _ := json.Marshal(e)
 	return data
 }
-
-func (e InitEvent) getEventType() string {
-	return e.Event
-}
-
-func (e InitEvent) getSenderID() int {
-	return e.UserIndex
-}
+func (e InitEvent) getEventType() string { return e.Event }
+func (e InitEvent) getSenderID() int     { return e.UserIndex }
 
 //UserEvent is sent to clients to inform them of when another client leaves/joins their room.
 type UserEvent struct {
@@ -44,14 +38,8 @@ func (e UserEvent) getEventData() []byte {
 	data, _ := json.Marshal(e)
 	return data
 }
-
-func (e UserEvent) getEventType() string {
-	return e.Event
-}
-
-func (e UserEvent) getSenderID() int {
-	return e.UserIndex
-}
+func (e UserEvent) getEventType() string { return e.Event }
+func (e UserEvent) getSenderID() int     { return e.UserIndex }
 
 //MessageEvent is sent to clients to inform them of a new message in their room.
 type MessageEvent struct {
@@ -64,14 +52,8 @@ func (e MessageEvent) getEventData() []byte {
 	data, _ := json.Marshal(e)
 	return data
 }
-
-func (e MessageEvent) getEventType() string {
-	return e.Event
-}
-
-func (e MessageEvent) getSenderID() int {
-	return e.UserIndex
-}
+func (e MessageEvent) getEventType() string { return e.Event }
+func (e MessageEvent) getSenderID() int     { return e.UserIndex }
 
 //AnnouncementEvent is sent to clients to inform them of an announcement in the room.
 type AnnouncementEvent struct {
@@ -83,14 +65,8 @@ func (e AnnouncementEvent) getEventData() []byte {
 	data, _ := json.Marshal(e)
 	return data
 }
-
-func (e AnnouncementEvent) getEventType() string {
-	return e.Event
-}
-
-func (e AnnouncementEvent) getSenderID() int {
-	return -1
-}
+func (e AnnouncementEvent) getEventType() string { return e.Event }
+func (e AnnouncementEvent) getSenderID() int     { return -1 }
 
 //RenameEvent is sent to clients to inform them of the name of their room being changed.
 type RenameEvent struct {
@@ -103,11 +79,5 @@ func (e RenameEvent) getEventData() []byte {
 	data, _ := json.Marshal(e)
 	return data
 }
-
-func (e RenameEvent) getEventType() string {
-	return e.Event
-}
-
-func (e RenameEvent) getSenderID() int {
-	return e.UserIndex
-}
+func (e RenameEvent) getEventType() string { return e.Event }
+func (e RenameEvent) getSenderID() int     { return e.UserIndex }
