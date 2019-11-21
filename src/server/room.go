@@ -141,7 +141,7 @@ func (r *Room) distributeMessage(m Message) {
 	r.MessageCache.push(m)
 	messageData := m.getEventData()
 	for _, client := range r.Clients {
-		if client.ID != m.SenderID {
+		if client != nil && client.ID != m.SenderID {
 			client.sendBuffer <- messageData
 		}
 	}
