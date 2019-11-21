@@ -103,8 +103,6 @@ func (r *Room) addClient(c *Client) error {
 		}
 
 		//Now the new client is up to date, all the other clients are notified of their presence.
-		for _, cc := range r.Clients {
-			if cc != nil {
 				userEvent, _ := json.Marshal(
 					UserEvent{
 						Event:     "user",
@@ -112,6 +110,8 @@ func (r *Room) addClient(c *Client) error {
 						Users:     clientNames,
 						NumUsers:  r.ClientCount,
 					})
+		for _, cc := range r.Clients {
+			if cc != nil {
 				cc.sendBuffer <- userEvent
 			}
 		}
