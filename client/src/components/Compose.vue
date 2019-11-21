@@ -1,7 +1,10 @@
 <template lang="html">
   <section>
     <div class="container">
-      <Message :author="this.$store.state.client.username">
+      <Message
+        :colour="this.$store.state.client.colour"
+        :author="this.$store.state.client.username"
+      >
         <canvas id="sketchpad"></canvas>
       </Message>
     </div>

@@ -1,7 +1,11 @@
+import router from "../router";
+import COLOURS from "../assets/js/colours.js"
+
 const state = {
-  socket: null,
   username: "",
-  colour: null
+  colour: COLOURS[0],
+  room: null,
+  users: []
 };
 
 const getters = {};
@@ -17,12 +21,19 @@ const actions = {
         // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
+  },
+  init: ({ commit }, payload) => {
+    commit("init", payload);
+    router.push({ name: "room", params: { id: payload.room } });
   }
 };
 
 const mutations = {
-  join: (state, sock) => {
-    state.socket = sock;
+  init: (state, payload) => {
+    state.room = payload.room;
+    state.index = payload.index;
+    state.users = payload.users;
+    state.colour = COLOURS[payload.index];
   }
 };
 
