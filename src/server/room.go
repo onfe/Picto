@@ -44,7 +44,7 @@ func (r *Room) addClient(c *Client) error {
 
 		//Checking that the client's desired name is not already taken.
 		for _, client := range r.Clients {
-			if client.Name == c.Name {
+			if client != nil && client.Name == c.Name {
 				//If it is, then ClientCount can be decremented as they've failed to join the room.
 				r.ClientCount--
 				return errors.New("Name already taken.")
@@ -58,19 +58,21 @@ func (r *Room) addClient(c *Client) error {
 			newClientID = (newClientID + 1) % r.MaxClients
 		}
 
-		r.Clients[newClientID] = c
-		r.Clients[newClientID].ID = newClientID
-
 		//Now that the client has successfully been added to the server, the LastUpdate can be updated to now.
 		r.LastUpdate = time.Now()
 
-		//The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
-		//To do this, an array of strings of all the clients' usernames has to be constructed.
+		/*
+			The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
+			To do this, an array of strings of all the clients' usernames has to be constructed.
+		*/
 		clientNames := make([]string, r.MaxClients)
 		for i := 0; i < r.MaxClients; i++ {
-			clientNames[i] = r.Clients[i].Name
+			if r.Clients[i] != nil {
+				clientNames[i] = r.Clients[i].Name
+			}
 		}
 
+		//Updating the new client as to the room state with an init event.
 		initEvent, _ := json.Marshal(
 			InitEvent{
 				Event:     Event{event: "init"},
@@ -82,24 +84,34 @@ func (r *Room) addClient(c *Client) error {
 			})
 		c.sendBuffer <- initEvent
 
-		for _, c := range r.Clients {
-			userEvent, _ := json.Marshal(
-				UserEvent{
-					Event:     Event{event: "user"},
-					UserIndex: newClientID,
-					Users:     clientNames,
-					NumUsers:  r.ClientCount,
-				})
-			c.sendBuffer <- userEvent
-		}
-
-		//The client is sent all of the messages currently in the MessageCache of the room.
+		//Updating the new client with all the messages from the message cache.
 		for _, M := range r.MessageCache.getAll() {
 			if M != nil {
 				m := M.(Message)
 				c.sendBuffer <- m.getEventData()
 			}
 		}
+
+		//The new client is added into the clientNames array.
+		clientNames[newClientID] = c.Name
+
+		//Now the new client is up to date, all the other clients are notified of their presence.
+		for _, cc := range r.Clients {
+			if cc != nil {
+				userEvent, _ := json.Marshal(
+					UserEvent{
+						Event:     Event{event: "user"},
+						UserIndex: newClientID,
+						Users:     clientNames,
+						NumUsers:  r.ClientCount,
+					})
+				cc.sendBuffer <- userEvent
+			}
+		}
+
+		//The new client is added to the room's clients array.
+		r.Clients[newClientID] = c
+		r.Clients[newClientID].ID = newClientID
 
 		return nil
 	}
