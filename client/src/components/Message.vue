@@ -1,13 +1,40 @@
 <template lang="html">
   <div class="ratio">
-    <div class="inner">
-      <span class="author">Pedanticat</span>
+    <div class="inner" v-bind:style="{ borderColor: this.borderCol }">
+      <span
+        class="author"
+        v-bind:style="{ background: this.colour, borderColor: this.borderCol }"
+      >
+        {{ author }}
+      </span>
+      <div class="content">
+        <slot></slot>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+import Color from "color";
+export default {
+  props: {
+    author: {
+      type: String,
+      default: ""
+    },
+    colour: {
+      type: String,
+      default: "#e97777"
+    }
+  },
+  computed: {
+    borderCol() {
+      return Color(this.colour)
+        .darken(0.2)
+        .hex();
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -24,15 +51,25 @@ export default {};
   height: 100%;
   background: #fff;
   border-radius: 4px;
-  border: 2px solid desaturate(darken(#e97777, 20%), 20%);
+  border: 0.5vw solid desaturate(darken(#e97777, 20%), 20%);
   overflow: hidden;
 }
 
+.content {
+  width: 100%;
+  height: 100%;
+}
+
 .author {
-  padding: 4px;
+  z-index: 5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 1vw;
+  font-size: 4vw;
   background: #e97777;
-  border-bottom: 2px solid transparent;
-  border-right: 2px solid transparent;
+  border-bottom: 0.5vw solid transparent;
+  border-right: 0.5vw solid transparent;
   border-color: inherit;
   border-bottom-right-radius: 4px;
   color: #fff;

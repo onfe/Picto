@@ -5,7 +5,7 @@
       v-for="(msg, key) in this.$store.state.messages.history"
       v-bind:key="key"
     >
-      <Message />
+      <Message :author="msg.author" :colour="msg.colour"></Message>
     </div>
   </section>
 </template>
