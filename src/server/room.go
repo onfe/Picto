@@ -4,11 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"math/rand"
-	"strconv"
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 //Room is a struct that holds all the info about a singular picto room.
@@ -55,14 +51,6 @@ func (r *Room) addClient(c *Client) error {
 			}
 		}
 
-		//The client is sent all of the messages currently in the MessageCache of the room.
-		for _, M := range r.MessageCache.getAll() {
-			if M != nil {
-				m := M.(Message)
-				c.send(websocket.TextMessage, m.Body)
-			}
-		}
-
 		//Generating an ID for the new client.
 		newClientID := 0
 		for r.Clients[newClientID] != nil {
@@ -75,6 +63,43 @@ func (r *Room) addClient(c *Client) error {
 
 		//Now that the client has successfully been added to the server, the LastUpdate can be updated to now.
 		r.LastUpdate = time.Now()
+
+		//The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
+		//To do this, an array of strings of all the clients' usernames has to be constructed.
+		clientNames := make([]string, r.MaxClients)
+		for i := 0; i < r.MaxClients; i++ {
+			clientNames[i] = r.Clients[i].Name
+		}
+
+		initEvent, _ := json.Marshal(
+			InitEvent{
+				Event:     Event{event: "init"},
+				RoomID:    r.ID,
+				RoomName:  r.Name,
+				UserIndex: newClientID,
+				Users:     clientNames,
+				NumUsers:  r.ClientCount,
+			})
+		c.sendBuffer <- initEvent
+
+		for _, c := range r.Clients {
+			userEvent, _ := json.Marshal(
+				UserEvent{
+					Event:     Event{event: "user"},
+					UserIndex: newClientID,
+					Users:     clientNames,
+					NumUsers:  r.ClientCount,
+				})
+			c.sendBuffer <- userEvent
+		}
+
+		//The client is sent all of the messages currently in the MessageCache of the room.
+		for _, M := range r.MessageCache.getAll() {
+			if M != nil {
+				m := M.(Message)
+				c.sendBuffer <- m.getEventData()
+			}
+		}
 
 		return nil
 	}
@@ -102,9 +127,10 @@ func (r *Room) removeClient(clientID int) error {
 func (r *Room) distributeMessage(m Message) {
 	r.LastUpdate = time.Now()
 	r.MessageCache.push(m)
+	messageData := m.getEventData()
 	for _, client := range r.Clients {
 		if client.ID != m.SenderID {
-			client.sendBuffer <- m.Body
+			client.sendBuffer <- messageData
 		}
 	}
 }
