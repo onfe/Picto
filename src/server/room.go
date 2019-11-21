@@ -37,6 +37,16 @@ func (r *Room) getDetails() string {
 	return "(Room ID" + r.ID + " ('" + r.Name + "'))"
 }
 
+func (r *Room) getClientNames() []string {
+	names := make([]string, r.MaxClients)
+	for i, user := range r.Clients {
+		if user != nil {
+			names[i] = user.Name
+		}
+	}
+	return names
+}
+
 func (r *Room) changeName(newName string) {
 	r.Name = newName
 }
@@ -69,13 +79,8 @@ func (r *Room) addClient(c *Client) error {
 			The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
 			To do this, an array of strings of all the clients' usernames (including the new client's) has to be constructed.
 		*/
-		clientNames := make([]string, r.MaxClients)
+		clientNames := r.getClientNames()
 		clientNames[newClientID] = c.Name
-		for i := 0; i < r.MaxClients; i++ {
-			if r.Clients[i] != nil {
-				clientNames[i] = r.Clients[i].Name
-			}
-		}
 
 		//Updating the new client as to the room state with an init event.
 		initEvent, _ := json.Marshal(
