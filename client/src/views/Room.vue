@@ -15,7 +15,7 @@
 <script>
 import Compose from "@/components/Compose.vue";
 import MessageHistory from "@/components/MessageHistory.vue";
-import Footer from "@/components/Footer.vue"
+import Footer from "@/components/Footer.vue";
 
 export default {
   components: {

@@ -5,11 +5,11 @@ const getters = {};
 const actions = {
   send: ({ dispatch }) => {
     const data = window._sketch.getSendableData();
-    console.log({data});
+    console.log({ data });
     const pl = {
       event: "message",
       data: data
-    }
+    };
     dispatch("socket/send", pl, { root: true });
   },
   clear: () => {

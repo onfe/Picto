@@ -20,6 +20,9 @@ const actions = {
     });
   },
   _onMessage: (s, pl) => {
+    if (!pl.event) {
+      throw "Payload does not contain event field.";
+    }
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
@@ -28,6 +31,10 @@ const actions = {
   },
   send: ({ state }, pl) => {
     // TODO: check if connected, if not, dispatch socket/reconnect
+    if (!pl.event) {
+      throw "Payload does not contain event field.";
+    }
+
     state._socket.send(pl);
     const now = new Date();
     // eslint-disable-next-line no-console

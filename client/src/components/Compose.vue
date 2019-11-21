@@ -10,7 +10,7 @@
 
 <script>
 import Sketchpad from "@/assets/js/sketchpad.js";
-import Message from "@/components/Message.vue"
+import Message from "@/components/Message.vue";
 export default {
   name: "Compose",
   data() {

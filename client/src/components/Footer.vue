@@ -9,14 +9,13 @@
 export default {
   methods: {
     onClear() {
-      this.$store.dispatch("compose/clear")
+      this.$store.dispatch("compose/clear");
     },
     onSend() {
-      this.$store.dispatch("compose/send")
+      this.$store.dispatch("compose/send");
     }
   }
-}
+};
 </script>
 
-<style lang="css" scoped>
-</style>
+<style lang="css" scoped></style>
