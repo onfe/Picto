@@ -17,7 +17,7 @@ func newMessage(Body []byte, SenderID int) Message {
 
 func (m *Message) getEventData() []byte {
 	data, _ := json.Marshal(MessageEvent{
-		Event:     Event{event: "message"},
+		Event:     Event{Event: "message"},
 		UserIndex: m.SenderID,
 		Message:   m.Body,
 	})

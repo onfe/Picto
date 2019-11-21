@@ -75,7 +75,7 @@ func (r *Room) addClient(c *Client) error {
 		//Updating the new client as to the room state with an init event.
 		initEvent, _ := json.Marshal(
 			InitEvent{
-				Event:     Event{event: "init"},
+				Event:     Event{Event: "init"},
 				RoomID:    r.ID,
 				RoomName:  r.Name,
 				UserIndex: newClientID,
@@ -100,7 +100,7 @@ func (r *Room) addClient(c *Client) error {
 			if cc != nil {
 				userEvent, _ := json.Marshal(
 					UserEvent{
-						Event:     Event{event: "user"},
+						Event:     Event{Event: "user"},
 						UserIndex: newClientID,
 						Users:     clientNames,
 						NumUsers:  r.ClientCount,

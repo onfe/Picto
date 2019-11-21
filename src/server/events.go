@@ -2,7 +2,7 @@ package server
 
 //Event is the base struct for an event sent to clients.
 type Event struct {
-	event string
+	Event string
 }
 
 //InitEvent is sent to clients when they join a room to inform them of the room's state.
