@@ -1,6 +1,7 @@
 const state = {
   socket: null,
-  username: ""
+  username: "",
+  colour: null
 };
 
 const getters = {};
