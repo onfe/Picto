@@ -138,6 +138,13 @@ func (r *Room) removeClient(clientID int) error {
 			r.ClientCount--
 		}
 
+		r.distributeEvent(UserEvent{
+			Event:     "user",
+			UserIndex: clientID,
+			Users:     r.getClientNames(),
+			NumUsers:  r.ClientCount,
+		})
+
 		return nil
 	}
 	return errors.New("Room does not have such a client")
