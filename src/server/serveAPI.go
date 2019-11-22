@@ -52,6 +52,23 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+		case "announce":
+			message, messageSupplied := r.Form["message"]
+			roomID, roomIDSupplied := r.Form["roomid"]
+			if messageSupplied {
+				if roomIDSupplied {
+					rm.Rooms[roomID[0]].announce(message[0])
+					response, err = json.Marshal("Announced " + message[0] + " To room ID" + roomID[0])
+				} else {
+					for _, room := range rm.Rooms {
+						room.announce(message[0])
+						response, err = json.Marshal("Announced " + message[0] + " To all rooms")
+					}
+				}
+			} else {
+				response, err = json.Marshal("Malformed API call. Please supply a message.")
+			}
+
 		default:
 			response, err = json.Marshal("Unrecognised API method")
 

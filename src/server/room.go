@@ -163,6 +163,13 @@ func (r *Room) distributeEvent(e Event) {
 	}
 }
 
+func (r *Room) announce(message string) {
+	r.distributeEvent(AnnouncementEvent{
+		Event:        "announcement",
+		Announcement: message,
+	})
+}
+
 func (r *Room) closeAllConnections() {
 	for _, client := range r.Clients {
 		client.closeConnection("Room closed by server.")
