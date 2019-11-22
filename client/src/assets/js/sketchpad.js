@@ -1,3 +1,5 @@
+import Notepad from "./notepad.js";
+
 class Sketchpad {
   constructor(width, height, canvas) {
     this.width = width;
