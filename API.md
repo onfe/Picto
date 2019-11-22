@@ -67,6 +67,16 @@ Client -> Server:
 }
 ```
 
+### Announcement
+
+Server -> Client:
+```JSON
+{
+  "Event": "announcement",
+  "Announcement": "Welcome to Picto!",
+}
+```
+
 ### Rename Room
 
 Client -> Server -> Client(s)
