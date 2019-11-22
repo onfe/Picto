@@ -49,6 +49,10 @@ func (r *Room) getClientNames() []string {
 
 func (r *Room) changeName(newName string) {
 	r.Name = newName
+	r.distributeEvent(RenameEvent{
+		Event:    "rename",
+		RoomName: r.Name,
+	})
 }
 
 func (r *Room) addClient(c *Client) error {
