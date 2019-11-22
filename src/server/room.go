@@ -102,6 +102,12 @@ func (r *Room) addClient(c *Client) error {
 			}
 		}
 
+		//Sending the client a "welcome to picto" announcement.
+		c.sendBuffer <- AnnouncementEvent{
+			Event:        "announcement",
+			Announcement: "Welcome to Picto!",
+		}.getEventData()
+
 		//Now the new client is up to date, all the other clients are notified of their presence.
 		userEvent, _ := json.Marshal(
 			UserEvent{
