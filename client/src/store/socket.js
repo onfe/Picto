@@ -49,6 +49,7 @@ const actions = {
         // TODO: ADD Rename event.
         break;
       default:
+        // eslint-disable-next-line no-console
         console.log(pl);
     }
   },
