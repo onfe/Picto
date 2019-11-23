@@ -27,6 +27,9 @@ const actions = {
   init: ({ commit }, payload) => {
     commit("init", payload);
     router.push(`/room/${payload.RoomID}`);
+  },
+  updateUser: ({ commit }, pl) => {
+    commit("updateUser", pl);
   }
 };
 
@@ -36,6 +39,9 @@ const mutations = {
     state.index = payload.UserIndex;
     state.users = payload.Users;
     state.colour = COLOURS[payload.UserIndex];
+  },
+  updateUser: (state, payload) => {
+    state.users = payload.Users;
   }
 };
 

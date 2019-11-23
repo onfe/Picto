@@ -27,7 +27,7 @@ const actions = {
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
-      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
+      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl.Event}`
     );
 
     switch (pl.Event) {
@@ -36,6 +36,15 @@ const actions = {
         break;
       case "init":
         dispatch("client/init", pl, { root: true });
+        break;
+      case "user":
+        dispatch("client/updateUser", pl, { root: true });
+        break;
+      case "announcement":
+        dispatch("messages/announce", pl, { root: true });
+        break;
+      case "rename":
+        // TODO: ADD Rename event.
         break;
       default:
         console.log(pl);
@@ -47,7 +56,7 @@ const actions = {
       throw "Payload does not contain event field.";
     }
 
-    state._socket.send(pl);
+    state._socket.send(JSON.stringify(pl));
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
