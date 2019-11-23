@@ -22,6 +22,11 @@ export default {
     Compose,
     MessageHistory,
     Footer
+  },
+  mounted() {
+    if (this.$store.state.client.room == null) {
+      this.$router.replace(`/join/${this.$route.params.id}`);
+    }
   }
 };
 </script>

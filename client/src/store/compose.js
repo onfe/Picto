@@ -10,6 +10,7 @@ const actions = {
       Event: "message",
       Message: data
     };
+    dispatch("messages/addSelf", pl, { root: true });
     dispatch("socket/send", pl, { root: true });
   },
   clear: () => {
