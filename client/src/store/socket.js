@@ -27,7 +27,9 @@ const actions = {
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
-      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl.Event}`
+      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${
+        pl.Event
+      }`
     );
 
     switch (pl.Event) {

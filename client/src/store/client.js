@@ -1,5 +1,5 @@
 import router from "../router";
-import COLOURS from "../assets/js/colours.js"
+import COLOURS from "../assets/js/colours.js";
 
 const state = {
   index: -1,

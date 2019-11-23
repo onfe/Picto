@@ -19,7 +19,7 @@ export default {
         return {
           span: 192,
           data: Array(192 * 64).fill(0)
-        }
+        };
       }
     },
     author: {
@@ -34,17 +34,19 @@ export default {
   data() {
     return {
       idHash: null
-    }
+    };
   },
   beforeMount() {
-    this.idHash = Math.random().toString(36).substring(2, 15)
+    this.idHash = Math.random()
+      .toString(36)
+      .substring(2, 15);
   },
   mounted() {
     const canv = document.getElementById(this.idHash);
     this.notepad = new Notepad(192, 64, canv);
     this.notepad.loadImageData(this.data);
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

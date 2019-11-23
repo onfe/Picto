@@ -15,8 +15,8 @@ const actions = {
       colour: COLOURS[pl.UserIndex],
       data: pl.Message,
       id: state.iter
-    }
-    commit("add", message)
+    };
+    commit("add", message);
   },
   addSelf: ({ rootState, commit }, pl) => {
     const message = {
@@ -24,16 +24,16 @@ const actions = {
       author: rootState.client.users[rootState.client.index],
       colour: COLOURS[rootState.client.index],
       data: pl.Message
-    }
-    commit("add", message)
+    };
+    commit("add", message);
   },
   announce: ({ commit }, pl) => {
     console.log(pl);
     const message = {
       type: "announcement",
       text: pl.Announcement
-    }
-    commit("add", message)
+    };
+    commit("add", message);
   }
 };
 
