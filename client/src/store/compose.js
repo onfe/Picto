@@ -5,7 +5,6 @@ const getters = {};
 const actions = {
   send: ({ dispatch }) => {
     const data = window._sketch.getSendableData();
-    console.log({ data });
     const pl = {
       Event: "message",
       Message: data

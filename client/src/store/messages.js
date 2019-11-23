@@ -28,7 +28,6 @@ const actions = {
     commit("add", message);
   },
   announce: ({ commit }, pl) => {
-    console.log(pl);
     const message = {
       type: "announcement",
       text: pl.Announcement
