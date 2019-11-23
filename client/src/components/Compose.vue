@@ -1,14 +1,19 @@
 <template lang="html">
   <section>
     <div class="container">
-      <canvas id="sketchpad"></canvas>
+      <Message
+        :colour="this.$store.state.client.colour"
+        :author="this.$store.getters['client/username']"
+      >
+        <canvas id="sketchpad"></canvas>
+      </Message>
     </div>
   </section>
 </template>
 
 <script>
 import Sketchpad from "@/assets/js/sketchpad.js";
-
+import Message from "@/components/Message.vue";
 export default {
   name: "Compose",
   data() {
@@ -20,6 +25,9 @@ export default {
     const canv = document.getElementById("sketchpad");
     this.sketchpad = new Sketchpad(192, 64, canv);
     window._sketch = this.sketchpad;
+  },
+  components: {
+    Message
   }
 };
 </script>
@@ -29,6 +37,7 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+  padding: 1vw;
 }
 
 canvas {

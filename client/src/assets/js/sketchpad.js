@@ -1,29 +1,39 @@
-class Sketchpad {
-  constructor(width, height, canvas, rainbowMode) {
-    rainbowMode = rainbowMode || false;
-    this.rainbowMode = rainbowMode;
-    this.colourIndex = rainbowMode ? 2 : 1;
-    this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
+import Notepad from "./notepad.js";
 
-    this.canvas = canvas;
-    this.ctx = this.canvas.getContext("2d");
+class Sketchpad {
+  constructor(width, height, canvas) {
     this.width = width;
     this.height = height;
-    this.canvas.width = this.width;
-    this.canvas.height = this.height;
+    this.notepad = new Notepad(width, height, canvas);
+
+    this.rainbowMode = false;
+    this.colourIndex = 1;
+    this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
 
     /**last coords of mouse, -1 when the mouse is outside the canvas bounds. */
     this.lastMousePos = [-1, -1];
 
     /**These events monitor if the mouse is up/down */
     this.mousedown = false;
-    this.canvas.addEventListener("pointerdown", () => (this.mousedown = true));
-    this.canvas.addEventListener("pointerup", () => (this.mousedown = false));
+    this.notepad.canvas.addEventListener(
+      "pointerdown",
+      () => (this.mousedown = true)
+    );
+    this.notepad.canvas.addEventListener(
+      "pointerup",
+      () => (this.mousedown = false)
+    );
 
     /**Drawing events */
-    this.canvas.addEventListener("pointermove", this.drawTo.bind(this));
-    this.canvas.addEventListener("pointerdown", this.drawPix.bind(this));
-    this.canvas.addEventListener("pointerleave", this.resetMousePos.bind(this));
+    this.notepad.canvas.addEventListener("pointermove", this.drawTo.bind(this));
+    this.notepad.canvas.addEventListener(
+      "pointerdown",
+      this.drawPix.bind(this)
+    );
+    this.notepad.canvas.addEventListener(
+      "pointerleave",
+      this.resetMousePos.bind(this)
+    );
 
     /**imageData is all the drawn pixels and baked text */
     this.imageData = {
@@ -66,6 +76,23 @@ class Sketchpad {
     this.refresh();
   }
 
+  refresh() {
+    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
+    this.notepad.loadImageData(this.imageData);
+    if (this.typeLog[this.typeLogHead] != undefined) {
+      this.overlayText(this.typeLog[this.typeLogHead]);
+    }
+  }
+
+  toggleRainbowMode() {
+    this.rainbowMode = !this.rainbowMode;
+    if (this.rainbowMode) {
+      this.colourIndex = 2;
+    } else {
+      this.colourIndex = 1;
+    }
+  }
+
   /**-------------------------------------------------- Resets */
   resetMousePos() {
     this.lastMousePos = [-1, -1];
@@ -92,7 +119,7 @@ class Sketchpad {
     var [x, y] = this.getMousePixPos(event.offsetX, event.offsetY);
 
     this.imageData["data"][y * this.width + x] = this.colourIndex;
-    this.setPixel(x, y, this.colourIndex);
+    this.notepad.setPixel(x, y, this.colourIndex);
 
     if (this.rainbowMode) {
       this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
@@ -116,7 +143,7 @@ class Sketchpad {
         var tempx = Math.round(x - deltas[0] * (i / dist));
         var tempy = Math.round(y - deltas[1] * (i / dist));
         this.imageData["data"][tempy * this.width + tempx] = this.colourIndex;
-        this.setPixel(tempx, tempy, this.colourIndex);
+        this.notepad.setPixel(tempx, tempy, this.colourIndex);
       }
       if (this.rainbowMode) {
         this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
@@ -126,14 +153,21 @@ class Sketchpad {
     [this.lastMousePos[0], this.lastMousePos[1]] = [x, y];
   }
 
+  getMousePixPos(offsetX, offsetY) {
+    return [
+      Math.round((offsetX / this.notepad.canvas.clientWidth) * this.width),
+      Math.round((offsetY / this.notepad.canvas.clientHeight) * this.height)
+    ];
+  }
+
   /**-------------------------------------------------- Text drawing */
   drawChar(char) {
     /*Setting up the styling for the text and ascertaining its size*/
-    this.ctx.font = "16px 'Generic Pixel Font 5x7 Neue'";
-    this.ctx.fillStyle = this.getColour(this.colourIndex);
-    this.ctx.textBaseline = "hanging";
-    this.ctx.textAlign = "end";
-    var charWidth = Math.round(this.ctx.measureText(char).width);
+    this.notepad.ctx.font = "16px 'Generic Pixel Font 5x7 Neue'";
+    this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
+    this.notepad.ctx.textBaseline = "hanging";
+    this.notepad.ctx.textAlign = "end";
+    var charWidth = Math.round(this.notepad.ctx.measureText(char).width);
 
     /**newText will hold the all the unbaked text on the sketchpad*/
     var newText = {
@@ -163,10 +197,10 @@ class Sketchpad {
     canvas, we write the text to the canvas to get the image data, then return
     the canvas to its original state and use the image data to decide where to
     draw the text onto the canvas ourselves.*/
-    var oldData = this.ctx.getImageData(0, 0, this.width, this.height);
-    this.ctx.fillText(char, this.cursorPos[0], this.cursorPos[1]);
-    var newData = this.ctx.getImageData(0, 0, this.width, this.height);
-    this.ctx.putImageData(oldData, 0, 0);
+    var oldData = this.notepad.ctx.getImageData(0, 0, this.width, this.height);
+    this.notepad.ctx.fillText(char, this.cursorPos[0], this.cursorPos[1]);
+    var newData = this.notepad.ctx.getImageData(0, 0, this.width, this.height);
+    this.notepad.ctx.putImageData(oldData, 0, 0);
 
     /**newText isn't added to typeLog unless the character actually made a
      * difference on the canvas (e.g. wasn't a space)
@@ -205,6 +239,18 @@ class Sketchpad {
     }
   }
 
+  overlayText(data) {
+    for (var i = 0; i < data["data"].length; i++) {
+      if (data["data"][i] != 0) {
+        this.notepad.setPixel(
+          i % data["span"],
+          Math.floor(i / data["span"]),
+          data["data"][i]
+        );
+      }
+    }
+  }
+
   /**bakeText takes the head of the textLog and writes it onto the imageData */
   bakeText() {
     var lastLog = this.typeLog[this.typeLogHead];
@@ -217,92 +263,6 @@ class Sketchpad {
       this.resetCursorPos();
       this.resetTypeLog();
       this.refresh();
-    }
-  }
-
-  /**-------------------------------------------------- Drawing */
-  refresh() {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-    this.loadImageData(this.imageData);
-    if (this.typeLog[this.typeLogHead] != undefined) {
-      this.overlayText(this.typeLog[this.typeLogHead]);
-    }
-  }
-
-  loadImageData(data) {
-    this.ctx.clearRect(0, 0, this.width, this.height);
-    for (var i = 0; i < data["data"].length; i++) {
-      if (data["data"][i] != 0) {
-        this.setPixel(
-          Math.round(i % data["span"]),
-          Math.floor(i / data["span"]),
-          data["data"][i]
-        );
-      }
-    }
-  }
-
-  overlayText(data) {
-    for (var i = 0; i < data["data"].length; i++) {
-      if (data["data"][i] != 0) {
-        this.setPixel(
-          i % data["span"],
-          Math.floor(i / data["span"]),
-          data["data"][i]
-        );
-      }
-    }
-  }
-
-  setPixel(x, y, i) {
-    this.ctx.fillStyle = this.getColour(i);
-    this.ctx.clearRect(x, y, 1, 1);
-    this.ctx.fillRect(x, y, 1, 1);
-  }
-
-  getMousePixPos(offsetX, offsetY) {
-    return [
-      Math.round((offsetX / this.canvas.clientWidth) * this.canvas.width),
-      Math.round((offsetY / this.canvas.clientHeight) * this.canvas.height)
-    ];
-  }
-
-  getColour(i) {
-    switch (i) {
-      case 0:
-        return "rgba(255,255,255,0)";
-      case 1:
-        return "rgba(0,0,0,1)";
-      default:
-        /**This is my (Josh's) nice way of generating rainbows.
-         * No touchy. >:c
-         * It goes
-         * ___      ___      ___      ___      ___
-         *    \    /|  \    /...\    /  |\    /   \    /
-         *     \  /.|   \  /|...|\  /   |.\  /     \  /
-         *      \/..|    \/ |...| \/    |..\/       \/
-         *         ^up        ^flat      ^down
-         */
-        var toCode = (r, g, b) => {
-          return "rgba(" + r + "," + g + "," + b + ",1)";
-        };
-
-        var up = i =>
-          Math.round(255 - this.saturation + this.saturation * (i % 1));
-        var flat = () => 255;
-        var down = i =>
-          Math.round(255 - this.saturation + this.saturation * (1 - (i % 1)));
-
-        var ci = ((i - 2) / 254) * 3;
-
-        switch (Math.floor(ci)) {
-          case 0:
-            return toCode(flat(ci), up(ci), down(ci));
-          case 1:
-            return toCode(down(ci), flat(ci), up(ci));
-          case 2:
-            return toCode(up(ci), down(ci), flat(ci));
-        }
     }
   }
 }

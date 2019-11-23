@@ -65,3 +65,27 @@ Client -> Server:
   "Event": "message",
   "Message": "NPXkOU8..."
 }
+```
+
+### Announcement
+
+Server -> Client:
+```JSON
+{
+  "Event": "announcement",
+  "Announcement": "Welcome to Picto!",
+}
+```
+
+### Rename Room
+
+Client -> Server -> Client(s)
+```JSON
+{
+  "Event": "rename",
+  "UserIndex": 2,
+  "RoomName": "Denver Airport"
+}
+```
+`UserIndex` is the index of the user in the users array who changed the room's 
+name.

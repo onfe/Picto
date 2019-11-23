@@ -7,7 +7,7 @@
     <div class="edit">
       <Toolbox class="toolbox" />
       <Compose class="compose" />
-      <TextEntry class="text" />
+      <Footer class="text" />
     </div>
   </main>
 </template>
@@ -15,11 +15,18 @@
 <script>
 import Compose from "@/components/Compose.vue";
 import MessageHistory from "@/components/MessageHistory.vue";
+import Footer from "@/components/Footer.vue";
 
 export default {
   components: {
     Compose,
-    MessageHistory
+    MessageHistory,
+    Footer
+  },
+  mounted() {
+    if (this.$store.state.client.room == null) {
+      this.$router.replace(`/join/${this.$route.params.id}`);
+    }
   }
 };
 </script>
@@ -55,20 +62,18 @@ main {
 .edit {
   flex: 0;
   display: grid;
-  grid-template: "T C" "E E";
+  grid-template: "T C" "T E";
 }
 
 .toolbox {
   grid-area: T;
   width: $sidebar-width;
-  height: $ratio-height;
   background: #ccc;
 }
 
 .compose {
   grid-area: C;
   width: $ratio-width;
-  height: $ratio-height;
 }
 
 .text {

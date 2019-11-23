@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strconv"
@@ -87,7 +88,7 @@ func (c *Client) sendLoop() {
 				return
 			}
 
-			log.Println("Distributed message to "+c.getDetails()+":", string(message))
+			log.Println("Distributed message to "+c.getDetails()+":", string(message)[:20])
 
 		case <-ticker.C:
 			err := c.send(websocket.PingMessage, nil)
@@ -135,19 +136,35 @@ func (c *Client) recieveLoop() {
 
 	//Loops, pulling messages from the websocket.
 	for {
-		_, message, err := c.ws.ReadMessage()
+		_, data, err := c.ws.ReadMessage()
 		if err != nil {
 			log.Println("Readloop got error from websocket connection and stopped:", err)
 			break
 		}
-		c.recieve(newMessage(message, c.ID))
+		event := make(map[string]interface{})
+		json.Unmarshal(data, &event)
+		if _, valid := event["Event"]; !valid {
+			log.Println("Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
+		} else {
+			switch event["Event"] {
+			case "message":
+				var e MessageEvent
+				json.Unmarshal(data, &e)
+				e.UserIndex = c.ID
+				c.recieve(e)
+			case "rename":
+				var e RenameEvent
+				json.Unmarshal(data, &e)
+				c.room.changeName(e.RoomName)
+			}
+		}
 	}
 }
 
-func (c *Client) recieve(m Message) {
+func (c *Client) recieve(e Event) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from "+c.getDetails()+":", string(m.Body))
-		c.room.distributeMessage(m)
+		log.Println("Recieved message from "+c.getDetails()+":", e.getEventType())
+		c.room.distributeEvent(e)
 	}
 }

@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import client from "./client";
 import socket from "./socket";
 import messages from "./messages";
+import compose from "./compose";
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ export default new Vuex.Store({
   modules: {
     client,
     socket,
-    messages
+    messages,
+    compose
   }
 });

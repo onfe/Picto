@@ -2,19 +2,23 @@
   <section>
     <div
       class="message"
-      v-for="(msg, key) in this.$store.state.messages.history"
-      v-bind:key="key"
+      v-for="msg in this.$store.state.messages.history"
+      v-bind:key="msg.id"
     >
-      <Message />
+      <CanvasMessage v-if="msg.type == 'normal'" v-bind="msg" />
+      <Announcement v-if="msg.type == 'announcement'" v-bind="msg" />
     </div>
   </section>
 </template>
 
 <script>
-import Message from "@/components/Message.vue";
+import CanvasMessage from "@/components/CanvasMessage.vue";
+import Announcement from "@/components/Announcement.vue";
+
 export default {
   components: {
-    Message
+    CanvasMessage,
+    Announcement
   }
 };
 </script>

@@ -14,6 +14,10 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	roomID, hasRoom := r.Form["room"]
 
 	if hasName {
+		hasName = !(name[0] == "")
+	}
+
+	if hasName {
 		client, err := newClient(w, r, name[0])
 		if err != nil {
 			log.Println("Failed to create websocket:", err)
@@ -51,6 +55,12 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				log.Println("Client with name '" + name[0] + "' tried to join a room doesn't exist.")
 				client.closeConnection("Room doesn't exist")
 			}
+		}
+	} else {
+		if hasRoom {
+			log.Println("Client attempted to join room ID" + roomID[0] + " without a name.")
+		} else {
+			log.Println("Client attempted to join without a name or room.")
 		}
 	}
 }
