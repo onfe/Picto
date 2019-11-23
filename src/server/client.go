@@ -142,6 +142,7 @@ func (c *Client) recieveLoop() {
 			break
 		}
 		event := make(map[string]interface{})
+		json.Unmarshal(data, &event)
 		if _, valid := event["Event"]; !valid {
 			log.Println("Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
