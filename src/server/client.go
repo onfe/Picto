@@ -88,7 +88,7 @@ func (c *Client) sendLoop() {
 				return
 			}
 
-			log.Println("Distributed message to "+c.getDetails()+":", string(message))
+			log.Println("Distributed message to "+c.getDetails()+":", string(message)[:20])
 
 		case <-ticker.C:
 			err := c.send(websocket.PingMessage, nil)
@@ -150,6 +150,7 @@ func (c *Client) recieveLoop() {
 			case "message":
 				var e MessageEvent
 				json.Unmarshal(data, &e)
+				e.UserIndex = c.ID
 				c.recieve(e)
 			case "rename":
 				var e RenameEvent
