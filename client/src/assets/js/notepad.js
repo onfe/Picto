@@ -6,6 +6,7 @@ class Notepad {
     this.height = height;
     this.canvas.width = this.width;
     this.canvas.height = this.height;
+    this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
   }
 
   loadImageData(data) {

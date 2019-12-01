@@ -11,7 +11,6 @@ class Sketchpad {
 
     this.rainbowMode = false;
     this.colourIndex = 1;
-    this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
 
     /**last coords of mouse, -1 when the mouse is outside the canvas bounds. */
     this.lastMousePos = [-1, -1];
