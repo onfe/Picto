@@ -7,6 +7,7 @@ class Sketchpad {
     this.notepad = new Notepad(width, height, canvas);
 
     this.erasing = false;
+    this.pensize = 0;
 
     this.rainbowMode = false;
     this.colourIndex = 1;
@@ -103,6 +104,14 @@ class Sketchpad {
     this.colourIndex = 0;
   }
 
+  togglePenSize() {
+    if (this.pensize == 0) {
+      this.pensize = 1;
+    } else {
+      this.pensize = 0;
+    }
+  }
+
   /**-------------------------------------------------- Resets */
   resetMousePos() {
     this.lastMousePos = [-1, -1];
@@ -128,8 +137,12 @@ class Sketchpad {
 
     var [x, y] = this.getMousePixPos(event.offsetX, event.offsetY);
 
-    this.imageData["data"][y * this.width + x] = this.colourIndex;
-    this.notepad.setPixel(x, y, this.colourIndex);
+    for (var xo = x-this.pensize; xo <= x+this.pensize; xo++) {
+      for (var yo = y-this.pensize; yo <= y+this.pensize; yo++) {
+        this.imageData["data"][yo * this.width + xo] = this.colourIndex;      
+      }
+    }
+    this.notepad.setPixel(x, y, this.colourIndex, this.pensize);
 
     if (this.rainbowMode) {
       this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
@@ -152,8 +165,12 @@ class Sketchpad {
       for (var i = 0; i < dist; i += 0.5) {
         var tempx = Math.round(x - deltas[0] * (i / dist));
         var tempy = Math.round(y - deltas[1] * (i / dist));
-        this.imageData["data"][tempy * this.width + tempx] = this.colourIndex;
-        this.notepad.setPixel(tempx, tempy, this.colourIndex);
+        for (var xo = tempx-this.pensize; xo <= tempx+this.pensize; xo++) {
+          for (var yo = tempy-this.pensize; yo <= tempy+this.pensize; yo++) {
+            this.imageData["data"][yo * this.width + xo] = this.colourIndex;
+          }
+        }
+        this.notepad.setPixel(tempx, tempy, this.colourIndex, this.pensize);
       }
       if (this.rainbowMode) {
         this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
