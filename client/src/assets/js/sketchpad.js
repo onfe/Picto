@@ -6,6 +6,8 @@ class Sketchpad {
     this.height = height;
     this.notepad = new Notepad(width, height, canvas);
 
+    this.erasing = false;
+
     this.rainbowMode = false;
     this.colourIndex = 1;
     this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
@@ -84,13 +86,21 @@ class Sketchpad {
     }
   }
 
-  toggleRainbowMode() {
-    this.rainbowMode = !this.rainbowMode;
+  /**-------------------------------------------------- Button handlers */
+  setPenMode() {
+    if (this.colourIndex != 0) {
+      this.rainbowMode = !this.rainbowMode;
+    }
     if (this.rainbowMode) {
       this.colourIndex = 2;
     } else {
       this.colourIndex = 1;
     }
+  }
+
+  setEraserMode() {
+    this.rainbowMode = false;
+    this.colourIndex = 0;
   }
 
   /**-------------------------------------------------- Resets */
