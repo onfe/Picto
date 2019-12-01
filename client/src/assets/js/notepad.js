@@ -22,10 +22,11 @@ class Notepad {
     }
   }
 
-  setPixel(x, y, i) {
+  setPixel(x, y, i, s) {
+    s = s || 0;
     this.ctx.fillStyle = this.getColour(i);
     this.ctx.clearRect(x, y, 1, 1);
-    this.ctx.fillRect(x, y, 1, 1);
+    this.ctx.fillRect(x - s, y - s, 1 + s * 2, 1 + s * 2);
   }
 
   getColour(i) {

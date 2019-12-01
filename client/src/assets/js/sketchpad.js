@@ -136,9 +136,9 @@ class Sketchpad {
 
     var [x, y] = this.getMousePixPos(event.offsetX, event.offsetY);
 
-    for (var xo = x-this.pensize; xo <= x+this.pensize; xo++) {
-      for (var yo = y-this.pensize; yo <= y+this.pensize; yo++) {
-        this.imageData["data"][yo * this.width + xo] = this.colourIndex;      
+    for (var xo = x - this.pensize; xo <= x + this.pensize; xo++) {
+      for (var yo = y - this.pensize; yo <= y + this.pensize; yo++) {
+        this.imageData["data"][yo * this.width + xo] = this.colourIndex;
       }
     }
     this.notepad.setPixel(x, y, this.colourIndex, this.pensize);
@@ -164,8 +164,12 @@ class Sketchpad {
       for (var i = 0; i < dist; i += 0.5) {
         var tempx = Math.round(x - deltas[0] * (i / dist));
         var tempy = Math.round(y - deltas[1] * (i / dist));
-        for (var xo = tempx-this.pensize; xo <= tempx+this.pensize; xo++) {
-          for (var yo = tempy-this.pensize; yo <= tempy+this.pensize; yo++) {
+        for (var xo = tempx - this.pensize; xo <= tempx + this.pensize; xo++) {
+          for (
+            var yo = tempy - this.pensize;
+            yo <= tempy + this.pensize;
+            yo++
+          ) {
             this.imageData["data"][yo * this.width + xo] = this.colourIndex;
           }
         }
