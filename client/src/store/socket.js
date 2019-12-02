@@ -12,7 +12,9 @@ const actions = {
       const proto = window.location.protocol == "https:" ? "wss" : "ws";
       const here = window.location.host;
       const roomarg = room ? `&room=${room}` : "";
-      const sock = new WebSocket(`${proto}://${here}/ws?name=${name}${roomarg}`);
+      const sock = new WebSocket(
+        `${proto}://${here}/ws?name=${name}${roomarg}`
+      );
 
       commit("create", sock);
       window._sock = sock;
