@@ -16,12 +16,16 @@
 import Compose from "@/components/Compose.vue";
 import MessageHistory from "@/components/MessageHistory.vue";
 import Footer from "@/components/Footer.vue";
+import Toolbox from "@/components/Toolbox.vue";
+import Navbar from "@/components/Navbar.vue";
 
 export default {
   components: {
     Compose,
     MessageHistory,
-    Footer
+    Footer,
+    Toolbox,
+    Navbar
   },
   mounted() {
     if (this.$store.state.client.room == null) {
@@ -68,7 +72,6 @@ main {
 .toolbox {
   grid-area: T;
   width: $sidebar-width;
-  background: #ccc;
 }
 
 .compose {
