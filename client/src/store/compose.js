@@ -1,4 +1,7 @@
-const state = {};
+const state = {
+  tool: "pencil",
+  size: "small"
+};
 
 const getters = {};
 
@@ -14,10 +17,39 @@ const actions = {
   },
   clear: () => {
     window._sketch.clear();
+  },
+  pencil: ({ commit }) => {
+    window._sketch.setPenMode();
+    commit("pencil");
+  },
+  eraser: ({ commit }) => {
+    window._sketch.setEraserMode();
+    commit("eraser");
+  },
+  large: ({ commit }) => {
+    window._sketch.pensize = 1;
+    commit("large");
+  },
+  small: ({ commit }) => {
+    window._sketch.pensize = 0;
+    commit("small");
   }
 };
 
-const mutations = {};
+const mutations = {
+  pencil: state => {
+    state.tool = "pencil";
+  },
+  eraser: state => {
+    state.tool = "eraser";
+  },
+  large: state => {
+    state.size = "large";
+  },
+  small: state => {
+    state.size = "small";
+  }
+};
 
 const client = {
   namespaced: true,

@@ -1,3 +1,10 @@
 $sidebar-width: 8vw;
 $ratio-width: calc(100vw - #{$sidebar-width});
 $ratio-height: calc(#{$ratio-width} / 3);
+
+$spacer: 1vw;
+
+$grey: #808080;
+$grey-d: darken( $grey, 20%);
+$grey-l: lighten( $grey, 20% );
+$almost-white: #F0F0F0;

@@ -4,6 +4,7 @@ import "./registerServiceWorker";
 import store from "./store";
 import router from "./router";
 import "./assets/scss/style.scss";
+import "./plugins/fontawesome-vue";
 
 Vue.config.productionTip = false;
 
