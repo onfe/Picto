@@ -15,4 +15,14 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.announcement {
+  padding: $spacer;
+  font-family: "pixel 5x7";
+  font-size: $size-pixel;
+  color: #fff;
+  background: #000;
+  border: 0.5vw solid $grey-d;
+  border-radius: $spacer;
+}
+</style>
