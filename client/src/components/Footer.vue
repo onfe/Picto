@@ -1,9 +1,9 @@
 <template>
   <section>
     <div class="cont">
-      <span @click="onSend">Send</span>
-      <span @click="onClear">Clear</span>
-      <input />
+      <a @click="onClear">Clear</a>
+      <a @click="onCopy">Copy</a>
+      <a @click="onSend">Send</a>
     </div>
   </section>
 </template>
@@ -34,5 +34,21 @@ section {
   border: 0.5vw solid $grey-l;
   background: $almost-white;
   height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  a {
+    flex: 1;
+    text-align: center;
+    font-family: "pixel 5x7";
+    font-size: 4vw;
+    border-right: 0.5vw solid $grey-l;
+
+    &:last-of-type {
+      border: 0;
+    }
+  }
 }
 </style>
