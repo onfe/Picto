@@ -6,7 +6,6 @@ class Sketchpad {
     this.height = height;
     this.notepad = new Notepad(width, height, canvas);
 
-    this.erasing = false;
     this.pensize = 0;
 
     this.rainbowMode = false;
