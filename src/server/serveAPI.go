@@ -9,9 +9,9 @@ import (
 //ServeAPI handles API calls.
 func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
+	method, methodSupplied := r.Form["method"]
 
 	if token, tokenSupplied := r.Form["token"]; tokenSupplied && token[0] == rm.apiToken {
-		method, methodSupplied := r.Form["method"]
 		if !methodSupplied {
 			log.Println("An attempt to query the API was made without supplying a method with token:", token[0])
 			return
@@ -72,6 +72,27 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		default:
 			response, err = json.Marshal("Unrecognised API method")
 
+		}
+
+		if err != nil {
+			response, _ = json.Marshal(err)
+		}
+
+		log.Println(method[0]+":", string(response))
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(response)
+
+	} else if !tokenSupplied && methodSupplied && method[0] == "room_exists" {
+		var response []byte
+		var err error
+
+		roomID, roomIDSupplied := r.Form["room_id"]
+
+		if roomIDSupplied {
+			_, hasRoom := rm.Rooms[roomID[0]]
+			response, err = json.Marshal(hasRoom)
+		} else {
+			response, err = json.Marshal("Malformed API call. Please supply a room_id.")
 		}
 
 		if err != nil {

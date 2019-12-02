@@ -89,3 +89,9 @@ Client -> Server -> Client(s)
 ```
 `UserIndex` is the index of the user in the users array who changed the room's 
 name.
+
+### Check Room Exists
+
+`/API/?method=room_exists&room_id=x`
+
+If a room exists, returns `true`. Otherwise `false`.
