@@ -40,7 +40,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(roomIDs)
 
 		case "get_room_state":
-			roomID, roomIDSupplied := r.Form["roomid"]
+			roomID, roomIDSupplied := r.Form["room_id"]
 			if !roomIDSupplied {
 				response, err = json.Marshal("No room ID supplied.")
 			} else {
@@ -54,7 +54,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 		case "announce":
 			message, messageSupplied := r.Form["message"]
-			roomID, roomIDSupplied := r.Form["roomid"]
+			roomID, roomIDSupplied := r.Form["room_id"]
 			if messageSupplied {
 				if roomIDSupplied {
 					rm.Rooms[roomID[0]].announce(message[0])
