@@ -78,6 +78,7 @@ class Sketchpad {
       span: this.width,
       data: new Array(this.width * this.height).fill(0)
     };
+    this.resetCursorPos();
     this.resetTypeLog();
     this.refresh();
   }
