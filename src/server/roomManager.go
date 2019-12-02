@@ -10,21 +10,19 @@ import (
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms     map[string]*Room `json:"Rooms"`
-	MaxRooms  int              `json:"MaxRooms"`
-	RoomCount int              `json:"RoomCount"`
-	apiToken  string
-	Mode      string
+	Rooms    map[string]*Room `json:"Rooms"`
+	MaxRooms int              `json:"MaxRooms"`
+	apiToken string
+	Mode     string
 }
 
 //NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int, apiToken string, Mode string) RoomManager {
 	rm := RoomManager{
-		Rooms:     make(map[string]*Room, MaxRooms),
-		MaxRooms:  MaxRooms,
-		RoomCount: 0,
-		apiToken:  apiToken,
-		Mode:      Mode,
+		Rooms:    make(map[string]*Room, MaxRooms),
+		MaxRooms: MaxRooms,
+		apiToken: apiToken,
+		Mode:     Mode,
 	}
 	go rm.roomMonitorLoop()
 	return rm
@@ -37,9 +35,7 @@ func (rm *RoomManager) roomMonitorLoop() {
 		case <-ticker.C:
 			for roomID, room := range rm.Rooms {
 				if room.ClientCount == -1 {
-					log.Println("Closed empty room:", room.getDetails())
 					rm.closeRoom(roomID)
-					rm.RoomCount--
 				}
 			}
 
@@ -48,28 +44,24 @@ func (rm *RoomManager) roomMonitorLoop() {
 }
 
 func (rm *RoomManager) createRoom() (*Room, error) {
-	if rm.RoomCount < rm.MaxRooms {
-		//RoomCount is immediately incremented so there's little chance of two people creating rooms within a short period of time causing there to become more than MaxRooms rooms.
-		rm.RoomCount++
-
+	if len(rm.Rooms) < rm.MaxRooms {
 		newRoomID := strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
 		for _, hasKey := rm.Rooms[newRoomID]; hasKey || newRoomID == ""; {
 			newRoomID = strconv.Itoa(rand.Intn(MaxRooms * (10 ^ 4)))
 		}
-
 		newRoom := newRoom(rm, newRoomID, MaxRoomSize)
 		rm.Rooms[newRoom.ID] = newRoom
 
+		log.Println("Created room ID"+newRoomID, "| There are now", len(rm.Rooms), "active rooms.")
 		return newRoom, nil
 	}
 	return nil, errors.New("Reached MaxRooms Limit.")
 }
 
 func (rm *RoomManager) closeRoom(roomID string) {
-	log.Println("Closing room ID" + roomID)
 	if rm.Rooms[roomID].ClientCount > 0 {
 		rm.Rooms[roomID].closeAllConnections()
 	}
 	delete(rm.Rooms, roomID)
-	rm.RoomCount--
+	log.Println("Closed room ID"+roomID, "| There are now", len(rm.Rooms), "active rooms.")
 }

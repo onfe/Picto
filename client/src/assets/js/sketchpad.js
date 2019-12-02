@@ -6,7 +6,6 @@ class Sketchpad {
     this.height = height;
     this.notepad = new Notepad(width, height, canvas);
 
-    this.erasing = false;
     this.pensize = 0;
 
     this.rainbowMode = false;
@@ -101,14 +100,6 @@ class Sketchpad {
   setEraserMode() {
     this.rainbowMode = false;
     this.colourIndex = 0;
-  }
-
-  togglePenSize() {
-    if (this.pensize == 0) {
-      this.pensize = 1;
-    } else {
-      this.pensize = 0;
-    }
   }
 
   /**-------------------------------------------------- Resets */
