@@ -90,8 +90,39 @@ Client -> Server -> Client(s)
 `UserIndex` is the index of the user in the users array who changed the room's 
 name.
 
-### Check Room Exists
+---
 
-`/API/?method=room_exists&room_id=x`
+## API - Public
 
-If a room exists, returns `true`. Otherwise `false`.
+### room_exists
+
+`/API/?method=room_exists&room_id=ROOM_ID`
+
+If `ROOM_ID` exists, returns `true`. Otherwise `false`.
+
+---
+
+## API - Private
+
+### get_state
+
+`/API/?token=API_TOKEN&method=get_state`
+Returns the state of the entire server by marshalling the roomManager. Not wise to use in prod.
+
+### get_room_ids
+
+`/API/?token=API_TOKEN&method=get_room_ids`
+Returns a list of all the ids of the currently open rooms.
+
+### get_room_state
+
+`/API/?token=API_TOKEN&method=get_room_state&room_id=ROOM_ID`
+Returns the state of the `ROOM_ID` specified by marshalling the room object.
+
+### announce
+
+`/API/?token=API_TOKEN&method=announce&message=MESSAGE`
+Announces `MESSAGE` to ALL ROOMS.
+
+`/API/?token=API_TOKEN&method=announce&message=MESSAGE&room_id=ROOM_ID`
+Announces `MESSAGE` to the `ROOM_ID` specified.
