@@ -103,14 +103,6 @@ class Sketchpad {
     this.colourIndex = 0;
   }
 
-  togglePenSize() {
-    if (this.pensize == 0) {
-      this.pensize = 1;
-    } else {
-      this.pensize = 0;
-    }
-  }
-
   /**-------------------------------------------------- Resets */
   resetMousePos() {
     this.lastMousePos = [-1, -1];
