@@ -23,7 +23,8 @@ const actions = {
       type: "normal",
       author: rootState.client.users[rootState.client.index],
       colour: COLOURS[rootState.client.index],
-      data: pl.Message
+      data: pl.Message,
+      id: state.iter
     };
     commit("add", message);
   },
