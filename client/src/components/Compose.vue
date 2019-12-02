@@ -25,6 +25,30 @@ export default {
     const canv = document.getElementById("sketchpad");
     this.sketchpad = new Sketchpad(192, 64, canv);
     window._sketch = this.sketchpad;
+
+    window.addEventListener("keypress", this.handleKeys);
+    window.addEventListener("keyup", this.handleBack);
+  },
+  beforeDestroy() {
+    window.removeEventListener("keypress", this.handleKeys);
+    window.removeEventListener("keyup", this.handleBack);
+  },
+  methods: {
+    handleKeys: function(e) {
+      if (e.key == "Enter") {
+        this.$store.dispatch("compose/send");
+      } else {
+        this.$store.dispatch("compose/write", e.key);
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    handleBack(e) {
+      if (e.which == 8) {
+        // desktop backspace
+        this.$store.dispatch("compose/backspace");
+      }
+    }
   },
   components: {
     Message

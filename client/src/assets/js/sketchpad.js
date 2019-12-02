@@ -1,7 +1,7 @@
 import Notepad from "./notepad.js";
 
 class Sketchpad {
-  constructor(width, height, canvas) {
+  constructor(width, height, canvas, nameWidth) {
     this.width = width;
     this.height = height;
     this.notepad = new Notepad(width, height, canvas);
@@ -43,10 +43,15 @@ class Sketchpad {
     };
 
     /*Text styling */
-    this.textMargin = 1;
-    this.lineSpacing = 10;
+    this.textMargin = 4;
+    this.lineSpacing = 12;
 
-    this.cursorPos = [this.textMargin, this.textMargin];
+    this.nameWidth = nameWidth || 0;
+
+    this.cursorPos = [
+      Math.round(this.width * this.nameWidth) + this.textMargin,
+      this.textMargin
+    ];
 
     /**typeLog contains charsLogged logs of text overlays in a circular queue.
      * It is drawn over imageData with this.overlayText() until it is baked,
@@ -73,6 +78,7 @@ class Sketchpad {
       span: this.width,
       data: new Array(this.width * this.height).fill(0)
     };
+    this.resetCursorPos();
     this.resetTypeLog();
     this.refresh();
   }
@@ -118,7 +124,10 @@ class Sketchpad {
   }
 
   resetCursorPos() {
-    this.cursorPos = [this.textMargin, this.textMargin];
+    this.cursorPos = [
+      Math.round(this.width * this.nameWidth) + this.textMargin,
+      this.textMargin
+    ];
   }
 
   /**-------------------------------------------------- Mouse drawing */
@@ -183,8 +192,10 @@ class Sketchpad {
 
   /**-------------------------------------------------- Text drawing */
   drawChar(char) {
+    /*Ensuring char is of length 1.*/
+    char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
-    this.notepad.ctx.font = "16px 'Generic Pixel Font 5x7 Neue'";
+    this.notepad.ctx.font = "16px 'pixel 5x7'";
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "hanging";
     this.notepad.ctx.textAlign = "end";
@@ -203,13 +214,13 @@ class Sketchpad {
     /**Adjusting the cursor position */
     if (this.cursorPos[0] + charWidth + this.textMargin > this.width) {
       this.cursorPos[0] = this.textMargin;
-      if (
-        this.cursorPos[1] + 2 * this.lineSpacing + this.textMargin <=
-        this.height
-      ) {
+      if (this.cursorPos[1] + 2 * this.lineSpacing <= this.height) {
         this.cursorPos[1] += this.lineSpacing;
       } else {
-        this.cursorPos[1] = this.textMargin;
+        this.cursorPos = [
+          Math.round(this.width * this.nameWidth) + this.textMargin,
+          this.textMargin
+        ];
       }
     }
     this.cursorPos[0] += charWidth;
