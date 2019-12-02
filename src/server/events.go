@@ -45,7 +45,7 @@ func (e UserEvent) getSenderID() int     { return e.UserIndex }
 type MessageEvent struct {
 	Event     string
 	UserIndex int //Index of the user that just sent the message
-	message   map[string]interface{}
+	Message   map[string]interface{}
 }
 
 func (e MessageEvent) getEventData() []byte {
