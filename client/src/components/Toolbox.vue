@@ -1,7 +1,7 @@
 <template>
   <section class="toolbox">
     <ul class="tool">
-      <li v-bind:class="{ selected: isPencil }">
+      <li v-bind:class="{ selected: isPencil, rainbow: isRainbow }">
         <font-awesome-icon @click="pencil" class="icn" icon="pencil-alt" />
       </li>
       <li v-bind:class="{ selected: isEraser }">
@@ -38,6 +38,9 @@ export default {
     },
     isSmall() {
       return this.$store.state.compose.size == "small";
+    },
+    isRainbow() {
+      return this.$store.state.compose.rainbow;
     }
   },
   methods: {
@@ -63,7 +66,6 @@ section {
   flex-direction: column;
   background: #fff;
   padding: $spacer;
-  border-right: 1px solid $almost-white;
 }
 
 ul {
@@ -98,6 +100,12 @@ ul {
     &.selected {
       background: $grey-l;
     }
+
+    &.rainbow .icn {
+      animation: rainbowbg 8s infinite;
+    }
   }
 }
+
+@include rainbow("rainbowbg", "color");
 </style>

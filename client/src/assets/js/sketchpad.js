@@ -190,7 +190,7 @@ class Sketchpad {
   /**-------------------------------------------------- Text drawing */
   drawChar(char) {
     /*Setting up the styling for the text and ascertaining its size*/
-    this.notepad.ctx.font = "16px 'Generic Pixel Font 5x7 Neue'";
+    this.notepad.ctx.font = "16px 'pixel 5x7'";
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "hanging";
     this.notepad.ctx.textAlign = "end";
