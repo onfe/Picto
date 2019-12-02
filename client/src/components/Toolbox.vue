@@ -63,7 +63,6 @@ section {
   flex-direction: column;
   background: #fff;
   padding: $spacer;
-  border-right: 1px solid $almost-white;
 }
 
 ul {

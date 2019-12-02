@@ -7,7 +7,7 @@
     <div class="edit">
       <Toolbox class="toolbox" />
       <Compose class="compose" />
-      <Footer class="text" />
+      <Footer class="foot" />
     </div>
   </main>
 </template>
@@ -39,28 +39,28 @@ export default {
 main {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
 }
 
 .view {
   flex: 1;
   position: relative;
   display: grid;
+  overflow: hidden;
   grid-template: "N H";
 }
 
 .nav {
   width: $sidebar-width;
-  height: 100%;
   grid-area: N;
-  background: purple;
+  border-right: 1px solid $almost-white;
 }
 
 .hist {
   width: $ratio-width;
-  height: 100%;
   grid-area: H;
+  border-bottom: 1px solid $almost-white;
 }
 
 .edit {
@@ -72,6 +72,7 @@ main {
 .toolbox {
   grid-area: T;
   width: $sidebar-width;
+  border-right: 1px solid $almost-white;
 }
 
 .compose {
@@ -79,10 +80,9 @@ main {
   width: $ratio-width;
 }
 
-.text {
+.foot {
   grid-area: E;
   width: 100%;
-  height: 2em;
-  background: orange;
+  height: $sidebar-width;
 }
 </style>
