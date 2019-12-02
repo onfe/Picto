@@ -192,6 +192,8 @@ class Sketchpad {
 
   /**-------------------------------------------------- Text drawing */
   drawChar(char) {
+    /*Ensuring char is of length 1.*/
+    char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
     this.notepad.ctx.font = "16px 'pixel 5x7'";
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
