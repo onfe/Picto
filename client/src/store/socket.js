@@ -9,11 +9,14 @@ const getters = {
 const actions = {
   connect: ({ commit, dispatch }, { name, room }) => {
     return new Promise((res, rej) => {
+      const proto = window.location.protocol == "https:" ? "wss" : "ws";
       const here = window.location.host;
       const roomarg = room ? `&room=${room}` : "";
-      const sock = new WebSocket(`ws://${here}/ws?name=${name}${roomarg}`);
+      const sock = new WebSocket(`${proto}://${here}/ws?name=${name}${roomarg}`);
+
       commit("create", sock);
       window._sock = sock;
+
       sock.onmessage = m => dispatch("_onMessage", m);
       sock.onopen = res;
       sock.onerror = rej;
