@@ -11,3 +11,15 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+
+@font-face {
+    font-family: 'pixel 5x7';
+    src: url('../font/generic-pixel-font-5x7-neue.woff2') format('woff2'),
+         url('../font/generic-pixel-font-5x7-neue.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.font-pixel {
+  font-family: "pixel 5x7";
+}

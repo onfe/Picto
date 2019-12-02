@@ -50,7 +50,7 @@ export default {
   width: 100%;
   height: 100%;
   background: #fff;
-  border-radius: 4px;
+  border-radius: $spacer;
   border: 0.5vw solid desaturate(darken(#e97777, 20%), 20%);
   overflow: hidden;
 }
@@ -66,12 +66,13 @@ export default {
   top: 0;
   left: 0;
   padding: 1vw;
-  font-size: 4vw;
+  font-size: $size-pixel;
   background: #e97777;
   border-bottom: 0.5vw solid transparent;
   border-right: 0.5vw solid transparent;
   border-color: inherit;
-  border-bottom-right-radius: 4px;
+  border-bottom-right-radius: $spacer;
   color: #fff;
+  font-family: "pixel 5x7";
 }
 </style>
