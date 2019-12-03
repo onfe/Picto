@@ -21,6 +21,12 @@
         <font-awesome-icon @click="large" class="icn" icon="circle" />
       </li>
     </ul>
+    <ul class="keyboard">
+      <li>
+        <font-awesome-icon @click="keyboard" class="icn" icon="keyboard" />
+      </li>
+    </ul>
+    <input autocapitalize="none" id="text-input" />
   </section>
 </template>
 
@@ -55,7 +61,32 @@ export default {
     },
     large() {
       this.$store.dispatch("compose/large");
+    },
+    keyboard() {
+      const el = document.getElementById("text-input");
+      el.focus();
+    },
+    handleInput(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const el = document.getElementById("text-input");
+      if (el.value.length < 1) {
+        this.$store.dispatch("compose/backspace");
+      } else if (el.value[1] != "℗") {
+        const chr = el.value[1];
+        this.$store.dispatch("compose/write", chr);
+      }
+      el.value = "℗";
     }
+  },
+  mounted() {
+    const el = document.getElementById("text-input");
+    el.value = "℗";
+    el.addEventListener("input", this.handleInput);
+  },
+  beforeDestroy() {
+    const el = document.getElementById("text-input");
+    el.removeEventListener("input", this.handleInput);
   }
 };
 </script>
@@ -77,6 +108,10 @@ ul {
   position: relative;
   background: $almost-white;
   margin-bottom: 1vw;
+
+  &:last-of-type {
+    margin: 0;
+  }
 
   li {
     width: 100%;
@@ -106,6 +141,20 @@ ul {
       animation-timing-function: linear;
     }
   }
+}
+
+.keyboard {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#text-input {
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  position: absolute;
 }
 
 @include rainbow("rainbowbg", "color");

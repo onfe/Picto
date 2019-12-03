@@ -36,6 +36,12 @@ const actions = {
   small: ({ commit }) => {
     window._sketch.pensize = 0;
     commit("small");
+  },
+  write: (_, chr) => {
+    window._sketch.drawChar(chr);
+  },
+  backspace: () => {
+    window._sketch.backspace();
   }
 };
 
