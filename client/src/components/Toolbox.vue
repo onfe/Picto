@@ -103,6 +103,7 @@ ul {
 
     &.rainbow .icn {
       animation: rainbowbg 8s infinite;
+      animation-timing-function: linear;
     }
   }
 }
