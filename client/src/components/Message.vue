@@ -38,7 +38,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 $perc-spacer: 1%;
 
 .ratio {

@@ -24,19 +24,24 @@ export default {
     };
   },
   mounted() {
-    setTimeout(function() {
-      const canv = document.getElementById("sketchpad");
-      const nametag = document.getElementById("compose").querySelector(".author");
-      const perc = nametag.clientWidth / canv.clientWidth;
+    setTimeout(
+      function() {
+        const canv = document.getElementById("sketchpad");
+        const nametag = document
+          .getElementById("compose")
+          .querySelector(".author");
+        const perc = nametag.clientWidth / canv.clientWidth;
 
-      console.log(perc);
+        console.log(perc);
 
-      this.sketchpad = new Sketchpad(192, 64, canv, perc);
-      window._sketch = this.sketchpad;
+        this.sketchpad = new Sketchpad(192, 64, canv, perc);
+        window._sketch = this.sketchpad;
 
-      window.addEventListener("keypress", this.handleKeys);
-      window.addEventListener("keyup", this.handleBack);
-    }.bind(this), 50);
+        window.addEventListener("keypress", this.handleKeys);
+        window.addEventListener("keyup", this.handleBack);
+      }.bind(this),
+      50
+    );
   },
   beforeDestroy() {
     window.removeEventListener("keypress", this.handleKeys);
