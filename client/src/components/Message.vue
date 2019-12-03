@@ -38,6 +38,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+$perc-spacer: 1%;
+
 .ratio {
   position: relative;
   padding-bottom: 33.333%;
@@ -65,7 +68,7 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 1vw;
+  padding: $perc-spacer;
   font-size: $size-pixel;
   background: #e97777;
   border-bottom: 0.5vw solid transparent;

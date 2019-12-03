@@ -2,6 +2,7 @@
   <section>
     <div class="container">
       <Message
+        id="compose"
         :colour="this.$store.state.client.colour"
         :author="this.$store.getters['client/username']"
       >
@@ -18,16 +19,24 @@ export default {
   name: "Compose",
   data() {
     return {
-      sketchpad: null
+      sketchpad: null,
+      firstkey: true
     };
   },
   mounted() {
-    const canv = document.getElementById("sketchpad");
-    this.sketchpad = new Sketchpad(192, 64, canv);
-    window._sketch = this.sketchpad;
+    setTimeout(function() {
+      const canv = document.getElementById("sketchpad");
+      const nametag = document.getElementById("compose").querySelector(".author");
+      const perc = nametag.clientWidth / canv.clientWidth;
 
-    window.addEventListener("keypress", this.handleKeys);
-    window.addEventListener("keyup", this.handleBack);
+      console.log(perc);
+
+      this.sketchpad = new Sketchpad(192, 64, canv, perc);
+      window._sketch = this.sketchpad;
+
+      window.addEventListener("keypress", this.handleKeys);
+      window.addEventListener("keyup", this.handleBack);
+    }.bind(this), 50);
   },
   beforeDestroy() {
     window.removeEventListener("keypress", this.handleKeys);
