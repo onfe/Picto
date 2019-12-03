@@ -32,8 +32,6 @@ export default {
           .querySelector(".author");
         const perc = nametag.clientWidth / canv.clientWidth;
 
-        console.log(perc);
-
         this.sketchpad = new Sketchpad(192, 64, canv, perc);
         window._sketch = this.sketchpad;
 
