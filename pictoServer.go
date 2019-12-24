@@ -40,7 +40,7 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 		h.ServeHTTP(customResponseWriter, r)
 
 		if customResponseWriter.status == 404 {
-			log.Printf("Redirecting %s to index.html.", r.RequestURI)
+			log.Println("[REDIRECT] - To index.html, from:", r.RequestURI)
 			data, _ := ioutil.ReadFile("client/dist/index.html")
 			w.Header().Set("Content-Type", "text/html")
 			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(data))
@@ -51,7 +51,7 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 func loadWordsList(fp string) []string {
 	data, err := ioutil.ReadFile(fp)
 	if err != nil {
-		log.Println("Couldn't open words list.")
+		log.Println("[SYSTEM] - Couldn't open words list.")
 		panic(err)
 	}
 	return strings.Split(string(data), "\r\n")

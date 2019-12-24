@@ -14,7 +14,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 	if token, tokenSupplied := r.Form["token"]; tokenSupplied && token[0] == rm.apiToken {
 		if !methodSupplied {
-			log.Println("An attempt to query the API was made without supplying a method with token:", token[0])
+			log.Println("[API FAIL] - An attempt to query the API was made without supplying a method with token:", token[0])
 			return
 		}
 
@@ -124,7 +124,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, _ = json.Marshal(err)
 		}
 
-		log.Println(method[0]+":", string(response))
+		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
@@ -145,13 +145,13 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, _ = json.Marshal(err)
 		}
 
-		log.Println(method[0]+":", string(response))
+		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
 	} else if tokenSupplied {
-		log.Println("An attempt to query the API was made with an invalid token:", token[0])
+		log.Println("[API FAIL] - An attempt to query the API was made with an invalid token:", token[0])
 	} else {
-		log.Println("An attempt to query the API was made without a token.")
+		log.Println("[API FAIL] - An attempt to query the API was made without a token.")
 	}
 }

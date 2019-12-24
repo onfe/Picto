@@ -143,7 +143,7 @@ func (r *Room) removeClient(clientID int) error {
 		r.Clients[clientID] = nil
 
 		r.LastUpdate = time.Now()
-		log.Println("Removed client:", client.getDetails())
+		log.Println("[ROOM] - Removed client:", client.getDetails())
 
 		r.ClientCount--
 		if r.ClientCount == 0 {

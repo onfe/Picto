@@ -64,7 +64,7 @@ func (rm *RoomManager) createRoom(roomName string, static bool, maxClients int) 
 		newRoom := newRoom(rm, newRoomID, roomName, static, maxClients)
 		rm.Rooms[newRoom.ID] = newRoom
 
-		log.Println("Created room ID \""+newRoomID+"\" | There are now", len(rm.Rooms), "active rooms.")
+		log.Println("[ROOM CREATED] - Created room ID \""+newRoomID+"\" | There are now", len(rm.Rooms), "active rooms.")
 		return newRoom, nil
 	}
 	return nil, errors.New("Reached MaxRooms Limit.")
@@ -75,5 +75,5 @@ func (rm *RoomManager) closeRoom(roomID string) {
 		rm.Rooms[roomID].closeAllConnections()
 	}
 	delete(rm.Rooms, roomID)
-	log.Println("Closed room ID \""+roomID+"\" | There are now", len(rm.Rooms), "active rooms.")
+	log.Println("[ROOM CLOSED] - Closed room ID \""+roomID+"\" | There are now", len(rm.Rooms), "active rooms.")
 }
