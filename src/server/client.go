@@ -50,7 +50,7 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 
 func (c *Client) getDetails() string {
 	if c.room != nil {
-		return "(Room ID" + c.room.ID + " ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
+		return "(Room ID \"" + c.room.ID + "\" ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 	}
 	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 }

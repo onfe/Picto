@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/onfe/Picto/src/server"
@@ -47,12 +48,23 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 	}
 }
 
+func loadWordsList(fp string) []string {
+	data, err := ioutil.ReadFile(fp)
+	if err != nil {
+		log.Println("Couldn't open words list.")
+		panic(err)
+	}
+	return strings.Split(string(data), "\r\n")
+}
+
 func main() {
+	wordsList := loadWordsList("words.txt")
+
 	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
 	if prod {
-		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod")
+		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList)
 	} else {
-		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev")
+		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
 	}
 
 	fs := getFileHandler(http.FileServer(http.Dir("client/dist")))

@@ -34,7 +34,7 @@ func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 }
 
 func (r *Room) getDetails() string {
-	return "(Room ID" + r.ID + " ('" + r.Name + "'))"
+	return "(Room ID \"" + r.ID + "\" ('" + r.Name + "'))"
 }
 
 func (r *Room) getClientNames() []string {
