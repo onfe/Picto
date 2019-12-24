@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -88,7 +90,9 @@ func (c *Client) sendLoop() {
 				return
 			}
 
-			log.Println("Distributed message to "+c.getDetails()+":", string(message)[:20])
+			h := sha1.New()
+			h.Write(message)
+			log.Println("Distributed message to "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
 
 		case <-ticker.C:
 			err := c.send(websocket.PingMessage, nil)
@@ -164,7 +168,9 @@ func (c *Client) recieveLoop() {
 func (c *Client) recieve(e Event) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from "+c.getDetails()+":", e.getEventType())
+		h := sha1.New()
+		h.Write(e.getEventData())
+		log.Println("Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
 		c.room.distributeEvent(e)
 	}
 }
