@@ -35,7 +35,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 			client.room = newRoom
 			newRoom.addClient(client)
-			log.Println("Created room", newRoom.ID, "for client with name:", client.Name)
+			log.Println("Created room \""+newRoom.ID+"\" for client with name:", client.Name)
 
 		} else { //Client is attempting to join a room.
 			if room, roomExists := rm.Rooms[roomID[0]]; roomExists {
