@@ -218,8 +218,11 @@ class Sketchpad {
     /**Adjusting the cursor position */
     if (this.cursorPos[0] + charWidth + this.textMargin > this.width) {
       this.cursorPos[0] = this.textMargin;
-      if (this.cursorPos[1] + 2 * this.lineSpacing <= this.height) {
-        this.cursorPos[1] += this.lineSpacing;
+      if (
+        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize + 1)) <=
+        this.height
+      ) {
+        this.cursorPos[1] += this.lineSpacing * (this.pensize + 1);
       } else {
         this.cursorPos = [
           Math.round(this.width * this.nameWidth) + this.textMargin,
