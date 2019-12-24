@@ -35,7 +35,7 @@ func (rm *RoomManager) roomMonitorLoop() {
 		select {
 		case <-ticker.C:
 			for roomID, room := range rm.Rooms {
-				if room.ClientCount == -1 {
+				if room.ClientCount == -1 && !room.Static {
 					rm.closeRoom(roomID)
 				}
 			}
@@ -58,10 +58,10 @@ func (rm *RoomManager) generateNewRoomID() string {
 	return newRoomID
 }
 
-func (rm *RoomManager) createRoom() (*Room, error) {
+func (rm *RoomManager) createRoom(roomName string, static bool, maxClients int) (*Room, error) {
 	if len(rm.Rooms) < rm.MaxRooms {
 		newRoomID := rm.generateNewRoomID()
-		newRoom := newRoom(rm, newRoomID, MaxRoomSize)
+		newRoom := newRoom(rm, newRoomID, roomName, static, maxClients)
 		rm.Rooms[newRoom.ID] = newRoom
 
 		log.Println("Created room ID \""+newRoomID+"\" | There are now", len(rm.Rooms), "active rooms.")

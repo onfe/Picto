@@ -12,6 +12,7 @@ type Room struct {
 	manager      *RoomManager
 	ID           string         `json:"ID"`
 	Name         string         `json:"Name"`
+	Static       bool           `json:"Static"`
 	Clients      []*Client      `json:"Clients"`
 	ClientCount  int            `json:"ClientCount"`
 	MaxClients   int            `json:"MaxClients"`
@@ -19,11 +20,12 @@ type Room struct {
 	LastUpdate   time.Time      `json:"LastUpdate"`
 }
 
-func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
+func newRoom(manager *RoomManager, roomID string, name string, static bool, maxClients int) *Room {
 	r := Room{
 		manager:      manager,
 		ID:           roomID,
 		Name:         "Picto Room",
+		Static:       static,
 		Clients:      make([]*Client, maxClients),
 		ClientCount:  0,
 		MaxClients:   maxClients,

@@ -26,7 +26,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 		if !hasRoom { //Client is trying to create a new room.
 
-			newRoom, err := rm.createRoom()
+			newRoom, err := rm.createRoom("Picto Room", false, DefaultRoomSize)
 			if err != nil {
 				log.Println("Failed to create room:", err)
 				client.closeConnection(err.Error())

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 //ServeAPI handles API calls.
@@ -67,6 +68,51 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			} else {
 				response, err = json.Marshal("Malformed API call. Please supply a message.")
+			}
+
+		case "create_static_room":
+			roomName := "Picto Room"
+			maxClients := DefaultRoomSize
+
+			_roomName, roomNameSupplied := r.Form["room_name"]
+			_maxClients, maxClientsSupplied := r.Form["room_size"]
+
+			if roomNameSupplied {
+				roomName = _roomName[0]
+			}
+			if maxClientsSupplied {
+				maxClients, err = strconv.Atoi(_maxClients[0])
+			}
+
+			if err != nil {
+				response, err = json.Marshal("size supplied isn't an integer value.")
+			} else {
+				newRoom, err := rm.createRoom(roomName, true, maxClients)
+				if err == nil {
+					response, err = json.Marshal("New room created with id '" + newRoom.ID + "'.")
+				}
+			}
+
+		case "close_room":
+			reason := "No reason supplied."
+
+			roomID, roomIDSupplied := r.Form["room_id"]
+			_reason, reasonSupplied := r.Form["reason"]
+
+			if reasonSupplied {
+				reason = _reason[0]
+			}
+
+			if roomIDSupplied {
+				if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
+					rm.Rooms[roomID[0]].announce(reason)
+					rm.closeRoom(roomID[0])
+					response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
+				} else {
+					response, err = json.Marshal("room_id supplied doesn't exist.")
+				}
+			} else {
+				response, err = json.Marshal("Malformed API call. Please supply a room_id.")
 			}
 
 		default:
