@@ -100,43 +100,43 @@ name.
 
 ### room_exists
 
-`/API/?method=room_exists&room_id=ROOM_ID`
+`/api/?method=room_exists&room_id=ROOM_ID`
 
 If `ROOM_ID` exists, returns `true`. Otherwise `false`.
 
 ---
 
-## API - Private
+## api - Private
 
 ### get_state
 
-`/API/?token=API_TOKEN&method=get_state`
+`/api/?token=API_TOKEN&method=get_state`
 Returns the state of the entire server by marshalling the roomManager. Not wise to use in prod.
 
 ### get_room_ids
 
-`/API/?token=API_TOKEN&method=get_room_ids`
+`/api/?token=API_TOKEN&method=get_room_ids`
 Returns a list of all the ids of the currently open rooms.
 
 ### get_room_state
 
-`/API/?token=API_TOKEN&method=get_room_state&room_id=ROOM_ID`
+`/api/?token=API_TOKEN&method=get_room_state&room_id=ROOM_ID`
 Returns the state of the `ROOM_ID` specified by marshalling the room object.
 
 ### announce
 
-`/API/?token=API_TOKEN&method=announce&message=MESSAGE`
+`/api/?token=API_TOKEN&method=announce&message=MESSAGE`
 Announces `MESSAGE` to ALL ROOMS.
 
-`/API/?token=API_TOKEN&method=announce&message=MESSAGE&room_id=ROOM_ID`
+`/api/?token=API_TOKEN&method=announce&message=MESSAGE&room_id=ROOM_ID`
 Announces `MESSAGE` to the `ROOM_ID` specified.
 
 ### close_room
 
-`/API/?token=API_TOKEN&method=close_room&room_id=ROOM_ID&reason=REASON`
+`/api/?token=API_TOKEN&method=close_room&room_id=ROOM_ID&reason=REASON`
 Closes `ROOM_ID` and announces message `REASON` beforehand.
 
 ### create_static_room
 
-`/API/?token=API_TOKEN&method=create_static_room&room_name=ROOM_NAME&room_size=ROOM_SIZE`
+`/api/?token=API_TOKEN&method=create_static_room&room_name=ROOM_NAME&room_size=ROOM_SIZE`
 Creates a static room (continues to exist when there are no clients connected) with name `ROOM_NAME` and a max clients of `ROOM_SIZE`.
