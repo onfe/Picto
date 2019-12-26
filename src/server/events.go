@@ -44,7 +44,8 @@ func (e UserEvent) getSenderID() int     { return e.UserIndex }
 //MessageEvent is sent to clients to inform them of a new message in their room.
 type MessageEvent struct {
 	Event     string
-	UserIndex int //Index of the user that just sent the message
+	UserIndex int    //Index of the user that just sent the message
+	Sender    string //Name of the user that sent the message (at the time it was recieved).
 	Message   map[string]interface{}
 }
 

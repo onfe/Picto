@@ -56,9 +56,13 @@ Server -> Client:
 {
   "Event": "message",
   "UserIndex": 2,
+  "Sender": "Josh",
   "Message": "NPXkOU8..."
 }
 ```
+
+`UserIndex` should not be used. It is due to be removed as it will become inaccurate on join/leaves.
+
 Client -> Server:
 ```JSON
 {
