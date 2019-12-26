@@ -31,6 +31,9 @@ export default {
     if (this.$store.state.client.room == null) {
       this.$router.replace(`/join/${this.$route.params.id}`);
     }
+  },
+  beforeDestroy() {
+    this.$store.dispatch("client/leave");
   }
 };
 </script>

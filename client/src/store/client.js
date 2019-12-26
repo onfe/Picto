@@ -24,6 +24,10 @@ const actions = {
         console.log("Failed to connect to Picto");
       });
   },
+  leave: ({ commit, dispatch }) => {
+    dispatch("socket/disconnect", {}, { root: true });
+    commit("leave");
+  },
   init: ({ commit }, payload) => {
     commit("init", payload);
     router.push(`/room/${payload.RoomID}`);
@@ -42,6 +46,12 @@ const mutations = {
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;
+  },
+  leave: state => {
+    state.room = null;
+    state.index = -1;
+    state.users = [];
+    state.colour = COLOURS[0];
   }
 };
 
