@@ -8,10 +8,10 @@ const state = {
 const getters = {};
 
 const actions = {
-  add: ({ state, rootState, commit }, pl) => {
+  add: ({ state, commit }, pl) => {
     const message = {
       type: "normal",
-      author: rootState.client.users[pl.UserIndex],
+      author: pl.Sender,
       colour: COLOURS[pl.UserIndex],
       data: pl.Message,
       id: state.iter
