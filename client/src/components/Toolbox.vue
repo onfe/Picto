@@ -73,10 +73,10 @@ export default {
       if (el.value.length < 1) {
         this.$store.dispatch("compose/backspace");
       } else {
-        let s = el.value.replace('℗', '');
-        [...s].forEach((chr) => {
+        let s = el.value.replace("℗", "");
+        [...s].forEach(chr => {
           this.$store.dispatch("compose/write", chr);
-        })
+        });
       }
       el.value = "℗";
     }
