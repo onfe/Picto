@@ -55,7 +55,7 @@ func loadWordsList(fp string) []string {
 		log.Println("[SYSTEM] - Couldn't open words list.")
 		panic(err)
 	}
-	return strings.Split(strings.Replace(string(data), "\r\n", "\n", -1), "\r\n")
+	return strings.Split(strings.Replace(string(data), "\r\n", "\n", -1), "\n")
 }
 
 func main() {
