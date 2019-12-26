@@ -41,6 +41,7 @@ const actions = {
     window._sketch.drawChar(chr);
   },
   backspace: () => {
+    console.log('bksp');
     window._sketch.backspace();
   }
 };
