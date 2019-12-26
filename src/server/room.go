@@ -12,6 +12,7 @@ type Room struct {
 	manager      *RoomManager
 	ID           string         `json:"ID"`
 	Name         string         `json:"Name"`
+	Static       bool           `json:"Static"`
 	Clients      []*Client      `json:"Clients"`
 	ClientCount  int            `json:"ClientCount"`
 	MaxClients   int            `json:"MaxClients"`
@@ -19,11 +20,12 @@ type Room struct {
 	LastUpdate   time.Time      `json:"LastUpdate"`
 }
 
-func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
+func newRoom(manager *RoomManager, roomID string, name string, static bool, maxClients int) *Room {
 	r := Room{
 		manager:      manager,
 		ID:           roomID,
 		Name:         "Picto Room",
+		Static:       static,
 		Clients:      make([]*Client, maxClients),
 		ClientCount:  0,
 		MaxClients:   maxClients,
@@ -34,7 +36,7 @@ func newRoom(manager *RoomManager, roomID string, maxClients int) *Room {
 }
 
 func (r *Room) getDetails() string {
-	return "(Room ID" + r.ID + " ('" + r.Name + "'))"
+	return "(Room ID \"" + r.ID + "\" ('" + r.Name + "'))"
 }
 
 func (r *Room) getClientNames() []string {
@@ -141,7 +143,7 @@ func (r *Room) removeClient(clientID int) error {
 		r.Clients[clientID] = nil
 
 		r.LastUpdate = time.Now()
-		log.Println("Removed client:", client.getDetails())
+		log.Println("[ROOM] - Removed client:", client.getDetails())
 
 		r.ClientCount--
 		if r.ClientCount == 0 {

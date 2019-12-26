@@ -126,3 +126,13 @@ Announces `MESSAGE` to ALL ROOMS.
 
 `/API/?token=API_TOKEN&method=announce&message=MESSAGE&room_id=ROOM_ID`
 Announces `MESSAGE` to the `ROOM_ID` specified.
+
+### close_room
+
+`/API/?token=API_TOKEN&method=close_room&room_id=ROOM_ID&reason=REASON`
+Closes `ROOM_ID` and announces message `REASON` beforehand.
+
+### create_static_room
+
+`/API/?token=API_TOKEN&method=create_static_room&room_name=ROOM_NAME&room_size=ROOM_SIZE`
+Creates a static room (continues to exist when there are no clients connected) with name `ROOM_NAME` and a max clients of `ROOM_SIZE`.

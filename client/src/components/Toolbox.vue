@@ -72,9 +72,11 @@ export default {
       const el = document.getElementById("text-input");
       if (el.value.length < 1) {
         this.$store.dispatch("compose/backspace");
-      } else if (el.value[1] != "℗") {
-        const chr = el.value[1];
-        this.$store.dispatch("compose/write", chr);
+      } else {
+        let s = el.value.replace("℗", "");
+        [...s].forEach(chr => {
+          this.$store.dispatch("compose/write", chr);
+        });
       }
       el.value = "℗";
     }
@@ -138,6 +140,7 @@ ul {
 
     &.rainbow .icn {
       animation: rainbowbg 8s infinite;
+      animation-timing-function: linear;
     }
   }
 }

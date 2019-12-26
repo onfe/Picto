@@ -35,15 +35,15 @@ export default {
         this.sketchpad = new Sketchpad(192, 64, canv, perc);
         window._sketch = this.sketchpad;
 
-        window.addEventListener("keypress", this.handleKeys);
-        window.addEventListener("keyup", this.handleBack);
+        document.addEventListener("keypress", this.handleKeys);
+        document.addEventListener("keydown", this.handleBack);
       }.bind(this),
       50
     );
   },
   beforeDestroy() {
-    window.removeEventListener("keypress", this.handleKeys);
-    window.removeEventListener("keyup", this.handleBack);
+    document.removeEventListener("keypress", this.handleKeys);
+    document.removeEventListener("keydown", this.handleBack);
   },
   methods: {
     handleKeys: function(e) {
@@ -59,6 +59,8 @@ export default {
       if (e.which == 8) {
         // desktop backspace
         this.$store.dispatch("compose/backspace");
+        e.preventDefault();
+        e.stopPropagation();
       }
     }
   },

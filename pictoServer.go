@@ -2,10 +2,12 @@ package main
 
 import (
 	"bytes"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/onfe/Picto/src/server"
@@ -39,7 +41,7 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 		h.ServeHTTP(customResponseWriter, r)
 
 		if customResponseWriter.status == 404 {
-			log.Printf("Redirecting %s to index.html.", r.RequestURI)
+			log.Println("[REDIRECT] - To index.html, from:", r.RequestURI)
 			data, _ := ioutil.ReadFile("client/dist/index.html")
 			w.Header().Set("Content-Type", "text/html")
 			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(data))
@@ -47,12 +49,31 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 	}
 }
 
+func loadWordsList(fp string) []string {
+	data, err := ioutil.ReadFile(fp)
+	if err != nil {
+		log.Println("[SYSTEM] - Couldn't open words list.")
+		panic(err)
+	}
+	return strings.Split(strings.Replace(string(data), "\r\n", "\n", -1), "\n")
+}
+
 func main() {
+	logFile, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+	mw := io.MultiWriter(os.Stdout, logFile)
+	log.SetOutput(mw)
+
+	wordsList := loadWordsList("words.txt")
+
 	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
 	if prod {
-		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod")
+		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList)
 	} else {
-		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev")
+		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
 	}
 
 	fs := getFileHandler(http.FileServer(http.Dir("client/dist")))

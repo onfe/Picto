@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -50,7 +52,7 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 
 func (c *Client) getDetails() string {
 	if c.room != nil {
-		return "(Room ID" + c.room.ID + " ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
+		return "(Room ID \"" + c.room.ID + "\" ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 	}
 	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 }
@@ -69,7 +71,7 @@ func (c *Client) sendLoop() {
 	defer func() {
 		ticker.Stop()
 
-		log.Println("Sending close message to", c.Name, "for reason:", c.closeReason)
+		log.Println("[CLIENT] - Sending close message to", c.Name, "for reason:", c.closeReason)
 		c.send(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, c.closeReason))
 		c.ws.Close()
 	}()
@@ -78,22 +80,24 @@ func (c *Client) sendLoop() {
 		select {
 		case message, open := <-c.sendBuffer:
 			if !open {
-				log.Println("Failed to get message from sendBuffer belonging to " + c.getDetails())
+				log.Println("[CLIENT] - Failed to get message from sendBuffer belonging to " + c.getDetails())
 				return
 			}
 
 			err := c.send(websocket.TextMessage, message)
 			if err != nil {
-				log.Println("Failed to distribute message to "+c.getDetails()+", error:", err.Error())
+				log.Println("[CLIENT] - Failed to distribute message to "+c.getDetails()+", error:", err.Error())
 				return
 			}
 
-			log.Println("Distributed message to "+c.getDetails()+":", string(message)[:20])
+			h := sha1.New()
+			h.Write(message)
+			log.Println("[CLIENT] - Distributed message to "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
 
 		case <-ticker.C:
 			err := c.send(websocket.PingMessage, nil)
 			if err != nil {
-				log.Println("Failed to send ping to "+c.getDetails()+", error:", err.Error())
+				log.Println("[CLIENT] - Failed to send ping to "+c.getDetails()+", error:", err.Error())
 				return
 			}
 		}
@@ -123,7 +127,7 @@ func (c *Client) recieveLoop() {
 
 	//When a close message is recieved, the client is removed from the room (if it's in one).
 	c.ws.SetCloseHandler(func(code int, reason string) error {
-		log.Println("Closed connection to "+c.getDetails()+" with code", code, "and reason:", reason)
+		log.Println("[CLIENT] - Closed connection to "+c.getDetails()+" with code", code, "and reason:", reason)
 		if c.closeReason == "" {
 			c.closeReason = reason
 			close(c.sendBuffer)
@@ -138,13 +142,13 @@ func (c *Client) recieveLoop() {
 	for {
 		_, data, err := c.ws.ReadMessage()
 		if err != nil {
-			log.Println("Readloop got error from websocket connection and stopped:", err)
+			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
 			break
 		}
 		event := make(map[string]interface{})
 		json.Unmarshal(data, &event)
 		if _, valid := event["Event"]; !valid {
-			log.Println("Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
+			log.Println("[CLIENT] - Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
 			switch event["Event"] {
 			case "message":
@@ -164,7 +168,9 @@ func (c *Client) recieveLoop() {
 func (c *Client) recieve(e Event) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
-		log.Println("Recieved message from "+c.getDetails()+":", e.getEventType())
+		h := sha1.New()
+		h.Write(e.getEventData())
+		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
 		c.room.distributeEvent(e)
 	}
 }

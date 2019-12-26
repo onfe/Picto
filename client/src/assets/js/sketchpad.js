@@ -195,7 +195,11 @@ class Sketchpad {
     /*Ensuring char is of length 1.*/
     char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
-    this.notepad.ctx.font = "16px 'pixel 5x7'";
+    if (this.pensize == 0) {
+      this.notepad.ctx.font = "16px 'pixel 5x7'";
+    } else {
+      this.notepad.ctx.font = "32px 'pixel 5x7'";
+    }
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "hanging";
     this.notepad.ctx.textAlign = "end";
@@ -214,8 +218,11 @@ class Sketchpad {
     /**Adjusting the cursor position */
     if (this.cursorPos[0] + charWidth + this.textMargin > this.width) {
       this.cursorPos[0] = this.textMargin;
-      if (this.cursorPos[1] + 2 * this.lineSpacing <= this.height) {
-        this.cursorPos[1] += this.lineSpacing;
+      if (
+        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize + 1)) <=
+        this.height
+      ) {
+        this.cursorPos[1] += this.lineSpacing * (this.pensize + 1);
       } else {
         this.cursorPos = [
           Math.round(this.width * this.nameWidth) + this.textMargin,
