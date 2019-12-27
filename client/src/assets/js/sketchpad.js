@@ -316,7 +316,7 @@ class Sketchpad {
 
   /**-------------------------------------------------- Text drawing */
   enableCamera() {
-    if ((this.camera = undefined)) {
+    if (this.camera == undefined) {
       this.camera = new Camera(this.notepad);
     }
     this.cameraInterval = setInterval(
