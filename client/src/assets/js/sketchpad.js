@@ -316,13 +316,19 @@ class Sketchpad {
 
   /**-------------------------------------------------- Text drawing */
   enableCamera() {
-    this.camera = new Camera(this.notepad);
-    setInterval(
+    if ((this.camera = undefined)) {
+      this.camera = new Camera(this.notepad);
+    }
+    this.cameraInterval = setInterval(
       function() {
         this.refresh();
       }.bind(this),
       1000 / 20
     );
+  }
+
+  disableCamera() {
+    clearInterval(this.cameraInterval);
   }
 }
 
