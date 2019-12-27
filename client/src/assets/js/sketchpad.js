@@ -1,4 +1,5 @@
 import Notepad from "./notepad.js";
+import Camera from "./camera";
 
 class Sketchpad {
   constructor(width, height, canvas, nameWidth) {
@@ -65,6 +66,8 @@ class Sketchpad {
       span: this.width,
       cursor: this.cursorPos.slice(0)
     };
+
+    this.enableCamera();
   }
 
   /**-------------------------------------------------- Utils */
