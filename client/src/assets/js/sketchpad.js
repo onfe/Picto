@@ -248,6 +248,7 @@ class Sketchpad {
     the canvas to its original state and use the image data to decide where to
     draw the text onto the canvas ourselves.*/
     var oldData = this.notepad.ctx.getImageData(0, 0, this.width, this.height);
+    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
     this.notepad.ctx.fillText(char, this.cursorPos[0], this.cursorPos[1]);
     var newData = this.notepad.ctx.getImageData(0, 0, this.width, this.height);
     this.notepad.ctx.putImageData(oldData, 0, 0);
@@ -258,10 +259,7 @@ class Sketchpad {
     var diff = false;
     for (var i = 0; i < newData["data"].length; i += 4) {
       /**The alpha channel is used for masking out the text */
-      if (
-        oldData["data"][i + 3] != newData["data"][i + 3] &&
-        newData["data"][i + 3] > 128
-      ) {
+      if (newData["data"][i + 3] > 128) {
         newText["data"][Math.floor(i / 4)] = this.colourIndex;
         diff = true;
       }
