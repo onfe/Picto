@@ -225,9 +225,9 @@ class Sketchpad {
     char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
     if (this.pensize == 0) {
-      this.notepad.ctx.font = "16px 'pixel 5x7'";
-    } else {
       this.notepad.ctx.font = "32px 'pixel 5x7'";
+    } else {
+      this.notepad.ctx.font = "64px 'pixel 5x7'";
     }
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "hanging";
