@@ -69,6 +69,9 @@ class Sketchpad {
 
   /**-------------------------------------------------- Utils */
   getSendableData() {
+    if (this.camera != undefined) {
+      this.imageData = this.camera.bakeImage(this.imageData);
+    }
     this.bakeText();
     return this.imageData;
   }
@@ -84,8 +87,13 @@ class Sketchpad {
   }
 
   refresh() {
-    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
-    this.notepad.loadImageData(this.imageData);
+    if (this.camera != undefined) {
+      this.camera.loadFrame();
+      this.notepad.loadImageData(this.camera.imageData);
+    } else {
+      this.notepad.ctx.clearRect(0, 0, this.width, this.height);
+    }
+    this.notepad.placeImageData(this.imageData);
     if (this.typeLog[this.typeLogHead] != undefined) {
       this.overlayText(this.typeLog[this.typeLogHead]);
     }
@@ -303,6 +311,17 @@ class Sketchpad {
       this.resetTypeLog();
       this.refresh();
     }
+  }
+
+  /**-------------------------------------------------- Text drawing */
+  enableCamera() {
+    this.camera = new Camera(this.notepad);
+    setInterval(
+      function() {
+        this.refresh();
+      }.bind(this),
+      1000 / 20
+    );
   }
 }
 

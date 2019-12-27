@@ -9,8 +9,7 @@ class Notepad {
     this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
   }
 
-  loadImageData(data) {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+  placeImageData(data) {
     for (var i = 0; i < data["data"].length; i++) {
       if (data["data"][i] != 0) {
         this.setPixel(
@@ -20,6 +19,11 @@ class Notepad {
         );
       }
     }
+  }
+
+  loadImageData(data) {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.placeImageData(data);
   }
 
   setPixel(x, y, i, s) {
