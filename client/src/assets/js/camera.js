@@ -12,7 +12,6 @@ class Camera {
     if (navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices.getUserMedia({ video: true }).then(
         function(stream) {
-          console.log(stream);
           this.video.srcObject = stream;
         }.bind(this)
       );
@@ -26,8 +25,6 @@ class Camera {
         drawingData["data"][i] = this.imageData["data"][i];
       }
     }
-    console.log(this.imageData);
-    console.log(drawingData["data"]);
     return drawingData;
   }
 
@@ -65,7 +62,13 @@ class Camera {
       var n = nearest(old);
       var err = old - n;
 
-      this.imageData["data"][Math.floor(i / 4)] = n == 0 ? 1 : 0;
+      var colourCode = n == 0 ? 1 : 0;
+      this.imageData["data"][Math.floor(i / 4)] = colourCode;
+      this.notepad.setPixel(
+        Math.floor(i / 4) % this.imageData["span"],
+        Math.floor(i / 4 / this.imageData["span"]),
+        colourCode
+      );
 
       this.img.data[i + 4] += (err * 7) / 16;
       this.img.data[i + 5] += (err * 7) / 16;

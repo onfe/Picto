@@ -55,7 +55,7 @@ class Sketchpad {
     ];
 
     /**typeLog contains charsLogged logs of text overlays in a circular queue.
-     * It is drawn over imageData with this.overlayText() until it is baked,
+     * It is drawn over imageData with this.overlayData() until it is baked,
      * at which point it becomes part of imageData.
      */
     this.charsLogged = 16;
@@ -90,15 +90,28 @@ class Sketchpad {
   }
 
   refresh() {
+    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
+
     if (this.camera != undefined) {
       this.camera.loadFrame();
-      this.notepad.loadImageData(this.camera.imageData);
-    } else {
-      this.notepad.ctx.clearRect(0, 0, this.width, this.height);
     }
-    this.notepad.placeImageData(this.imageData);
+
+    this.overlayData(this.imageData);
+
     if (this.typeLog[this.typeLogHead] != undefined) {
-      this.overlayText(this.typeLog[this.typeLogHead]);
+      this.overlayData(this.typeLog[this.typeLogHead]);
+    }
+  }
+
+  overlayData(data) {
+    for (var i = 0; i < data["data"].length; i++) {
+      if (data["data"][i] != 0) {
+        this.notepad.setPixel(
+          i % data["span"],
+          Math.floor(i / data["span"]),
+          data["data"][i]
+        );
+      }
     }
   }
 
@@ -287,18 +300,6 @@ class Sketchpad {
     }
   }
 
-  overlayText(data) {
-    for (var i = 0; i < data["data"].length; i++) {
-      if (data["data"][i] != 0) {
-        this.notepad.setPixel(
-          i % data["span"],
-          Math.floor(i / data["span"]),
-          data["data"][i]
-        );
-      }
-    }
-  }
-
   /**bakeText takes the head of the textLog and writes it onto the imageData */
   bakeText() {
     var lastLog = this.typeLog[this.typeLogHead];
@@ -314,7 +315,7 @@ class Sketchpad {
     }
   }
 
-  /**-------------------------------------------------- Text drawing */
+  /**-------------------------------------------------- Camera */
   enableCamera() {
     if (this.camera == undefined) {
       this.camera = new Camera(this.notepad);
@@ -323,7 +324,7 @@ class Sketchpad {
       function() {
         this.refresh();
       }.bind(this),
-      1000 / 20
+      1000
     );
   }
 
