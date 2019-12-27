@@ -67,13 +67,18 @@ class Sketchpad {
       cursor: this.cursorPos.slice(0)
     };
 
+    /**cameraEnabled keeps track of whether the camera has been enabled by the
+     * user. It's automatically disabled when getSendableData() is called.
+     */
+    this.cameraEnabled = false;
     this.enableCamera();
   }
 
   /**-------------------------------------------------- Utils */
   getSendableData() {
-    if (this.camera != undefined) {
+    if (this.cameraEnabled) {
       this.imageData = this.camera.bakeImage(this.imageData);
+      this.disableCamera();
     }
     this.bakeText();
     return this.imageData;
@@ -92,7 +97,7 @@ class Sketchpad {
   refresh() {
     this.notepad.ctx.clearRect(0, 0, this.width, this.height);
 
-    if (this.camera != undefined) {
+    if (this.cameraEnabled) {
       this.camera.loadFrame();
     }
 
@@ -320,6 +325,7 @@ class Sketchpad {
     if (this.camera == undefined) {
       this.camera = new Camera(this.notepad);
     }
+    this.cameraEnabled = true;
     this.cameraInterval = setInterval(
       function() {
         this.refresh();
@@ -329,6 +335,7 @@ class Sketchpad {
   }
 
   disableCamera() {
+    this.cameraEnabled = false;
     clearInterval(this.cameraInterval);
   }
 }
