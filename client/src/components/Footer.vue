@@ -16,6 +16,9 @@ export default {
     },
     onSend() {
       this.$store.dispatch("compose/send");
+    },
+    onCopy() {
+      this.$store.dispatch("compose/copy");
     }
   }
 };

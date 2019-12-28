@@ -20,6 +20,14 @@ const actions = {
   clear: () => {
     window._sketch.clear();
   },
+  copy: ({ rootState }, id) => {
+    if (id != null) {
+      // var msg = console.log('id');
+    } else {
+      var msg = rootState.messages.history.sort((a, b) => {a.id - b.id})[0]
+      window._sketch.notepad.loadImageData(msg.data);
+    }
+  },
   pencil: ({ commit, state }) => {
     commit("rainbow", state.tool == "pencil" && !state.rainbow);
     window._sketch.setPenMode();
