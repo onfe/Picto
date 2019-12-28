@@ -76,5 +76,6 @@ $perc-spacer: 1%;
   border-bottom-right-radius: $spacer;
   color: #fff;
   font-family: "pixel 5x7";
+  user-select: none;
 }
 </style>

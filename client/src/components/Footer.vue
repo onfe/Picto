@@ -45,6 +45,7 @@ section {
     font-family: "pixel 5x7";
     font-size: 4vw;
     border-right: 0.5vw solid $grey-l;
+    user-select: none;
 
     &:last-of-type {
       border: 0;
