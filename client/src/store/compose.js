@@ -24,7 +24,9 @@ const actions = {
     if (id != null) {
       // var msg = console.log('id');
     } else {
-      var msg = rootState.messages.history.sort((a, b) => {a.id - b.id})[0]
+      var msg = rootState.messages.history.sort((a, b) => {
+        a.id - b.id;
+      })[0];
       window._sketch.notepad.loadImageData(msg.data);
     }
   },
