@@ -88,7 +88,7 @@ export default {
             this.$router.push("/");
           }
         });
-    }, 100);
+    }, 250);
   }
 };
 </script>
