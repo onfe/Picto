@@ -18,11 +18,6 @@ export default {
   name: "home",
   components: {
     Join
-  },
-  data() {
-    return {
-      name: ""
-    };
   }
 };
 </script>

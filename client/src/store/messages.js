@@ -34,6 +34,18 @@ const actions = {
       text: pl.Announcement
     };
     commit("add", message);
+  },
+  join: ({ commit }, pl) => {
+    const message = {
+      text: `${pl} joined the room.`
+    };
+    commit("add", message);
+  },
+  leave: ({ commit }, pl) => {
+    const message = {
+      text: `${pl} left.`
+    };
+    commit("add", message);
   }
 };
 

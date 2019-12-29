@@ -53,7 +53,7 @@ export default {
       }
     }
   },
-  beforeCreate() {
+  mounted() {
     // check the room exists that we're about to join.
     const id = this.$route.params.id;
     if (!id) {
@@ -66,16 +66,18 @@ export default {
       method: "GET"
     };
 
-    fetch(url, options)
-      .then(resp => {
-        return resp.text();
-      })
-      .then(result => {
-        if (result != "true") {
-          // room doesn't exist anymore! redirect.
-          this.$router.push("/");
-        }
-      });
+    setTimeout(() => {
+      fetch(url, options)
+        .then(resp => {
+          return resp.text();
+        })
+        .then(result => {
+          if (result != "true") {
+            // room doesn't exist anymore! redirect.
+            this.$router.push("/");
+          }
+        });
+    }, 100);
   }
 };
 </script>

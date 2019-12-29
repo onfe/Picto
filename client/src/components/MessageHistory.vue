@@ -6,7 +6,8 @@
       v-bind:key="msg.id"
     >
       <CanvasMessage v-if="msg.type == 'normal'" v-bind="msg" />
-      <Announcement v-if="msg.type == 'announcement'" v-bind="msg" />
+      <Announcement v-else-if="msg.type == 'announcement'" v-bind="msg" />
+      <div class="text" v-else>{{ msg.text }}</div>
     </div>
   </section>
 </template>
@@ -33,5 +34,12 @@ section {
 
 .message {
   margin-top: 1vw;
+}
+
+.text {
+  font-size: 0.85em;
+  text-align: center;
+  color: $grey;
+  font-family: monospace;
 }
 </style>
