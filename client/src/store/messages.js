@@ -46,6 +46,9 @@ const actions = {
       text: `${pl} left.`
     };
     commit("add", message);
+  },
+  reset: ({ commit }) => {
+    commit("reset");
   }
 };
 
@@ -53,6 +56,10 @@ const mutations = {
   add: (state, message) => {
     state.history.unshift(message);
     state.iter += 1;
+  },
+  reset: state => {
+    state.history = [];
+    state.iter = 0;
   }
 };
 

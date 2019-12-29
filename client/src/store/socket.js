@@ -28,7 +28,7 @@ const actions = {
     });
   },
   disconnect: ({ state }) => {
-    state.sock.close();
+    state._socket.close();
   },
   _onMessage: ({ dispatch }, pl) => {
     pl = JSON.parse(pl.data);

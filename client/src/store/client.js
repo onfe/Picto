@@ -26,6 +26,7 @@ const actions = {
   },
   leave: ({ commit, dispatch }) => {
     dispatch("socket/disconnect", {}, { root: true });
+    dispatch("messages/reset", {}, { root: true });
     commit("leave");
   },
   init: ({ commit }, payload) => {
