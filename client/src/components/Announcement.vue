@@ -19,6 +19,7 @@ export default {
 .announcement {
   padding: $spacer;
   font-family: "pixel 5x7";
+  line-height: 0.625;
   font-size: $size-pixel;
   color: #fff;
   background: #000;
