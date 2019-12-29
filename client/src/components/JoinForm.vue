@@ -14,10 +14,12 @@
         autocorrect="off"
         autocapitalize="off"
         autofocus
+        :disabled="loading"
       />
 
-      <button type="submit" name="button">
+      <button type="submit" name="button" :disabled="loading">
         <svg
+          v-if="!loading"
           xmlns="http://www.w3.org/2000/svg"
           width="21"
           height="35"
@@ -28,22 +30,29 @@
             transform="translate(-544 -18)"
           />
         </svg>
+        <Spinner v-else />
       </button>
     </form>
   </div>
 </template>
 
 <script>
+import Spinner from "@/components/Spinner.vue";
+
 export default {
   name: "join-form",
-  components: {},
+  components: {
+    Spinner
+  },
   data() {
     return {
-      name: ""
+      name: "",
+      loading: true
     };
   },
   methods: {
     join() {
+      this.loading = true;
       const room = this.$route.params.id;
       const name = this.name;
       if (room) {
@@ -58,6 +67,7 @@ export default {
     const id = this.$route.params.id;
     if (!id) {
       // if we're not trying to join a room we don't need to check it exists.
+      this.loading = false;
       return;
     }
     const url =
@@ -72,6 +82,7 @@ export default {
           return resp.text();
         })
         .then(result => {
+          this.loading = false;
           if (result != "true") {
             // room doesn't exist anymore! redirect.
             this.$router.push("/");
@@ -113,11 +124,17 @@ input {
 }
 
 button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   width: 20%;
 
   background-color: $grey-d;
   border: none;
   color: white;
+
+  font-size: 2.5rem;
 
   // margin: 0;
   vertical-align: middle;
@@ -133,5 +150,9 @@ button {
       transform: scale(1.1);
     }
   }
+}
+
+p {
+  line-height: 1.2;
 }
 </style>

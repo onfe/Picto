@@ -48,6 +48,7 @@ export default {
 
 p {
   margin-bottom: 3rem;
+  line-height: 1.2;
 }
 
 .logo {
