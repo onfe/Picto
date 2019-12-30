@@ -27,7 +27,7 @@ const actions = {
       var msg = rootState.messages.history.sort((a, b) => {
         a.id - b.id;
       })[0];
-      window._sketch.notepad.loadImageData(msg.data);
+      window._sketch.loadImageData(msg.data);
     }
   },
   pencil: ({ commit, state }) => {

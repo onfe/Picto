@@ -73,6 +73,11 @@ class Sketchpad {
     return this.imageData;
   }
 
+  loadImageData(data) {
+    this.imageData = data;
+    this.refresh();
+  }
+
   clear() {
     this.imageData = {
       span: this.width,
