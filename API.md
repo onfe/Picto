@@ -55,7 +55,7 @@ Server -> Client:
 ```JSON
 {
   "Event": "message",
-  "UserIndex": 2,
+  "ColourIndex": 2,
   "Sender": "Josh",
   "Message": "NPXkOU8..."
 }

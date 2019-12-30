@@ -154,7 +154,7 @@ func (c *Client) recieveLoop() {
 			case "message":
 				var e MessageEvent
 				json.Unmarshal(data, &e)
-				e.UserIndex = c.ID
+				e.ColourIndex = c.ID
 				e.Sender = c.Name
 				c.recieve(e)
 			case "rename":
