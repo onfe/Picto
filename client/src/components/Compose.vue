@@ -86,5 +86,7 @@ canvas {
   height: 100%;
   image-rendering: pixelated;
   touch-action: none;
+  background-image: linear-gradient($grey-l 0.25vw, transparent 0);
+  background-size: 100% 19%;
 }
 </style>

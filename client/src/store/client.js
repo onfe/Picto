@@ -26,13 +26,19 @@ const actions = {
   },
   leave: ({ commit, dispatch }) => {
     dispatch("socket/disconnect", {}, { root: true });
+    dispatch("messages/reset", {}, { root: true });
     commit("leave");
   },
   init: ({ commit }, payload) => {
     commit("init", payload);
     router.push(`/room/${payload.RoomID}`);
   },
-  updateUser: ({ commit }, pl) => {
+  updateUser: ({ commit, state, dispatch }, pl) => {
+    if (state.users[pl.UserIndex] == "") {
+      dispatch("messages/join", pl.Users[pl.UserIndex], { root: true });
+    } else {
+      dispatch("messages/leave", state.users[pl.UserIndex], { root: true });
+    }
     commit("updateUser", pl);
   }
 };

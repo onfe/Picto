@@ -8,10 +8,10 @@ const state = {
 const getters = {};
 
 const actions = {
-  add: ({ state, rootState, commit }, pl) => {
+  add: ({ state, commit }, pl) => {
     const message = {
       type: "normal",
-      author: rootState.client.users[pl.UserIndex],
+      author: pl.Sender,
       colour: COLOURS[pl.UserIndex],
       data: pl.Message,
       id: state.iter
@@ -34,6 +34,21 @@ const actions = {
       text: pl.Announcement
     };
     commit("add", message);
+  },
+  join: ({ commit }, pl) => {
+    const message = {
+      text: `${pl} joined the room.`
+    };
+    commit("add", message);
+  },
+  leave: ({ commit }, pl) => {
+    const message = {
+      text: `${pl} left.`
+    };
+    commit("add", message);
+  },
+  reset: ({ commit }) => {
+    commit("reset");
   }
 };
 
@@ -41,6 +56,10 @@ const mutations = {
   add: (state, message) => {
     state.history.unshift(message);
     state.iter += 1;
+  },
+  reset: state => {
+    state.history = [];
+    state.iter = 0;
   }
 };
 

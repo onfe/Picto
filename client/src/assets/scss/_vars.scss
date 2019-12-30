@@ -4,6 +4,9 @@ $ratio-height: calc(#{$ratio-width} / 3);
 
 $spacer: 1vw;
 
+$height-lower: calc(#{$ratio-height} + calc(calc(2 * #{$spacer}) + #{$sidebar-width}));
+$height-upper: calc(100% - #{$height-lower});
+
 $size-pixel: 6vw;
 
 $grey: #808080;

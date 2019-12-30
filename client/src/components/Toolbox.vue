@@ -88,7 +88,9 @@ export default {
   },
   beforeDestroy() {
     const el = document.getElementById("text-input");
-    el.removeEventListener("input", this.handleInput);
+    if (el) {
+      el.removeEventListener("input", this.handleInput);
+    }
   }
 };
 </script>
