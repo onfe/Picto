@@ -109,9 +109,13 @@ class Sketchpad {
   }
 
   setPenSize(newPenSize) {
-    this.cursorPos[1] -= Math.round(this.lineSpacing / 2 * (this.pensize + 1))    
+    this.cursorPos[1] -= Math.round(
+      (this.lineSpacing / 2) * (this.pensize + 1)
+    );
     this.pensize = newPenSize;
-    this.cursorPos[1] += Math.round(this.lineSpacing / 2 * (this.pensize + 1))    
+    this.cursorPos[1] += Math.round(
+      (this.lineSpacing / 2) * (this.pensize + 1)
+    );
   }
 
   /**-------------------------------------------------- Resets */
@@ -243,7 +247,12 @@ class Sketchpad {
     the canvas to its original state and use the image data to decide where to
     draw the text onto the canvas ourselves.*/
     var oldData = this.notepad.ctx.getImageData(0, 0, this.width, this.height);
-    this.notepad.ctx.fillText(char, this.cursorPos[0], this.cursorPos[1] + Math.round(this.lineSpacing / 2 * (this.pensize + 1)));
+    this.notepad.ctx.fillText(
+      char,
+      this.cursorPos[0],
+      this.cursorPos[1] +
+        Math.round((this.lineSpacing / 2) * (this.pensize + 1))
+    );
     var newData = this.notepad.ctx.getImageData(0, 0, this.width, this.height);
     this.notepad.ctx.putImageData(oldData, 0, 0);
 
