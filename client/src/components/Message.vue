@@ -69,6 +69,7 @@ $perc-spacer: 1%;
   left: 0;
   padding: $perc-spacer;
   font-size: $size-pixel;
+  line-height: 0.625;
   background: #e97777;
   border-bottom: 0.5vw solid transparent;
   border-right: 0.5vw solid transparent;
@@ -76,5 +77,6 @@ $perc-spacer: 1%;
   border-bottom-right-radius: $spacer;
   color: #fff;
   font-family: "pixel 5x7";
+  user-select: none;
 }
 </style>

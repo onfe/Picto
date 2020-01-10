@@ -1,3 +1,5 @@
+import router from "../router";
+
 const state = {
   _socket: null
 };
@@ -22,7 +24,11 @@ const actions = {
       sock.onmessage = m => dispatch("_onMessage", m);
       sock.onopen = res;
       sock.onerror = rej;
+      sock.onclose = () => dispatch("_onClose");
     });
+  },
+  disconnect: ({ state }) => {
+    state._socket.close();
   },
   _onMessage: ({ dispatch }, pl) => {
     pl = JSON.parse(pl.data);
@@ -58,6 +64,12 @@ const actions = {
         console.log(pl);
     }
   },
+  _onClose: ({ commit }) => {
+    if (router.currentRoute.name == "room") {
+      router.replace(`/join/${router.currentRoute.params.id}`);
+    }
+    commit("destroy");
+  },
   send: ({ state }, pl) => {
     // TODO: check if connected, if not, dispatch socket/reconnect
     if (!pl.Event) {
@@ -77,6 +89,9 @@ const actions = {
 const mutations = {
   create: (state, sock) => {
     state._socket = sock;
+  },
+  destroy: state => {
+    state._socket = null;
   }
 };
 
