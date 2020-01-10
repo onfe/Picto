@@ -85,7 +85,6 @@ class Camera {
       this.img.data[i + stride + 5] += (err * 1) / 16;
       this.img.data[i + stride + 6] += (err * 1) / 16;
     }
-    console.log(this.img.data);
     this.notepad.ctx.putImageData(this.img, 0, 0);
   }
 }
