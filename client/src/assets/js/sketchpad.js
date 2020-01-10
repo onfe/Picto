@@ -95,10 +95,10 @@ class Sketchpad {
   }
 
   refresh() {
-    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
-
     if (this.cameraEnabled) {
       this.camera.loadFrame();
+    } else {
+      this.notepad.ctx.clearRect(0, 0, this.width, this.height);
     }
 
     this.overlayData(this.imageData);
@@ -330,7 +330,7 @@ class Sketchpad {
       function() {
         this.refresh();
       }.bind(this),
-      1000
+      1000/30
     );
   }
 

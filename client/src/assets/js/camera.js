@@ -64,11 +64,10 @@ class Camera {
 
       var colourCode = n == 0 ? 1 : 0;
       this.imageData["data"][Math.floor(i / 4)] = colourCode;
-      this.notepad.setPixel(
-        Math.floor(i / 4) % this.imageData["span"],
-        Math.floor(i / 4 / this.imageData["span"]),
-        colourCode
-      );
+
+      this.img.data[i] = n;
+      this.img.data[i + 1] = n;
+      this.img.data[i + 2] = n;
 
       this.img.data[i + 4] += (err * 7) / 16;
       this.img.data[i + 5] += (err * 7) / 16;
@@ -86,6 +85,8 @@ class Camera {
       this.img.data[i + stride + 5] += (err * 1) / 16;
       this.img.data[i + stride + 6] += (err * 1) / 16;
     }
+    console.log(this.img.data);
+    this.notepad.ctx.putImageData(this.img, 0, 0);
   }
 }
 
