@@ -52,7 +52,7 @@ class Camera {
       this.notepad.height
     );
 
-    var nearest = x => (x < 128 ? 0 : 255);
+    var nearest = x => (x < 43 ? 0 : x < 128 ? 85 : x < 213 ? 170 : 255);
 
     var stride = this.notepad.width * 4;
     for (var i = 0; i < this.img.data.length - 1; i += 4) {
@@ -62,7 +62,7 @@ class Camera {
       var n = nearest(old);
       var err = old - n;
 
-      var colourCode = n == 0 ? 1 : 0;
+      var colourCode = n == 255 ? 0 : n == 0 ? 1 : n == 85 ? 2 : 3;
       this.imageData["data"][Math.floor(i / 4)] = colourCode;
 
       this.img.data[i] = n;
