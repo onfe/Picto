@@ -173,7 +173,7 @@ class Sketchpad {
     this.notepad.setPixel(x, y, this.colourIndex, this.pensize);
 
     if (this.rainbowMode) {
-      this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
+      this.colourIndex = ((this.colourIndex + 3) % 252) + 4;
     }
 
     [this.lastMousePos[0], this.lastMousePos[1]] = [x, y];
@@ -205,7 +205,7 @@ class Sketchpad {
         this.notepad.setPixel(tempx, tempy, this.colourIndex, this.pensize);
       }
       if (this.rainbowMode) {
-        this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
+        this.colourIndex = ((this.colourIndex + 3) % 252) + 4;
       }
     }
 
