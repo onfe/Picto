@@ -63,7 +63,7 @@ class Notepad {
         var down = i =>
           Math.round(255 - this.saturation + this.saturation * (1 - (i % 1)));
 
-        var ci = ((i - 4) / 254) * 3;
+        var ci = ((i - 4) / 60) * 3;
 
         switch (Math.floor(ci)) {
           case 0:
