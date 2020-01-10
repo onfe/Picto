@@ -44,8 +44,8 @@ class Sketchpad {
     };
 
     /*Text styling */
-    this.textMargin = 4;
-    this.lineSpacing = 12;
+    this.textMargin = 8;
+    this.lineSpacing = 24;
 
     this.nameWidth = nameWidth || 0;
 
@@ -263,10 +263,12 @@ class Sketchpad {
     if (this.cursorPos[0] + charWidth + this.textMargin > this.width) {
       this.cursorPos[0] = this.textMargin;
       if (
-        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize/1.5 + 1)) <=
+        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize / 1.5 + 1)) <=
         this.height
       ) {
-        this.cursorPos[1] += Math.round(this.lineSpacing * (this.pensize/1.5 + 1));
+        this.cursorPos[1] += Math.round(
+          this.lineSpacing * (this.pensize / 1.5 + 1)
+        );
       } else {
         this.cursorPos = [
           Math.round(this.width * this.nameWidth) + this.textMargin,
