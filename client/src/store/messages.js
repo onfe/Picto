@@ -12,7 +12,7 @@ const actions = {
     const message = {
       type: "normal",
       author: pl.Sender,
-      colour: COLOURS[pl.UserIndex],
+      colour: COLOURS[pl.ColourIndex],
       data: pl.Message,
       id: state.iter
     };

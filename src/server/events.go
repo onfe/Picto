@@ -43,10 +43,10 @@ func (e UserEvent) getSenderID() int     { return e.UserIndex }
 
 //MessageEvent is sent to clients to inform them of a new message in their room.
 type MessageEvent struct {
-	Event     string
-	UserIndex int    //Index of the user that just sent the message
-	Sender    string //Name of the user that sent the message (at the time it was recieved).
-	Message   map[string]interface{}
+	Event       string
+	ColourIndex int    //Index of the user that just sent the message; used to set the message colour.
+	Sender      string //Name of the user that sent the message (at the time it was recieved).
+	Message     map[string]interface{}
 }
 
 func (e MessageEvent) getEventData() []byte {
@@ -54,7 +54,7 @@ func (e MessageEvent) getEventData() []byte {
 	return data
 }
 func (e MessageEvent) getEventType() string { return e.Event }
-func (e MessageEvent) getSenderID() int     { return e.UserIndex }
+func (e MessageEvent) getSenderID() int     { return e.ColourIndex }
 
 //AnnouncementEvent is sent to clients to inform them of an announcement in the room.
 type AnnouncementEvent struct {
