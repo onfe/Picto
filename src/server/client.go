@@ -145,33 +145,34 @@ func (c *Client) recieveLoop() {
 			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
 			break
 		}
-		event := make(map[string]interface{})
-		json.Unmarshal(data, &event)
-		if _, valid := event["Event"]; !valid {
+		event := EventWrapper{}
+		err = json.Unmarshal(data, &event)
+		if err != nil {
 			log.Println("[CLIENT] - Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
-			switch event["Event"] {
+			switch event.Event {
 			case "message":
-				var e MessageEvent
-				json.Unmarshal(data, &e)
-				e.ColourIndex = c.ID
-				e.Sender = c.Name
-				c.recieve(e)
+				//The payload field of EventWrapper is defined as interface{},
+				// Unmarshal throws the payload into a map[string]interface{}.
+				event.Payload.(map[string]interface{})["ColourIndex"] = c.ID
+				event.Payload.(map[string]interface{})["Sender"] = c.Name
+				if err != nil {
+					log.Println("[CLIENT] - Server unable to marshal ColourIndex and Sender into message event")
+				}
+				c.recieve(event)
 			case "rename":
-				var e RenameEvent
-				json.Unmarshal(data, &e)
-				c.room.changeName(e.RoomName)
+				c.room.changeName(event, c.ID)
 			}
 		}
 	}
 }
 
-func (c *Client) recieve(e Event) {
+func (c *Client) recieve(e EventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
 		h := sha1.New()
 		h.Write(e.getEventData())
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e)
+		c.room.distributeEvent(e.getEventData(), true, -1)
 	}
 }
