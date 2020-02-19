@@ -17,7 +17,7 @@ const actions = {
       }
     };
     dispatch("clear");
-    dispatch("messages/addSelf", pl, { root: true });
+    dispatch("messages/addSelf", pl.Payload, { root: true });
     dispatch("socket/send", pl, { root: true });
   },
   clear: () => {

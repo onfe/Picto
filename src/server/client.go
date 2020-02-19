@@ -173,6 +173,6 @@ func (c *Client) recieve(e EventWrapper) {
 		h := sha1.New()
 		h.Write(e.getEventData())
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e.getEventData(), true, -1)
+		c.room.distributeEvent(e.getEventData(), true, c.ID)
 	}
 }
