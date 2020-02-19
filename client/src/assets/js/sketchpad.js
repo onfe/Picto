@@ -234,10 +234,12 @@ class Sketchpad {
     if (this.cursorPos[0] + charWidth + this.textMargin > this.width) {
       this.cursorPos[0] = this.textMargin;
       if (
-        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize/1.5 + 1)) <=
+        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize / 1.5 + 1)) <=
         this.height
       ) {
-        this.cursorPos[1] += Math.round(this.lineSpacing * (this.pensize/1.5 + 1));
+        this.cursorPos[1] += Math.round(
+          this.lineSpacing * (this.pensize / 1.5 + 1)
+        );
       } else {
         this.cursorPos = [
           Math.round(this.width * this.nameWidth) + this.textMargin,
@@ -273,11 +275,11 @@ class Sketchpad {
         // >if two arrays are equal?
         //        O/                  O    [js]
         //       \|                  /|/   >?you wanna what?
-        (oldData["data"][i] != newData["data"][i]
-        || oldData["data"][i+1] != newData["data"][i+1]
-        || oldData["data"][i+2] != newData["data"][i+2]
-        || oldData["data"][i+3] != newData["data"][i+3])
-        && newData["data"][i + 3] == 255
+        (oldData["data"][i] != newData["data"][i] ||
+          oldData["data"][i + 1] != newData["data"][i + 1] ||
+          oldData["data"][i + 2] != newData["data"][i + 2] ||
+          oldData["data"][i + 3] != newData["data"][i + 3]) &&
+        newData["data"][i + 3] == 255
       ) {
         newText["data"][Math.floor(i / 4)] = this.colourIndex;
         diff = true;
