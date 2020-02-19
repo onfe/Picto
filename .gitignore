@@ -1,5 +1,6 @@
 *.exe
 *.log
 pictoServer
+Picto
 
 /pkg
