@@ -1,100 +1,125 @@
 # API and WebSocket Protocol
 
+
+
 ## WebSocket Protocol
-Every message across the WebSocket must be a JSON Object, that contains the
-`event` field.
+
+Every message across the WebSocket must be contained in the following wrapper's `payload` field:
+
+Client -> server
 
 ```JSON
 {
   "event": "",
-  "...": ""
+  "payload": {event data}
 }
 ```
 
-### Joining a room
+Server ​​-> client
+
+```json
+{
+  "event": "",
+  "time": 1582128345655,
+  "payload": {event data}
+}
+```
+
+The server will be in charge of dating events as it receives them.
+
+
+
+### `init` - Joining a room
+
 ```JSON
 {
-  "Event": "init",
   "RoomID": "id",
   "RoomName": "default",
   "UserIndex": 1,
   "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
-  "NumUsers": 4
 }
 ```
-`Users` has length equal to the max number of users in a room. Colours are
-assigned using the modulo of the index of the user. You have the index 
-`UserIndex` in the array. The `RoomID` is the value for `/room/code` and serves
-as the link for inviting friends to the room.
+`Users` has length equal to the max number of users in a room. Colours are assigned using the index of the user. You have the index `UserIndex` in the array. The `RoomID` is the value for `/room/code` and serves as the link for inviting friends to the room.
 
-### User join/leave
+
+
+### `user` - User join/leave
 
 User join:
 ```JSON
 {
-  "Event":"user",
   "UserIndex": 1,
   "Users": ["Eddie", "Jordie", "Josho", null, null, "Martin", "Elle", null],
-  "NumUsers": 5
 }
 ```
 
 User leave:
 ```JSON
 {
-  "Event":"user",
   "UserIndex": 1,
   "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
-  "NumUsers": 4
 }
 ```
 
-### Message
 
-Server -> Client:
+
+### `message` - Client Message
+
+Client -> Server:
+
 ```JSON
 {
-  "Event": "message",
+  "Message": "NPXkOU8..."
+}
+```
+
+Server -> Client:
+
+```JSON
+{
   "ColourIndex": 2,
   "Sender": "Josh",
   "Message": "NPXkOU8..."
 }
 ```
 
-`UserIndex` should not be used. It is due to be removed as it will become inaccurate on join/leaves.
+`ColourIndex` was the index of the user that sent the message in the `users` array when they sent it, it differs from `UserIndex` in that there may or may not be the same user that sent the message in that index in the `Users` array. 
 
-Client -> Server:
-```JSON
-{
-  "Event": "message",
-  "Message": "NPXkOU8..."
-}
-```
 
-### Announcement
+
+### `announcement` - message from server
 
 Server -> Client:
 ```JSON
 {
-  "Event": "announcement",
   "Announcement": "Welcome to Picto!",
 }
 ```
 
-### Rename Room
 
-Client -> Server -> Client(s)
+
+### `rename` - Rename Room
+
+Client -> server
 ```JSON
 {
-  "Event": "rename",
+  "RoomName": "Denver Airport"
+}
+```
+Server -> client
+
+```json
+{
   "UserIndex": 2,
   "RoomName": "Denver Airport"
 }
 ```
-`UserIndex` is the index of the user in the users array who changed the room's 
-name.
 
----
+`UserIndex` is the index of the user in the users array who changed the room's name.
+
+`rename` events are not cached, so we don't need to worry about `UserIndex` becoming incorrect on user join/leaves.
+
+
 
 ## API - Public
 
@@ -104,9 +129,9 @@ name.
 
 If `ROOM_ID` exists, returns `true`. Otherwise `false`.
 
----
 
-## api - Private
+
+## API - Private
 
 ### get_state
 

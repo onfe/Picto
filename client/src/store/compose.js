@@ -11,10 +11,13 @@ const actions = {
     const data = window._sketch.getSendableData();
     const pl = {
       Event: "message",
-      Message: data
+      Time: 1000,
+      Payload: {
+        Message: data
+      }
     };
     dispatch("clear");
-    dispatch("messages/addSelf", pl, { root: true });
+    dispatch("messages/addSelf", pl.Payload, { root: true });
     dispatch("socket/send", pl, { root: true });
   },
   clear: () => {

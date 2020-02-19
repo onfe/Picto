@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/onfe/Picto/src/server"
+	"./src/server"
 )
 
 var roomManager server.RoomManager
