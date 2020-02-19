@@ -102,12 +102,12 @@ func (r *Room) addClient(c *Client) error {
 		//Sending the client a "welcome to picto" announcement.
 		c.sendBuffer <- newAnnouncementEvent("Welcome to Picto!")
 
-		//Now the new client is up to date, all the clients are notified of their presence.
-		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, -1)
-
 		//The new client is added to the room's clients array.
 		r.Clients[newClientID] = c
 		r.Clients[newClientID].ID = newClientID
+
+		//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
+		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, -1)
 
 		return nil
 	}
