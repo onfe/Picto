@@ -102,8 +102,8 @@ func (r *Room) addClient(c *Client) error {
 		//Sending the client a "welcome to picto" announcement.
 		c.sendBuffer <- newAnnouncementEvent("Welcome to Picto!")
 
-		//Now the new client is up to date, all the other clients are notified of their presence.
-		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, newClientID)
+		//Now the new client is up to date, all the clients are notified of their presence.
+		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, -1)
 
 		//The new client is added to the room's clients array.
 		r.Clients[newClientID] = c
@@ -116,8 +116,6 @@ func (r *Room) addClient(c *Client) error {
 
 func (r *Room) removeClient(clientID int) error {
 	if r.Clients[clientID] != nil {
-		r.distributeEvent(newUserEvent(clientID, r.Clients[clientID].Name, r.getClientNames()), true, -1)
-
 		client := r.Clients[clientID]
 		r.Clients[clientID] = nil
 
@@ -128,6 +126,8 @@ func (r *Room) removeClient(clientID int) error {
 		if r.ClientCount == 0 {
 			r.ClientCount--
 		}
+
+		r.distributeEvent(newUserEvent(clientID, client.Name, r.getClientNames()), true, -1)
 		return nil
 	}
 	return errors.New("Room does not have such a client")
