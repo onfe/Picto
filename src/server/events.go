@@ -50,14 +50,17 @@ func newInitEvent(roomID string, roomName string, userIndex int, users []string)
 }
 
 //UserEvent is sent to clients to inform them of when another client leaves/joins their room.
+//Including UserName might seem a bit redundant but it's neccessary when sending cached join/leave events.
 type UserEvent struct {
-	UserIndex int //Index of the user that just joined in the users array.
+	UserIndex int    //Index of the user that just joined/left in the users array.
+	UserName  string //Name of the user that just joined/left
 	Users     []string
 }
 
-func newUserEvent(userIndex int, users []string) []byte {
+func newUserEvent(userIndex int, userName string, users []string) []byte {
 	userEvent := UserEvent{
 		UserIndex: userIndex,
+		UserName:  userName,
 		Users:     users,
 	}
 	return newEventWrapper("user", userEvent)

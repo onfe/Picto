@@ -95,8 +95,7 @@ func (r *Room) addClient(c *Client) error {
 		//Updating the new client with all the messages from the message cache.
 		for _, M := range r.EventCache.getAll() {
 			if M != nil {
-				m := M.(EventWrapper)
-				c.sendBuffer <- m.getEventData()
+				c.sendBuffer <- M.([]byte)
 			}
 		}
 
@@ -104,16 +103,7 @@ func (r *Room) addClient(c *Client) error {
 		c.sendBuffer <- newAnnouncementEvent("Welcome to Picto!")
 
 		//Now the new client is up to date, all the other clients are notified of their presence.
-		userEvent, _ := json.Marshal(
-			EventWrapper{
-				Event:   "user",
-				Payload: newUserEvent(newClientID, clientNames),
-			})
-		for _, cc := range r.Clients {
-			if cc != nil {
-				cc.sendBuffer <- userEvent
-			}
-		}
+		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, newClientID)
 
 		//The new client is added to the room's clients array.
 		r.Clients[newClientID] = c
@@ -126,6 +116,8 @@ func (r *Room) addClient(c *Client) error {
 
 func (r *Room) removeClient(clientID int) error {
 	if r.Clients[clientID] != nil {
+		r.distributeEvent(newUserEvent(clientID, r.Clients[clientID].Name, r.getClientNames()), true, -1)
+
 		client := r.Clients[clientID]
 		r.Clients[clientID] = nil
 
@@ -136,8 +128,6 @@ func (r *Room) removeClient(clientID int) error {
 		if r.ClientCount == 0 {
 			r.ClientCount--
 		}
-
-		r.distributeEvent(newUserEvent(clientID, r.getClientNames()), true, -1)
 		return nil
 	}
 	return errors.New("Room does not have such a client")

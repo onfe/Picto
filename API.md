@@ -49,6 +49,7 @@ User join:
 ```JSON
 {
   "UserIndex": 1,
+  "UserName":"Jordie",
   "Users": ["Eddie", "Jordie", "Josho", null, null, "Martin", "Elle", null],
 }
 ```
@@ -57,11 +58,12 @@ User leave:
 ```JSON
 {
   "UserIndex": 1,
+  "UserName":"Jordie",
   "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
 }
 ```
 
-
+Including `UserName` may seem a bit redundant but it is necessary in the case of cached join/leave events. 
 
 ### `message` - Client Message
 
