@@ -49,10 +49,10 @@ const actions = {
         dispatch("messages/add", pl.Payload, { root: true });
         break;
       case "init":
-        dispatch("client/init", pl.Payload, { root: true });
+        dispatch("client/init", pl, { root: true });
         break;
       case "user":
-        dispatch("client/updateUser", pl.Payload, { root: true });
+        dispatch("client/updateUser", pl, { root: true });
         break;
       case "announcement":
         dispatch("messages/announce", pl.Payload, { root: true });

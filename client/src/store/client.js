@@ -31,24 +31,28 @@ const actions = {
   },
   init: ({ commit }, payload) => {
     commit("init", payload);
-    router.push(`/room/${payload.RoomID}`);
+    router.push(`/room/${payload.Payload.RoomID}`);
   },
-  updateUser: ({ commit, state, dispatch }, pl) => {
-    if (state.users[pl.UserIndex] == "") {
-      dispatch("messages/join", pl.Users[pl.UserIndex], { root: true });
+  updateUser: ({ commit, state, dispatch }, d) => {
+    const pl = d.Payload;
+    if (pl.Users[pl.UserIndex] != "") {
+      dispatch("messages/join", pl.UserName, { root: true });
     } else {
-      dispatch("messages/leave", state.users[pl.UserIndex], { root: true });
+      dispatch("messages/leave", pl.UserName, { root: true });
     }
-    commit("updateUser", pl);
+    if (d.Time > state.joinTime) {
+      commit("updateUser", pl);
+    }
   }
 };
 
 const mutations = {
-  init: (state, payload) => {
-    state.room = payload.RoomID;
-    state.index = payload.UserIndex;
-    state.users = payload.Users;
-    state.colour = COLOURS[payload.UserIndex];
+  init: (state, d) => {
+    state.room = d.Payload.RoomID;
+    state.index = d.Payload.UserIndex;
+    state.users = d.Payload.Users;
+    state.colour = COLOURS[d.Payload.UserIndex];
+    state.joinTime = d.Time;
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;
