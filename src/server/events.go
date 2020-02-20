@@ -13,7 +13,7 @@ type EventWrapper struct {
 	Payload interface{}
 }
 
-func newEventWrapper(event string, payload interface{}) []byte {
+func wrapEvent(event string, payload interface{}) []byte {
 	eventWrapper := EventWrapper{
 		Event:   event,
 		Time:    time.Now().Unix(),
@@ -46,7 +46,7 @@ func newInitEvent(roomID string, roomName string, userIndex int, users []string)
 		UserIndex: userIndex,
 		Users:     users,
 	}
-	return newEventWrapper("init", initEvent)
+	return wrapEvent("init", initEvent)
 }
 
 //UserEvent is sent to clients to inform them of when another client leaves/joins their room.
@@ -63,7 +63,7 @@ func newUserEvent(userIndex int, userName string, users []string) []byte {
 		UserName:  userName,
 		Users:     users,
 	}
-	return newEventWrapper("user", userEvent)
+	return wrapEvent("user", userEvent)
 }
 
 //MessageEvent is sent to clients to inform them of a new message in their room.
@@ -82,7 +82,7 @@ func newAnnouncementEvent(announcement string) []byte {
 	announcementEvent := AnnouncementEvent{
 		Announcement: announcement,
 	}
-	return newEventWrapper("announcement", announcementEvent)
+	return wrapEvent("announcement", announcementEvent)
 }
 
 //RenameEvent is sent to clients to inform them of the name of their room being changed.
