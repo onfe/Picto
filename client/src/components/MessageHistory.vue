@@ -28,21 +28,39 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.history {
-  padding: 1vw;
-  overflow-y: scroll;
-  display: flex;
-  height: 100%;
-  flex-direction: column-reverse;
-}
-
 section {
   position: relative;
   height: 100%;
 }
 
+.history {
+  padding: 1vw;
+  overflow-y: scroll;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+}
+
 .message {
   margin-top: 1vw;
+}
+
+/*
+Problem: FireFox just doesn't scroll on a flexbox with flex-direction:column-reverse.
+
+| Potential Solution            | Negatives                    | Positives                   |
+| ----------------------------- | ---------------------------- | --------------------------- |
+| flex-direction:column-reverse | Doesn't work on FireFox.     | Works on everything except  |
+| on .history                   |                              | FireFox perfectly.          |
+| ----------------------------- | ---------------------------- | --------------------------- |
+| transform: scaleY(-1)         | Scroll direction is reversed | https://open.spotify.com/tr |
+| on .history and .message      | (doesn't affect mobile);     | ack/5foxQ24C0x7W0B2OD46AJg? | 
+|                               | it's just really dumb        | si=joaaiGIsTES52UQVX5bNoQ   | 
+
+https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
+*/
+.history, .message {
+  transform: scaleY(-1);
 }
 
 .text {
@@ -51,4 +69,5 @@ section {
   color: $grey;
   font-family: monospace;
 }
+
 </style>
