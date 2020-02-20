@@ -9,8 +9,7 @@ class Notepad {
     this.saturation = 255; /*Saturation should be in range 0-255 inclusive*/
   }
 
-  loadImageData(data) {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+  placeImageData(data) {
     for (var i = 0; i < data["data"].length; i++) {
       if (data["data"][i] != 0) {
         this.setPixel(
@@ -20,6 +19,11 @@ class Notepad {
         );
       }
     }
+  }
+
+  loadImageData(data) {
+    this.ctx.clearRect(0, 0, this.width, this.height);
+    this.placeImageData(data);
   }
 
   setPixel(x, y, i, s) {
@@ -35,6 +39,10 @@ class Notepad {
         return "rgba(255,255,255,0)";
       case 1:
         return "rgba(0,0,0,1)";
+      case 2:
+        return "rgba(85,85,85,1)";
+      case 3:
+        return "rgba(170,170,170,1)";
       default:
         /**This is my (Josh's) nice way of generating rainbows.
          * No touchy. >:c
@@ -55,7 +63,7 @@ class Notepad {
         var down = i =>
           Math.round(255 - this.saturation + this.saturation * (1 - (i % 1)));
 
-        var ci = ((i - 2) / 254) * 3;
+        var ci = ((i - 4) / 60) * 3;
 
         switch (Math.floor(ci)) {
           case 0:

@@ -1,4 +1,5 @@
 import Notepad from "./notepad.js";
+import Camera from "./camera";
 
 class Sketchpad {
   constructor(width, height, canvas, nameWidth) {
@@ -43,8 +44,8 @@ class Sketchpad {
     };
 
     /*Text styling */
-    this.textMargin = 4;
-    this.lineSpacing = 12;
+    this.textMargin = 8;
+    this.lineSpacing = 24;
 
     this.nameWidth = nameWidth || 0;
 
@@ -54,7 +55,7 @@ class Sketchpad {
     ];
 
     /**typeLog contains charsLogged logs of text overlays in a circular queue.
-     * It is drawn over imageData with this.overlayText() until it is baked,
+     * It is drawn over imageData with this.overlayData() until it is baked,
      * at which point it becomes part of imageData.
      */
     this.charsLogged = 16;
@@ -65,10 +66,20 @@ class Sketchpad {
       span: this.width,
       cursor: this.cursorPos.slice(0)
     };
+
+    /**cameraEnabled keeps track of whether the camera has been enabled by the
+     * user. It's automatically disabled when getSendableData() is called.
+     */
+    this.cameraEnabled = false;
+    this.enableCamera();
   }
 
   /**-------------------------------------------------- Utils */
   getSendableData() {
+    if (this.cameraEnabled) {
+      this.imageData = this.camera.bakeImage(this.imageData);
+      this.disableCamera();
+    }
     this.bakeText();
     return this.imageData;
   }
@@ -89,10 +100,28 @@ class Sketchpad {
   }
 
   refresh() {
-    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
-    this.notepad.loadImageData(this.imageData);
+    if (this.cameraEnabled) {
+      this.camera.loadFrame();
+    } else {
+      this.notepad.ctx.clearRect(0, 0, this.width, this.height);
+    }
+
+    this.overlayData(this.imageData);
+
     if (this.typeLog[this.typeLogHead] != undefined) {
-      this.overlayText(this.typeLog[this.typeLogHead]);
+      this.overlayData(this.typeLog[this.typeLogHead]);
+    }
+  }
+
+  overlayData(data) {
+    for (var i = 0; i < data["data"].length; i++) {
+      if (data["data"][i] != 0) {
+        this.notepad.setPixel(
+          i % data["span"],
+          Math.floor(i / data["span"]),
+          data["data"][i]
+        );
+      }
     }
   }
 
@@ -159,7 +188,7 @@ class Sketchpad {
     this.notepad.setPixel(x, y, this.colourIndex, this.pensize);
 
     if (this.rainbowMode) {
-      this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
+      this.colourIndex = ((this.colourIndex - 3) % 60) + 4;
     }
 
     [this.lastMousePos[0], this.lastMousePos[1]] = [x, y];
@@ -191,7 +220,7 @@ class Sketchpad {
         this.notepad.setPixel(tempx, tempy, this.colourIndex, this.pensize);
       }
       if (this.rainbowMode) {
-        this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
+        this.colourIndex = ((this.colourIndex - 3) % 60) + 4;
       }
     }
 
@@ -211,9 +240,9 @@ class Sketchpad {
     char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
     if (this.pensize == 0) {
-      this.notepad.ctx.font = "16px 'pixel 5x7'";
-    } else {
       this.notepad.ctx.font = "32px 'pixel 5x7'";
+    } else {
+      this.notepad.ctx.font = "64px 'pixel 5x7'";
     }
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "alphabetic";
@@ -309,18 +338,6 @@ class Sketchpad {
     }
   }
 
-  overlayText(data) {
-    for (var i = 0; i < data["data"].length; i++) {
-      if (data["data"][i] != 0) {
-        this.notepad.setPixel(
-          i % data["span"],
-          Math.floor(i / data["span"]),
-          data["data"][i]
-        );
-      }
-    }
-  }
-
   /**bakeText takes the head of the textLog and writes it onto the imageData */
   bakeText() {
     var lastLog = this.typeLog[this.typeLogHead];
@@ -334,6 +351,25 @@ class Sketchpad {
       this.resetTypeLog();
       this.refresh();
     }
+  }
+
+  /**-------------------------------------------------- Camera */
+  enableCamera() {
+    if (this.camera == undefined) {
+      this.camera = new Camera(this.notepad);
+    }
+    this.cameraEnabled = true;
+    this.cameraInterval = setInterval(
+      function() {
+        this.refresh();
+      }.bind(this),
+      1000 / 30
+    );
+  }
+
+  disableCamera() {
+    this.cameraEnabled = false;
+    clearInterval(this.cameraInterval);
   }
 }
 

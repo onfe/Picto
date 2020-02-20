@@ -17,8 +17,8 @@ export default {
       type: Object,
       default: () => {
         return {
-          span: 192,
-          data: Array(192 * 64).fill(0)
+          span: 384,
+          data: Array(384 * 128).fill(0)
         };
       }
     },
@@ -43,7 +43,7 @@ export default {
   },
   mounted() {
     const canv = document.getElementById(this.idHash);
-    this.notepad = new Notepad(192, 64, canv);
+    this.notepad = new Notepad(384, 128, canv);
     this.notepad.loadImageData(this.data);
   }
 };
