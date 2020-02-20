@@ -71,7 +71,7 @@ class Sketchpad {
      * user. It's automatically disabled when getSendableData() is called.
      */
     this.cameraEnabled = false;
-    this.enableCamera();
+    //this.enableCamera();
   }
 
   /**-------------------------------------------------- Utils */
