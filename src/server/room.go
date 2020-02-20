@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"time"
@@ -50,12 +49,10 @@ func (r *Room) getClientNames() []string {
 }
 
 func (r *Room) changeName(event EventWrapper, nameChangerID int) {
-	//Unmarshal the event payload to get the new room name and update it...
-	rename := RenameEvent{}
-	json.Unmarshal(event.Payload.([]byte), &rename)
-	r.Name = rename.RoomName
-	//...then distribute the event to all the users.
-	r.distributeEvent(event.getEventData(), false, nameChangerID)
+	//Get the new room name and update it. This method might not be particularly safe?
+	r.Name = (event.Payload.(map[string]interface{}))["RoomName"].(string)
+	//Distribute the rename event to all the users.
+	r.distributeEvent(event.toBytes(), false, nameChangerID)
 }
 
 func (r *Room) addClient(c *Client) error {

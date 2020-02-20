@@ -89,3 +89,11 @@ type RenameEvent struct {
 	UserIndex int
 	RoomName  string
 }
+
+func newRenameEvent(userIndex int, roomName string) []byte {
+	renameEvent := RenameEvent{
+		UserIndex: userIndex,
+		RoomName:  roomName,
+	}
+	return wrapEvent("rename", renameEvent)
+}
