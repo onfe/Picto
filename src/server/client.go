@@ -171,8 +171,8 @@ func (c *Client) recieve(e EventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
 		h := sha1.New()
-		h.Write(e.getEventData())
+		h.Write(e.toBytes())
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e.getEventData(), true, c.ID)
+		c.room.distributeEvent(e.toBytes(), true, c.ID)
 	}
 }

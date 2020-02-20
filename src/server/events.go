@@ -19,15 +19,14 @@ func wrapEvent(event string, payload interface{}) []byte {
 		Time:    time.Now().Unix(),
 		Payload: payload,
 	}
-	data, err := json.Marshal(eventWrapper)
+	return eventWrapper.toBytes()
+}
+
+func (e EventWrapper) toBytes() []byte {
+	data, err := json.Marshal(e)
 	if err != nil {
 		log.Println("[EVENTS] - Couldn't marshal new EventWrapper")
 	}
-	return data
-}
-
-func (e EventWrapper) getEventData() []byte {
-	data, _ := json.Marshal(e)
 	return data
 }
 
