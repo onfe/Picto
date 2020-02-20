@@ -37,7 +37,7 @@ const actions = {
   },
   join: ({ commit }, pl) => {
     const message = {
-      text: `${pl} joined the room.`
+      text: `${pl} joined.`
     };
     commit("add", message);
   },
