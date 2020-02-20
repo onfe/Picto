@@ -63,8 +63,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				} else {
 					for _, room := range rm.Rooms {
 						room.announce(message[0])
-						response, err = json.Marshal("Announced " + message[0] + " To all rooms")
 					}
+					response, err = json.Marshal("Announced " + message[0] + " To all rooms")
 				}
 			} else {
 				response, err = json.Marshal("Malformed API call. Please supply a message.")
