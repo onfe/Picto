@@ -1,7 +1,6 @@
 package server
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
 	"time"
@@ -9,28 +8,28 @@ import (
 
 //Room is a struct that holds all the info about a singular picto room.
 type Room struct {
-	manager      *RoomManager
-	ID           string         `json:"ID"`
-	Name         string         `json:"Name"`
-	Static       bool           `json:"Static"`
-	Clients      []*Client      `json:"Clients"`
-	ClientCount  int            `json:"ClientCount"`
-	MaxClients   int            `json:"MaxClients"`
-	MessageCache *CircularQueue `json:"MessageCache"`
-	LastUpdate   time.Time      `json:"LastUpdate"`
+	manager     *RoomManager
+	ID          string         `json:"ID"`
+	Name        string         `json:"Name"`
+	Static      bool           `json:"Static"`
+	Clients     []*Client      `json:"Clients"`
+	ClientCount int            `json:"ClientCount"`
+	MaxClients  int            `json:"MaxClients"`
+	EventCache  *CircularQueue `json:"EventCache"`
+	LastUpdate  time.Time      `json:"LastUpdate"`
 }
 
 func newRoom(manager *RoomManager, roomID string, name string, static bool, maxClients int) *Room {
 	r := Room{
-		manager:      manager,
-		ID:           roomID,
-		Name:         "Picto Room",
-		Static:       static,
-		Clients:      make([]*Client, maxClients),
-		ClientCount:  0,
-		MaxClients:   maxClients,
-		MessageCache: newCircularQueue(ChatHistoryLen),
-		LastUpdate:   time.Now(),
+		manager:     manager,
+		ID:          roomID,
+		Name:        "Picto Room",
+		Static:      static,
+		Clients:     make([]*Client, maxClients),
+		ClientCount: 0,
+		MaxClients:  maxClients,
+		EventCache:  newCircularQueue(ChatHistoryLen),
+		LastUpdate:  time.Now(),
 	}
 	return &r
 }
@@ -49,12 +48,11 @@ func (r *Room) getClientNames() []string {
 	return names
 }
 
-func (r *Room) changeName(newName string) {
-	r.Name = newName
-	r.distributeEvent(RenameEvent{
-		Event:    "rename",
-		RoomName: r.Name,
-	})
+func (r *Room) changeName(event EventWrapper, nameChangerID int) {
+	//Get the new room name and update it. This method might not be particularly safe?
+	r.Name = (event.Payload.(map[string]interface{}))["RoomName"].(string)
+	//Distribute the rename event to all the users.
+	r.distributeEvent(event.toBytes(), true, nameChangerID)
 }
 
 func (r *Room) addClient(c *Client) error {
@@ -67,7 +65,7 @@ func (r *Room) addClient(c *Client) error {
 			if client != nil && client.Name == c.Name {
 				//If it is, then ClientCount can be decremented as they've failed to join the room.
 				r.ClientCount--
-				return errors.New("Name already taken.")
+				return errors.New("name already taken")
 			}
 		}
 
@@ -89,52 +87,28 @@ func (r *Room) addClient(c *Client) error {
 		clientNames[newClientID] = c.Name
 
 		//Updating the new client as to the room state with an init event.
-		initEvent, _ := json.Marshal(
-			InitEvent{
-				Event:     "init",
-				RoomID:    r.ID,
-				RoomName:  r.Name,
-				UserIndex: newClientID,
-				Users:     clientNames,
-				NumUsers:  r.ClientCount,
-			})
-		c.sendBuffer <- initEvent
+		c.sendBuffer <- newInitEvent(r.ID, r.Name, newClientID, clientNames)
 
 		//Updating the new client with all the messages from the message cache.
-		for _, M := range r.MessageCache.getAll() {
+		for _, M := range r.EventCache.getAll() {
 			if M != nil {
-				m := M.(Event)
-				c.sendBuffer <- m.getEventData()
+				c.sendBuffer <- M.([]byte)
 			}
 		}
 
 		//Sending the client a "welcome to picto" announcement.
-		c.sendBuffer <- AnnouncementEvent{
-			Event:        "announcement",
-			Announcement: "Welcome to Picto!",
-		}.getEventData()
-
-		//Now the new client is up to date, all the other clients are notified of their presence.
-		userEvent, _ := json.Marshal(
-			UserEvent{
-				Event:     "user",
-				UserIndex: newClientID,
-				Users:     clientNames,
-				NumUsers:  r.ClientCount,
-			})
-		for _, cc := range r.Clients {
-			if cc != nil {
-				cc.sendBuffer <- userEvent
-			}
-		}
+		c.sendBuffer <- newAnnouncementEvent("Welcome to Picto!")
 
 		//The new client is added to the room's clients array.
 		r.Clients[newClientID] = c
 		r.Clients[newClientID].ID = newClientID
 
+		//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
+		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, -1)
+
 		return nil
 	}
-	return errors.New("Room already full.")
+	return errors.New("room already full")
 }
 
 func (r *Room) removeClient(clientID int) error {
@@ -150,36 +124,26 @@ func (r *Room) removeClient(clientID int) error {
 			r.ClientCount--
 		}
 
-		r.distributeEvent(UserEvent{
-			Event:     "user",
-			UserIndex: clientID,
-			Users:     r.getClientNames(),
-			NumUsers:  r.ClientCount,
-		})
-
+		r.distributeEvent(newUserEvent(clientID, client.Name, r.getClientNames()), true, -1)
 		return nil
 	}
 	return errors.New("Room does not have such a client")
 }
 
-func (r *Room) distributeEvent(e Event) {
+func (r *Room) distributeEvent(event []byte, cached bool, sender int) {
 	r.LastUpdate = time.Now()
-	if e.getEventType() == "message" {
-		r.MessageCache.push(e)
+	if cached {
+		r.EventCache.push(event)
 	}
-	eventData := e.getEventData()
 	for _, client := range r.Clients {
-		if client != nil && client.ID != e.getSenderID() {
-			client.sendBuffer <- eventData
+		if client != nil && client.ID != sender {
+			client.sendBuffer <- event
 		}
 	}
 }
 
 func (r *Room) announce(message string) {
-	r.distributeEvent(AnnouncementEvent{
-		Event:        "announcement",
-		Announcement: message,
-	})
+	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
 func (r *Room) closeAllConnections() {

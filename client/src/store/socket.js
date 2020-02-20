@@ -32,6 +32,7 @@ const actions = {
   },
   _onMessage: ({ dispatch }, pl) => {
     pl = JSON.parse(pl.data);
+    console.log(pl);
     if (!pl.Event) {
       throw "Payload does not contain event field.";
     }
@@ -45,7 +46,7 @@ const actions = {
 
     switch (pl.Event) {
       case "message":
-        dispatch("messages/add", pl, { root: true });
+        dispatch("messages/add", pl.Payload, { root: true });
         break;
       case "init":
         dispatch("client/init", pl, { root: true });
@@ -54,7 +55,7 @@ const actions = {
         dispatch("client/updateUser", pl, { root: true });
         break;
       case "announcement":
-        dispatch("messages/announce", pl, { root: true });
+        dispatch("messages/announce", pl.Payload, { root: true });
         break;
       case "rename":
         // TODO: ADD Rename event.

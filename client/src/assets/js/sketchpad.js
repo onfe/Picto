@@ -298,11 +298,23 @@ class Sketchpad {
     var diff = false;
     for (var i = 0; i < newData["data"].length; i += 4) {
       /**The alpha channel is used for masking out the text */
-      if (newData["data"][i + 3] > 128) {
+      if (
+        // [me]
+        // >Hey, uh, I'd like to check, uh...
+        // >if two arrays are equal?
+        //        O/                  O    [js]
+        //       \|                  /|/   >?you wanna what?
+        (oldData["data"][i] != newData["data"][i] ||
+          oldData["data"][i + 1] != newData["data"][i + 1] ||
+          oldData["data"][i + 2] != newData["data"][i + 2] ||
+          oldData["data"][i + 3] != newData["data"][i + 3]) &&
+        newData["data"][i + 3] == 255
+      ) {
         newText["data"][Math.floor(i / 4)] = this.colourIndex;
         diff = true;
       }
     }
+
     if (diff) {
       this.typeLogHead = (this.typeLogHead + 1) % this.charsLogged;
       this.typeLog[this.typeLogHead] = newText;
