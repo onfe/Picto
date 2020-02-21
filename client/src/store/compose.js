@@ -10,16 +10,16 @@ const actions = {
   send: ({ dispatch }) => {
     const data = window._sketch.getSendableData();
     if (data != null) { //We don't send empty messages.
-    const pl = {
-      Event: "message",
-      Time: 1000,
-      Payload: {
-        Message: data
-      }
-    };
-    dispatch("clear");
-    dispatch("messages/addSelf", pl.Payload, { root: true });
-    dispatch("socket/send", pl, { root: true });
+      const pl = {
+        Event: "message",
+        Time: 1000,
+        Payload: {
+          Message: data
+        }
+      };
+      dispatch("clear");
+      dispatch("messages/addSelf", pl.Payload, { root: true });
+      dispatch("socket/send", pl, { root: true });
     }
   },
   clear: () => {
@@ -32,7 +32,7 @@ const actions = {
       var msg = rootState.messages.history.sort((a, b) => {
         a.id - b.id;
       })[0];
-      window._sketch.loadImageData(msg.data);
+      window._sketch.copy(msg.data);
     }
   },
   pencil: ({ commit, state }) => {

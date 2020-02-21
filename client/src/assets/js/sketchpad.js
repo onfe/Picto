@@ -102,6 +102,12 @@ class Sketchpad {
     this.refresh();
   }
 
+  copy(data) {
+    this.imageData = data
+    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
+    this.notepad.placeImageData(data)
+  }
+
   refresh() {
     if (this.cameraEnabled) {
       this.camera.loadFrame();
