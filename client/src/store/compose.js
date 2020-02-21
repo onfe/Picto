@@ -11,7 +11,8 @@ const getters = {};
 const actions = {
   send: ({ dispatch }) => {
     const msg = window._sketch.getBakedImageData();
-    if (msg != null) { //We don't send empty messages.
+    if (msg != null) {
+      //We don't send empty messages.
       const pl = {
         Event: "message",
         Time: 1000,
@@ -32,7 +33,7 @@ const actions = {
           }
         }
       };
-      
+
       dispatch("clear");
       dispatch("messages/addSelf", pl.Payload, { root: true });
       dispatch("socket/send", socket_pl, { root: true });
@@ -45,11 +46,11 @@ const actions = {
     if (id != null) {
       // var msg = console.log('id');
     } else {
-      console.log(rootState)
+      console.log(rootState);
       var msg = rootState.messages.history.sort((a, b) => {
         a.id - b.id;
       })[0];
-      console.log(msg.data.data)
+      console.log(msg.data.data);
       window._sketch.copy(msg.data);
     }
   },

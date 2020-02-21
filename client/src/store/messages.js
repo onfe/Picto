@@ -10,7 +10,7 @@ const getters = {};
 
 const actions = {
   add: ({ state, commit }, pl) => {
-    pl.Message.data = RunlengthEncoder.decode(pl.Message.data)
+    pl.Message.data = RunlengthEncoder.decode(pl.Message.data);
     const message = {
       type: "normal",
       author: pl.Sender,

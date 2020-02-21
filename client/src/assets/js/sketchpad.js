@@ -83,8 +83,8 @@ class Sketchpad {
     this.bakeText();
 
     //If the image is empty, we return null.
-    if (this.imageData.data.reduce((a,b)=>a+b) == 0) {
-      return null
+    if (this.imageData.data.reduce((a, b) => a + b) == 0) {
+      return null;
     }
     return this.imageData;
   }

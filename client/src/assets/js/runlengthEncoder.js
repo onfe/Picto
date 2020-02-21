@@ -2,7 +2,7 @@ const itobs =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
 class RunlengthEncoder {
-    static encode(d) {
+  static encode(d) {
     var occurences = 0;
     var prev = null;
     var resArr = [];
