@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/mitchellh/mapstructure"
 )
 
 var upgrader = websocket.Upgrader{
@@ -154,12 +155,18 @@ func (c *Client) recieveLoop() {
 			case "message":
 				//The payload field of EventWrapper is defined as interface{},
 				// Unmarshal throws the payload into a map[string]interface{}.
-				event.Payload.(map[string]interface{})["ColourIndex"] = c.ID
-				event.Payload.(map[string]interface{})["Sender"] = c.Name
-				if err != nil {
-					log.Println("[CLIENT] - Server unable to marshal ColourIndex and Sender into message event")
+				// We need to decode it into a MessageEvent struct.
+				message := MessageEvent{}
+				mapstructure.Decode(event.Payload, &message)
+				//If the message is empty, we ignore it...
+				if d, valid := message.Message["data"].(string); valid && d == EmptyMessage {
+					continue
 				}
-				c.recieve(event)
+				//...otherwise we fill in the ColourIndex and Sender fields,
+				// rewrap it and recieve it.
+				message.ColourIndex = c.ID
+				message.Sender = c.Name
+				c.recieve(wrapEvent("message", message))
 			case "rename":
 				c.room.changeName(event, c.ID)
 			}
@@ -167,12 +174,12 @@ func (c *Client) recieveLoop() {
 	}
 }
 
-func (c *Client) recieve(e EventWrapper) {
+func (c *Client) recieve(e []byte) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
 		h := sha1.New()
-		h.Write(e.toBytes())
+		h.Write(e)
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e.toBytes(), true, c.ID)
+		c.room.distributeEvent(e, true, c.ID)
 	}
 }
