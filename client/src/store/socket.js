@@ -32,7 +32,6 @@ const actions = {
   },
   _onMessage: ({ dispatch }, pl) => {
     pl = JSON.parse(pl.data);
-    console.log(pl);
     if (!pl.Event) {
       throw "Payload does not contain event field.";
     }
