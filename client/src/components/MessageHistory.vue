@@ -59,7 +59,8 @@ Problem: FireFox just doesn't scroll on a flexbox with flex-direction:column-rev
 
 https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
 */
-.history, .message {
+.history,
+.message {
   transform: scaleY(-1);
 }
 
@@ -69,5 +70,4 @@ https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
   color: $grey;
   font-family: monospace;
 }
-
 </style>
