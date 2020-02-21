@@ -51,7 +51,7 @@ const actions = {
         a.id - b.id;
       })[0];
       console.log(msg.data.data);
-      window._sketch.copy(msg.data);
+      window._sketch.loadImageData(msg.data);
     }
   },
   pencil: ({ commit, state }) => {
