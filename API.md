@@ -167,3 +167,19 @@ Closes `ROOM_ID` and announces message `REASON` beforehand.
 
 `/api/?token=API_TOKEN&method=create_static_room&room_name=ROOM_NAME&room_size=ROOM_SIZE`
 Creates a static room (continues to exist when there are no clients connected) with name `ROOM_NAME` and a max clients of `ROOM_SIZE`.
+
+
+
+# Message Encoding
+
+A byte is used per pixel.
+
+| Range | Use                                       |
+| ----- | ----------------------------------------- |
+| 0     | Transparent                               |
+| 1     | Black                                     |
+| 2-3   | Greyscale (2 = light grey, 3 = dark grey) |
+| 4-62  | Rainbow colours                           |
+| 63    | RLE encoding start character              |
+
+RLE encoding is `255 [counts] 0 [value]` where the total count is the sum of `counts`, plus 4 (if four or less characters are repeated they're not RLE'd as it'd be less efficient, and 0 is an illegal character in `[counts]`, so we know there's at least 5). The sum of `[counts]` is used as opposed to a product as to avoid having to complicate message checking for illegally large images.

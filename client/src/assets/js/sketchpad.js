@@ -81,12 +81,9 @@ class Sketchpad {
       this.disableCamera();
     }
     this.bakeText();
-    return this.imageData;
-  }
-
-  loadImageData(data) {
-    this.imageData = data;
-    this.refresh();
+    var compressed = this.imageData;
+    compressed.data = this.notepad.rleEncode(compressed.data);
+    return compressed;
   }
 
   clear() {
@@ -131,7 +128,7 @@ class Sketchpad {
       this.rainbowMode = !this.rainbowMode;
     }
     if (this.rainbowMode) {
-      this.colourIndex = 2;
+      this.colourIndex = 4;
     } else {
       this.colourIndex = 1;
     }
@@ -220,7 +217,7 @@ class Sketchpad {
         this.notepad.setPixel(tempx, tempy, this.colourIndex, this.pensize);
       }
       if (this.rainbowMode) {
-        this.colourIndex = ((this.colourIndex - 3) % 60) + 4;
+        this.colourIndex = ((this.colourIndex - 3) % 59) + 4;
       }
     }
 
