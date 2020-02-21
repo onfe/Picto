@@ -1,3 +1,5 @@
+import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
+
 const state = {
   tool: "pencil",
   size: "small",
@@ -8,18 +10,32 @@ const getters = {};
 
 const actions = {
   send: ({ dispatch }) => {
-    const data = window._sketch.getSendableData();
-    if (data != null) { //We don't send empty messages.
+    const msg = window._sketch.getBakedImageData();
+    if (msg != null) { //We don't send empty messages.
       const pl = {
         Event: "message",
         Time: 1000,
         Payload: {
-          Message: data
+          Message: {
+            data: msg.data,
+            span: msg.span
+          }
         }
       };
+      const socket_pl = {
+        Event: "message",
+        Time: 1000,
+        Payload: {
+          Message: {
+            data: RunlengthEncoder.encode(msg.data),
+            span: msg.span
+          }
+        }
+      };
+      
       dispatch("clear");
       dispatch("messages/addSelf", pl.Payload, { root: true });
-      dispatch("socket/send", pl, { root: true });
+      dispatch("socket/send", socket_pl, { root: true });
     }
   },
   clear: () => {
@@ -29,9 +45,11 @@ const actions = {
     if (id != null) {
       // var msg = console.log('id');
     } else {
+      console.log(rootState)
       var msg = rootState.messages.history.sort((a, b) => {
         a.id - b.id;
       })[0];
+      console.log(msg.data.data)
       window._sketch.copy(msg.data);
     }
   },

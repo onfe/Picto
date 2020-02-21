@@ -75,7 +75,7 @@ class Sketchpad {
   }
 
   /**-------------------------------------------------- Utils */
-  getSendableData() {
+  getBakedImageData() {
     if (this.cameraEnabled) {
       this.imageData = this.camera.bakeImage(this.imageData);
       this.disableCamera();
@@ -86,10 +86,7 @@ class Sketchpad {
     if (this.imageData.data.reduce((a,b)=>a+b) == 0) {
       return null
     }
-
-    var compressed = this.imageData;
-    compressed.data = this.notepad.rleEncode(compressed.data);
-    return compressed;
+    return this.imageData;
   }
 
   clear() {
@@ -100,12 +97,6 @@ class Sketchpad {
     this.resetCursorPos();
     this.resetTypeLog();
     this.refresh();
-  }
-
-  copy(data) {
-    this.imageData = data
-    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
-    this.notepad.placeImageData(data)
   }
 
   refresh() {
