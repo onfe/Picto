@@ -9,6 +9,7 @@ const getters = {};
 const actions = {
   send: ({ dispatch }) => {
     const data = window._sketch.getSendableData();
+    if (data != null) { //We don't send empty messages.
     const pl = {
       Event: "message",
       Time: 1000,
@@ -19,6 +20,7 @@ const actions = {
     dispatch("clear");
     dispatch("messages/addSelf", pl.Payload, { root: true });
     dispatch("socket/send", pl, { root: true });
+    }
   },
   clear: () => {
     window._sketch.clear();

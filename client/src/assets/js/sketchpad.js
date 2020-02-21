@@ -81,6 +81,12 @@ class Sketchpad {
       this.disableCamera();
     }
     this.bakeText();
+
+    //If the image is empty, we return null.
+    if (this.imageData.data.reduce((a,b)=>a+b) == 0) {
+      return null
+    }
+
     var compressed = this.imageData;
     compressed.data = this.notepad.rleEncode(compressed.data);
     return compressed;
