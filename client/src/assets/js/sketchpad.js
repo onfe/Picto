@@ -1,4 +1,5 @@
 import Notepad from "./notepad.js";
+import Camera from "./camera";
 
 class Sketchpad {
   constructor(width, height, canvas, nameWidth) {
@@ -43,8 +44,8 @@ class Sketchpad {
     };
 
     /*Text styling */
-    this.textMargin = 4;
-    this.lineSpacing = 12;
+    this.textMargin = 8;
+    this.lineSpacing = 24;
 
     this.nameWidth = nameWidth || 0;
 
@@ -54,7 +55,7 @@ class Sketchpad {
     ];
 
     /**typeLog contains charsLogged logs of text overlays in a circular queue.
-     * It is drawn over imageData with this.overlayText() until it is baked,
+     * It is drawn over imageData with this.overlayData() until it is baked,
      * at which point it becomes part of imageData.
      */
     this.charsLogged = 16;
@@ -65,17 +66,32 @@ class Sketchpad {
       span: this.width,
       cursor: this.cursorPos.slice(0)
     };
+
+    /**cameraEnabled keeps track of whether the camera has been enabled by the
+     * user. It's automatically disabled when getSendableData() is called.
+     */
+    this.cameraEnabled = false;
+    //this.enableCamera();
   }
 
   /**-------------------------------------------------- Utils */
-  getSendableData() {
+  getBakedImageData() {
+    if (this.cameraEnabled) {
+      this.imageData = this.camera.bakeImage(this.imageData);
+      this.disableCamera();
+    }
     this.bakeText();
+
+    //If the image is empty, we return null.
+    if (this.imageData.data.reduce((a, b) => a + b) == 0) {
+      return null;
+    }
     return this.imageData;
   }
 
   loadImageData(data) {
     this.imageData = data;
-    this.refresh();
+    this.notepad.loadImageData(data);
   }
 
   clear() {
@@ -89,10 +105,28 @@ class Sketchpad {
   }
 
   refresh() {
-    this.notepad.ctx.clearRect(0, 0, this.width, this.height);
-    this.notepad.loadImageData(this.imageData);
+    if (this.cameraEnabled) {
+      this.camera.loadFrame();
+    } else {
+      this.notepad.ctx.clearRect(0, 0, this.width, this.height);
+    }
+
+    this.overlayData(this.imageData);
+
     if (this.typeLog[this.typeLogHead] != undefined) {
-      this.overlayText(this.typeLog[this.typeLogHead]);
+      this.overlayData(this.typeLog[this.typeLogHead]);
+    }
+  }
+
+  overlayData(data) {
+    for (var i = 0; i < data["data"].length; i++) {
+      if (data["data"][i] != 0) {
+        this.notepad.setPixel(
+          i % data["span"],
+          Math.floor(i / data["span"]),
+          data["data"][i]
+        );
+      }
     }
   }
 
@@ -102,7 +136,7 @@ class Sketchpad {
       this.rainbowMode = !this.rainbowMode;
     }
     if (this.rainbowMode) {
-      this.colourIndex = 2;
+      this.colourIndex = 4;
     } else {
       this.colourIndex = 1;
     }
@@ -159,7 +193,7 @@ class Sketchpad {
     this.notepad.setPixel(x, y, this.colourIndex, this.pensize);
 
     if (this.rainbowMode) {
-      this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
+      this.colourIndex = ((this.colourIndex - 3) % 59) + 4;
     }
 
     [this.lastMousePos[0], this.lastMousePos[1]] = [x, y];
@@ -191,7 +225,7 @@ class Sketchpad {
         this.notepad.setPixel(tempx, tempy, this.colourIndex, this.pensize);
       }
       if (this.rainbowMode) {
-        this.colourIndex = ((this.colourIndex + 1) % 254) + 2;
+        this.colourIndex = ((this.colourIndex - 3) % 59) + 4;
       }
     }
 
@@ -211,9 +245,9 @@ class Sketchpad {
     char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
     if (this.pensize == 0) {
-      this.notepad.ctx.font = "16px 'pixel 5x7'";
-    } else {
       this.notepad.ctx.font = "32px 'pixel 5x7'";
+    } else {
+      this.notepad.ctx.font = "64px 'pixel 5x7'";
     }
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "alphabetic";
@@ -234,10 +268,12 @@ class Sketchpad {
     if (this.cursorPos[0] + charWidth + this.textMargin > this.width) {
       this.cursorPos[0] = this.textMargin;
       if (
-        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize + 1)) <=
+        this.cursorPos[1] + 2 * (this.lineSpacing * (this.pensize / 1.5 + 1)) <=
         this.height
       ) {
-        this.cursorPos[1] += this.lineSpacing * (this.pensize + 1);
+        this.cursorPos[1] += Math.round(
+          this.lineSpacing * (this.pensize / 1.5 + 1)
+        );
       } else {
         this.cursorPos = [
           Math.round(this.width * this.nameWidth) + this.textMargin,
@@ -268,13 +304,22 @@ class Sketchpad {
     for (var i = 0; i < newData["data"].length; i += 4) {
       /**The alpha channel is used for masking out the text */
       if (
-        oldData["data"][i + 3] != newData["data"][i + 3] &&
-        newData["data"][i + 3] > 128
+        // [me]
+        // >Hey, uh, I'd like to check, uh...
+        // >if two arrays are equal?
+        //        O/                  O    [js]
+        //       \|                  /|/   >?you wanna what?
+        (oldData["data"][i] != newData["data"][i] ||
+          oldData["data"][i + 1] != newData["data"][i + 1] ||
+          oldData["data"][i + 2] != newData["data"][i + 2] ||
+          oldData["data"][i + 3] != newData["data"][i + 3]) &&
+        newData["data"][i + 3] == 255
       ) {
         newText["data"][Math.floor(i / 4)] = this.colourIndex;
         diff = true;
       }
     }
+
     if (diff) {
       this.typeLogHead = (this.typeLogHead + 1) % this.charsLogged;
       this.typeLog[this.typeLogHead] = newText;
@@ -282,7 +327,7 @@ class Sketchpad {
     }
 
     if (this.rainbowMode) {
-      this.colourIndex = ((this.colourIndex + Math.round(254 / 16)) % 254) + 2;
+      this.colourIndex = ((this.colourIndex - 3) % 59) + 4;
     }
   }
 
@@ -295,18 +340,6 @@ class Sketchpad {
       this.typeLogHead = nextTypeLogHead;
       this.refresh();
       return;
-    }
-  }
-
-  overlayText(data) {
-    for (var i = 0; i < data["data"].length; i++) {
-      if (data["data"][i] != 0) {
-        this.notepad.setPixel(
-          i % data["span"],
-          Math.floor(i / data["span"]),
-          data["data"][i]
-        );
-      }
     }
   }
 
@@ -323,6 +356,25 @@ class Sketchpad {
       this.resetTypeLog();
       this.refresh();
     }
+  }
+
+  /**-------------------------------------------------- Camera */
+  enableCamera() {
+    if (this.camera == undefined) {
+      this.camera = new Camera(this.notepad);
+    }
+    this.cameraEnabled = true;
+    this.cameraInterval = setInterval(
+      function() {
+        this.refresh();
+      }.bind(this),
+      1000 / 30
+    );
+  }
+
+  disableCamera() {
+    this.cameraEnabled = false;
+    clearInterval(this.cameraInterval);
   }
 }
 

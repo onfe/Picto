@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/mitchellh/mapstructure"
 )
 
 var upgrader = websocket.Upgrader{
@@ -145,33 +146,40 @@ func (c *Client) recieveLoop() {
 			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
 			break
 		}
-		event := make(map[string]interface{})
-		json.Unmarshal(data, &event)
-		if _, valid := event["Event"]; !valid {
+		event := EventWrapper{}
+		err = json.Unmarshal(data, &event)
+		if err != nil {
 			log.Println("[CLIENT] - Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
-			switch event["Event"] {
+			switch event.Event {
 			case "message":
-				var e MessageEvent
-				json.Unmarshal(data, &e)
-				e.UserIndex = c.ID
-				e.Sender = c.Name
-				c.recieve(e)
+				//The payload field of EventWrapper is defined as interface{},
+				// Unmarshal throws the payload into a map[string]interface{}.
+				// We need to decode it into a MessageEvent struct.
+				message := MessageEvent{}
+				mapstructure.Decode(event.Payload, &message)
+				//If the message is empty, we ignore it...
+				if d, valid := message.Message["data"].(string); valid && d == EmptyMessage {
+					continue
+				}
+				//...otherwise we fill in the ColourIndex and Sender fields,
+				// rewrap it and recieve it.
+				message.ColourIndex = c.ID
+				message.Sender = c.Name
+				c.recieve(wrapEvent("message", message))
 			case "rename":
-				var e RenameEvent
-				json.Unmarshal(data, &e)
-				c.room.changeName(e.RoomName)
+				c.room.changeName(event, c.ID)
 			}
 		}
 	}
 }
 
-func (c *Client) recieve(e Event) {
+func (c *Client) recieve(e []byte) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
 		h := sha1.New()
-		h.Write(e.getEventData())
+		h.Write(e)
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e)
+		c.room.distributeEvent(e, true, c.ID)
 	}
 }

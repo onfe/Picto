@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <style>
+            html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background:#ccc;
+                font-family: 'Generic Pixel Font 5x7 Neue';
+                font-size: 100px;
+            }
+            canvas {
+                background:#fff;
+                height:256px;
+                width:768px;
+                image-rendering: -moz-crisp-edges;
+                image-rendering:crisp-edges;
+                image-rendering:pixelated;
+                touch-action: none;
+            }
+        </style>
+        <script src="notepad.js"></script>
+        <script src="sketchpad.js"></script>
+        <script src="camera.js"></script>
+        <script>
+            window.onload = function () {
+                sp = new Sketchpad(64*6,64*2,document.getElementById("c"),0.3)
+                sp2 = new Sketchpad(64*6,64*2,document.getElementById("d"))
+                document.getElementById("send").addEventListener("click",
+                function(){
+                    sp2.notepad.loadImageData(sp.getSendableData())
+                    sp.clear()
+                })
+                sp.enableCamera()
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="c">
+        </canvas>
+        <canvas id="d">
+        </canvas>
+        <button type="button" id="send">Send</button>
+        </body>
+</html>

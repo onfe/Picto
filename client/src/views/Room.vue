@@ -40,36 +40,37 @@ export default {
 
 <style lang="scss" scoped>
 main {
-  display: flex;
-  flex-direction: column;
   width: 100%;
   height: 100%;
+  min-height: 0;
 }
 
 .view {
-  flex: 1;
   position: relative;
-  display: grid;
   overflow: hidden;
-  grid-template: "N H";
+  height: $height-upper;
 }
 
 .nav {
   width: $sidebar-width;
-  grid-area: N;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-block;
   border-right: 1px solid $almost-white;
 }
 
 .hist {
   width: $ratio-width;
-  grid-area: H;
+  margin-left: $sidebar-width;
   border-bottom: 1px solid $almost-white;
 }
 
 .edit {
-  flex: 0;
   display: grid;
   grid-template: "T C" "T E";
+  height: $height-lower;
 }
 
 .toolbox {

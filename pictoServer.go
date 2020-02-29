@@ -5,8 +5,10 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -15,11 +17,13 @@ import (
 
 var roomManager server.RoomManager
 
+//CustomResponseWriter ...
 type CustomResponseWriter struct {
 	http.ResponseWriter
 	status int
 }
 
+//WriteHeader ...
 func (w *CustomResponseWriter) WriteHeader(status int) {
 	w.status = status
 	if status != http.StatusNotFound {
@@ -74,6 +78,17 @@ func main() {
 		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList)
 	} else {
 		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
+	}
+
+	seedString, seeded := os.LookupEnv("RAND_SEED")
+	if seeded {
+		seed, err := strconv.ParseInt(seedString, 10, 64)
+		if err != nil {
+			log.Println("RAND_SEED set incorrectly (should be int64)")
+		}
+		if err == nil {
+			rand.Seed(seed)
+		}
 	}
 
 	fs := getFileHandler(http.FileServer(http.Dir("client/dist")))

@@ -1,84 +1,99 @@
 package server
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"log"
+	"time"
+)
 
-//Event is the base struct for an event sent to clients.
-type Event interface {
-	getEventData() []byte
-	getEventType() string
-	getSenderID() int
+//EventWrapper is the wrapper around every event
+type EventWrapper struct {
+	Event   string
+	Time    int64
+	Payload interface{}
+}
+
+func wrapEvent(event string, payload interface{}) []byte {
+	eventWrapper := EventWrapper{
+		Event:   event,
+		Time:    time.Now().Unix(),
+		Payload: payload,
+	}
+	return eventWrapper.toBytes()
+}
+
+func (e EventWrapper) toBytes() []byte {
+	data, err := json.Marshal(e)
+	if err != nil {
+		log.Println("[EVENTS] - Couldn't marshal new EventWrapper")
+	}
+	return data
 }
 
 //InitEvent is sent to clients when they join a room to inform them of the room's state.
 type InitEvent struct {
-	Event     string
 	RoomID    string
 	RoomName  string
 	UserIndex int      //Index of the user that just joined in the users array.
 	Users     []string //Array of strings of users' names.
-	NumUsers  int
 }
 
-func (e InitEvent) getEventData() []byte {
-	data, _ := json.Marshal(e)
-	return data
+func newInitEvent(roomID string, roomName string, userIndex int, users []string) []byte {
+	initEvent := InitEvent{
+		RoomID:    roomID,
+		RoomName:  roomName,
+		UserIndex: userIndex,
+		Users:     users,
+	}
+	return wrapEvent("init", initEvent)
 }
-func (e InitEvent) getEventType() string { return e.Event }
-func (e InitEvent) getSenderID() int     { return e.UserIndex }
 
 //UserEvent is sent to clients to inform them of when another client leaves/joins their room.
+//Including UserName might seem a bit redundant but it's neccessary when sending cached join/leave events.
 type UserEvent struct {
-	Event     string
-	UserIndex int //Index of the user that just joined in the users array.
+	UserIndex int    //Index of the user that just joined/left in the users array.
+	UserName  string //Name of the user that just joined/left
 	Users     []string
-	NumUsers  int
 }
 
-func (e UserEvent) getEventData() []byte {
-	data, _ := json.Marshal(e)
-	return data
+func newUserEvent(userIndex int, userName string, users []string) []byte {
+	userEvent := UserEvent{
+		UserIndex: userIndex,
+		UserName:  userName,
+		Users:     users,
+	}
+	return wrapEvent("user", userEvent)
 }
-func (e UserEvent) getEventType() string { return e.Event }
-func (e UserEvent) getSenderID() int     { return e.UserIndex }
 
 //MessageEvent is sent to clients to inform them of a new message in their room.
 type MessageEvent struct {
-	Event     string
-	UserIndex int    //Index of the user that just sent the message
-	Sender    string //Name of the user that sent the message (at the time it was recieved).
-	Message   map[string]interface{}
+	ColourIndex int    //Index of the user that just sent the message
+	Sender      string //Name of the user that sent the message (at the time it was recieved).
+	Message     map[string]interface{}
 }
-
-func (e MessageEvent) getEventData() []byte {
-	data, _ := json.Marshal(e)
-	return data
-}
-func (e MessageEvent) getEventType() string { return e.Event }
-func (e MessageEvent) getSenderID() int     { return e.UserIndex }
 
 //AnnouncementEvent is sent to clients to inform them of an announcement in the room.
 type AnnouncementEvent struct {
-	Event        string
 	Announcement string
 }
 
-func (e AnnouncementEvent) getEventData() []byte {
-	data, _ := json.Marshal(e)
-	return data
+func newAnnouncementEvent(announcement string) []byte {
+	announcementEvent := AnnouncementEvent{
+		Announcement: announcement,
+	}
+	return wrapEvent("announcement", announcementEvent)
 }
-func (e AnnouncementEvent) getEventType() string { return e.Event }
-func (e AnnouncementEvent) getSenderID() int     { return -1 }
 
 //RenameEvent is sent to clients to inform them of the name of their room being changed.
 type RenameEvent struct {
-	Event     string
-	RoomName  string
 	UserIndex int
+	RoomName  string
 }
 
-func (e RenameEvent) getEventData() []byte {
-	data, _ := json.Marshal(e)
-	return data
+func newRenameEvent(userIndex int, roomName string) []byte {
+	renameEvent := RenameEvent{
+		UserIndex: userIndex,
+		RoomName:  roomName,
+	}
+	return wrapEvent("rename", renameEvent)
 }
-func (e RenameEvent) getEventType() string { return e.Event }
-func (e RenameEvent) getSenderID() int     { return e.UserIndex }

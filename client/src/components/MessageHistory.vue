@@ -1,13 +1,10 @@
 <template lang="html">
-  <section id="hist">
-    <div class="cont">
+  <section>
+    <div class="history">
       <div class="message" v-for="msg in history" v-bind:key="msg.id">
         <CanvasMessage v-if="msg.type == 'normal'" v-bind="msg" />
         <Announcement v-else-if="msg.type == 'announcement'" v-bind="msg" />
         <div class="text" v-else>{{ msg.text }}</div>
-      </div>
-      <div class="spacer">
-        🐈
       </div>
     </div>
   </section>
@@ -26,54 +23,45 @@ export default {
     history() {
       return this.$store.state.messages.history;
     }
-  },
-  watch: {
-    history() {
-      const el = document.getElementById("hist");
-      if (!el) {
-        return;
-      }
-      if (el.scrollTop + el.clientHeight + 15 > el.scrollHeight) {
-        setTimeout(() => {
-          document
-            .querySelectorAll(".message")[0]
-            .scrollIntoView({ behavior: "smooth" });
-        }, 10);
-      }
-    }
-  },
-  mounted() {
-    const el = document.getElementById("hist");
-    el.scrollTop = el.scrollHeight - el.clientHeight;
-    setTimeout(() => {
-      const el = document.getElementById("hist");
-      el.scrollTop = el.scrollHeight - el.clientHeight;
-    }, 50);
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.cont {
-  padding: 1vw;
-  display: flex;
-  flex-direction: column-reverse;
-  min-height: 100%;
+section {
+  position: relative;
+  height: 100%;
 }
 
-section {
+.history {
+  padding: 1vw;
   overflow-y: scroll;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
 }
 
 .message {
   margin-top: 1vw;
 }
 
-.spacer {
-  height: 150vh;
-  text-align: center;
-  font-size: 1.5em;
-  color: $grey-l;
+/*
+Problem: FireFox just doesn't scroll on a flexbox with flex-direction:column-reverse.
+
+| Potential Solution            | Negatives                    | Positives                   |
+| ----------------------------- | ---------------------------- | --------------------------- |
+| flex-direction:column-reverse | Doesn't work on FireFox.     | Works on everything except  |
+| on .history                   |                              | FireFox perfectly.          |
+| ----------------------------- | ---------------------------- | --------------------------- |
+| transform: scaleY(-1)         | Scroll direction is reversed | https://open.spotify.com/tr |
+| on .history and .message      | (doesn't affect mobile);     | ack/5foxQ24C0x7W0B2OD46AJg? | 
+|                               | it's just really dumb        | si=joaaiGIsTES52UQVX5bNoQ   | 
+
+https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
+*/
+.history,
+.message {
+  transform: scaleY(-1);
 }
 
 .text {

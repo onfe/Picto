@@ -9,5 +9,6 @@
   height: 100%;
   position: relative;
   display: block;
+  min-height: 0;
 }
 </style>

@@ -1,4 +1,5 @@
 import COLOURS from "../assets/js/colours.js";
+import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
 
 const state = {
   history: [],
@@ -9,10 +10,11 @@ const getters = {};
 
 const actions = {
   add: ({ state, commit }, pl) => {
+    pl.Message.data = RunlengthEncoder.decode(pl.Message.data);
     const message = {
       type: "normal",
       author: pl.Sender,
-      colour: COLOURS[pl.UserIndex],
+      colour: COLOURS[pl.ColourIndex],
       data: pl.Message,
       id: state.iter
     };
@@ -37,7 +39,7 @@ const actions = {
   },
   join: ({ commit }, pl) => {
     const message = {
-      text: `${pl} joined the room.`
+      text: `${pl} joined.`
     };
     commit("add", message);
   },
