@@ -90,8 +90,8 @@ class Sketchpad {
   }
 
   loadImageData(data) {
-    this.imageData = data
-    this.notepad.loadImageData(data)
+    this.imageData = data;
+    this.notepad.loadImageData(data);
   }
 
   clear() {

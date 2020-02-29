@@ -46,11 +46,9 @@ const actions = {
     if (id != null) {
       // var msg = console.log('id');
     } else {
-      console.log(rootState);
       var msg = rootState.messages.history.sort((a, b) => {
         a.id - b.id;
       })[0];
-      console.log(msg.data.data);
       window._sketch.loadImageData(msg.data);
     }
   },
