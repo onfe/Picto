@@ -2,8 +2,7 @@ import COLOURS from "../assets/js/colours.js";
 import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
 
 const state = {
-  history: [],
-  iter: 0
+  history: []
 };
 
 const getters = {};
@@ -62,11 +61,10 @@ const actions = {
 const mutations = {
   add: (state, message) => {
     state.history.unshift(message);
-    state.iter += 1;
+    state.history.sort((a, b) => b.id - a.id)
   },
   reset: state => {
     state.history = [];
-    state.iter = 0;
   }
 };
 
