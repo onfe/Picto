@@ -16,7 +16,7 @@ type EventWrapper struct {
 func wrapEvent(event string, payload interface{}) []byte {
 	eventWrapper := EventWrapper{
 		Event:   event,
-		Time:    time.Now().Unix(),
+		Time:    time.Now().UnixNano() / int64(time.Millisecond),
 		Payload: payload,
 	}
 	return eventWrapper.toBytes()
