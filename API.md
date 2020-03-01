@@ -27,6 +27,8 @@ Server ​​-> client
 
 The server will be in charge of dating events as it receives them.
 
+`time` is in UNIX time to millisecond precision.
+
 
 
 ### `init` - Joining a room
