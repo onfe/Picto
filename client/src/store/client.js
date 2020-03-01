@@ -42,10 +42,14 @@ const actions = {
   },
   updateUser: ({ commit, state, dispatch }, d) => {
     const pl = d.Payload;
+    const data = {
+      name: pl.UserName,
+      time: d.Time
+    };
     if (pl.Users[pl.UserIndex] != "") {
-      dispatch("messages/join", pl.UserName, { root: true });
+      dispatch("messages/join", data, { root: true });
     } else {
-      dispatch("messages/leave", pl.UserName, { root: true });
+      dispatch("messages/leave", data, { root: true });
     }
     if (d.Time > state.joinTime) {
       commit("updateUser", pl);

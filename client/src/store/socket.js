@@ -3,7 +3,8 @@ const state = {
 };
 
 const getters = {
-  open: state => (state._socket !== null && state._socket.readyState === WebSocket.OPEN)
+  open: state =>
+    state._socket !== null && state._socket.readyState === WebSocket.OPEN
 };
 
 const actions = {
@@ -20,8 +21,8 @@ const actions = {
       window._sock = sock;
 
       sock.onmessage = m => dispatch("_onMessage", m);
-      sock.onopen = () => res()
-      sock.onerror = () => rej()
+      sock.onopen = () => res();
+      sock.onerror = () => rej();
       sock.onclose = () => dispatch("_onClose");
     });
   },
@@ -46,7 +47,7 @@ const actions = {
 
     switch (pl.Event) {
       case "message":
-        dispatch("messages/add", pl.Payload, { root: true });
+        dispatch("messages/add", pl, { root: true });
         break;
       case "init":
         dispatch("client/init", pl, { root: true });
@@ -55,7 +56,7 @@ const actions = {
         dispatch("client/updateUser", pl, { root: true });
         break;
       case "announcement":
-        dispatch("messages/announce", pl.Payload, { root: true });
+        dispatch("messages/announce", pl, { root: true });
         break;
       case "rename":
         // TODO: ADD Rename event.

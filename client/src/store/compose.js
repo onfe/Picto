@@ -15,7 +15,7 @@ const actions = {
       //We don't send empty messages.
       const pl = {
         Event: "message",
-        Time: 1000,
+        Time: Date.now(),
         Payload: {
           Message: {
             data: msg.data,

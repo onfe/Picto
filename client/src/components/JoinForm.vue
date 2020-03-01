@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      name: "",
+      name: ""
     };
   },
   methods: {
@@ -63,6 +63,9 @@ export default {
   computed: {
     loading() {
       return this.$store.state.client.status === "connecting";
+    },
+    error() {
+      return this.$store.state.client.status === "fail";
     }
   },
   mounted() {

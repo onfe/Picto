@@ -9,14 +9,15 @@ const state = {
 const getters = {};
 
 const actions = {
-  add: ({ state, commit }, pl) => {
+  add: ({ commit }, d) => {
+    const pl = d.Payload;
     pl.Message.data = RunlengthEncoder.decode(pl.Message.data);
     const message = {
       type: "normal",
       author: pl.Sender,
       colour: COLOURS[pl.ColourIndex],
       data: pl.Message,
-      id: state.iter
+      id: d.Time
     };
     commit("add", message);
   },
@@ -26,26 +27,30 @@ const actions = {
       author: rootState.client.users[rootState.client.index],
       colour: COLOURS[rootState.client.index],
       data: pl.Message,
-      id: state.iter
+      id: Date.now()
     };
     commit("add", message);
   },
-  announce: ({ commit }, pl) => {
+  announce: ({ commit }, d) => {
+    const pl = d.Payload;
     const message = {
       type: "announcement",
-      text: pl.Announcement
+      text: pl.Announcement,
+      id: d.Time
     };
     commit("add", message);
   },
   join: ({ commit }, pl) => {
     const message = {
-      text: `${pl} joined.`
+      text: `${pl.name} joined.`,
+      id: pl.time
     };
     commit("add", message);
   },
   leave: ({ commit }, pl) => {
     const message = {
-      text: `${pl} left.`
+      text: `${pl.name} left.`,
+      id: pl.Time
     };
     commit("add", message);
   },
