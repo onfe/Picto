@@ -47,12 +47,10 @@ export default {
   data() {
     return {
       name: "",
-      loading: true
     };
   },
   methods: {
     join() {
-      this.loading = true;
       const room = this.$route.params.id;
       const name = this.name;
       if (room) {
@@ -60,6 +58,11 @@ export default {
       } else {
         this.$store.dispatch("client/join", { name });
       }
+    }
+  },
+  computed: {
+    loading() {
+      return this.$store.state.client.status === "connecting";
     }
   },
   mounted() {

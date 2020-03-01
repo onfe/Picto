@@ -5,6 +5,7 @@ const state = {
   index: -1,
   colour: COLOURS[0],
   room: null,
+  status: "idle",
   users: []
 };
 
@@ -13,13 +14,16 @@ const getters = {
 };
 
 const actions = {
-  join: ({ dispatch }, { name, room }) => {
+  join: ({ commit, dispatch }, { name, room }) => {
+    commit("updateStatus", "connecting");
     dispatch("socket/connect", { name, room }, { root: true })
       .then(() => {
+        commit("updateStatus", "connected");
         // eslint-disable-next-line no-console
         console.log("Connected to Picto.");
       })
       .catch(() => {
+        commit("updateStatus", "fail");
         // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
@@ -28,6 +32,9 @@ const actions = {
     dispatch("socket/disconnect", {}, { root: true });
     dispatch("messages/reset", {}, { root: true });
     commit("leave");
+    if (router.currentRoute.name == "room") {
+      router.replace(`/join/${router.currentRoute.params.id}`);
+    }
   },
   init: ({ commit }, payload) => {
     commit("init", payload);
@@ -62,6 +69,10 @@ const mutations = {
     state.index = -1;
     state.users = [];
     state.colour = COLOURS[0];
+    state.status = "idle";
+  },
+  updateStatus: (state, payload) => {
+    state.status = payload;
   }
 };
 
