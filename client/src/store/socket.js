@@ -1,11 +1,9 @@
-import router from "../router";
-
 const state = {
   _socket: null
 };
 
 const getters = {
-  open: state => state._socket.readyState === WebSocket.OPEN
+  open: state => (state._socket !== null && state._socket.readyState === WebSocket.OPEN)
 };
 
 const actions = {
@@ -22,13 +20,16 @@ const actions = {
       window._sock = sock;
 
       sock.onmessage = m => dispatch("_onMessage", m);
-      sock.onopen = res;
-      sock.onerror = rej;
+      sock.onopen = () => res()
+      sock.onerror = () => rej()
       sock.onclose = () => dispatch("_onClose");
     });
   },
-  disconnect: ({ state }) => {
-    state._socket.close();
+  disconnect: ({ state, commit }) => {
+    if (state._socket !== null) {
+      state._socket.close();
+    }
+    commit("destroy");
   },
   _onMessage: ({ dispatch }, pl) => {
     pl = JSON.parse(pl.data);
@@ -64,11 +65,9 @@ const actions = {
         console.log(pl);
     }
   },
-  _onClose: ({ commit }) => {
-    if (router.currentRoute.name == "room") {
-      router.replace(`/join/${router.currentRoute.params.id}`);
-    }
+  _onClose: ({ commit, dispatch }) => {
     commit("destroy");
+    dispatch("client/leave", {}, { root: true });
   },
   send: ({ state }, pl) => {
     // TODO: check if connected, if not, dispatch socket/reconnect
