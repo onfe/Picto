@@ -70,17 +70,18 @@ const actions = {
     commit("destroy");
     dispatch("client/leave", {}, { root: true });
   },
-  send: ({ state }, pl) => {
-    // TODO: check if connected, if not, dispatch socket/reconnect
-    if (!pl.Event) {
-      throw "Payload does not contain event field.";
-    }
+  send: ({ state }, { event, payload }) => {
+    const packet = {
+      Time: Date.now(),
+      Event: event,
+      Payload: payload
+    };
 
-    state._socket.send(JSON.stringify(pl));
+    state._socket.send(JSON.stringify(packet));
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
-      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
+      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${packet}`
     );
   },
   reconnect: () => {}
