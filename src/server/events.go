@@ -69,7 +69,12 @@ func newUserEvent(userIndex int, userName string, users []string) []byte {
 type MessageEvent struct {
 	ColourIndex int    //Index of the user that just sent the message
 	Sender      string //Name of the user that sent the message (at the time it was recieved).
-	Message     map[string]interface{}
+	Data        string //Message image, base64 encoded, RLE'd
+	Span        int    //Width of the message
+}
+
+func (m *MessageEvent) isEmpty() bool {
+	return false //Dummy method, pretends all messages are not empty.
 }
 
 //AnnouncementEvent is sent to clients to inform them of an announcement in the room.
