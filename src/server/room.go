@@ -96,9 +96,6 @@ func (r *Room) addClient(c *Client) error {
 			}
 		}
 
-		//Sending the client a "welcome to picto" announcement.
-		c.sendBuffer <- newAnnouncementEvent("Welcome to Picto!")
-
 		//The new client is added to the room's clients array.
 		r.Clients[newClientID] = c
 		r.Clients[newClientID].ID = newClientID
