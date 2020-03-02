@@ -44,7 +44,7 @@ export default {
   mounted() {
     const canv = document.getElementById(this.idHash);
     this.notepad = new Notepad(384, 128, canv);
-    this.notepad.loadImageData(this.data);
+    this.notepad.loadImageData(this.data.raw());
   }
 };
 </script>

@@ -1,4 +1,4 @@
-import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
+import Message from "../assets/js/message.js";
 
 const state = {
   tool: "pencil",
@@ -10,34 +10,20 @@ const getters = {};
 
 const actions = {
   send: ({ dispatch }) => {
-    const msg = window._sketch.getBakedImageData();
-    if (msg != null) {
-      //We don't send empty messages.
-      const pl = {
-        Event: "message",
-        Time: Date.now(),
-        Payload: {
-          Message: {
-            data: msg.data,
-            span: msg.span
-          }
-        }
-      };
-      const socket_pl = {
-        Event: "message",
-        Time: 1000,
-        Payload: {
-          Message: {
-            data: RunlengthEncoder.encode(msg.data),
-            span: msg.span
-          }
-        }
-      };
-
-      dispatch("clear");
-      dispatch("messages/addSelf", pl.Payload, { root: true });
-      dispatch("socket/send", socket_pl, { root: true });
+    const raw = window._sketch.getBakedImageData();
+    if (raw == null) {
+      // Don't send empty messages.
+      return;
     }
+    const msg = new Message(raw.data, raw.span);
+
+    dispatch("clear");
+    dispatch("messages/addSelf", msg, { root: true });
+    dispatch(
+      "socket/send",
+      { event: "message", payload: { Message: msg.encoded() } },
+      { root: true }
+    );
   },
   clear: () => {
     window._sketch.clear();
@@ -46,10 +32,17 @@ const actions = {
     if (id != null) {
       // var msg = console.log('id');
     } else {
-      var msg = rootState.messages.history.sort((a, b) => {
-        a.id - b.id;
-      })[0];
-      window._sketch.loadImageData(msg.data);
+      var msgs = rootState.messages.history
+        .sort((a, b) => {
+          a.id - b.id;
+        })
+        .filter(a => a.type === "normal");
+      if (msgs.length < 1) {
+        console.error("No messages to copy!");
+        return;
+      }
+      const msg = msgs[0];
+      window._sketch.loadImageData(msg.data.raw());
     }
   },
   pencil: ({ commit, state }) => {

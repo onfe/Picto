@@ -21,11 +21,12 @@ const actions = {
     commit("add", message);
   },
   addSelf: ({ rootState, commit }, pl) => {
+    console.log(pl);
     const message = {
       type: "normal",
       author: rootState.client.users[rootState.client.index],
       colour: COLOURS[rootState.client.index],
-      data: pl.Message,
+      data: pl,
       id: Date.now()
     };
     commit("add", message);
@@ -61,7 +62,7 @@ const actions = {
 const mutations = {
   add: (state, message) => {
     state.history.unshift(message);
-    state.history.sort((a, b) => b.id - a.id)
+    state.history.sort((a, b) => b.id - a.id);
   },
   reset: state => {
     state.history = [];
