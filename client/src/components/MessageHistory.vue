@@ -1,9 +1,9 @@
 <template lang="html">
   <section>
     <div class="history">
-      <div class="message" v-for="msg in history" v-bind:key="msg.id">
-        <CanvasMessage v-if="msg.type == 'normal'" v-bind="msg" />
-        <Announcement v-else-if="msg.type == 'announcement'" v-bind="msg" />
+      <div class="message" v-for="msg in history" v-bind:key="msg.time">
+        <CanvasMessage v-if="msg.constructor.name == 'Message'" :msg="msg" />
+        <Announcement v-else-if="msg.constructor.name == 'Announcement'" v-bind="msg" />
         <div class="text" v-else>{{ msg.text }}</div>
       </div>
     </div>
@@ -54,8 +54,8 @@ Problem: FireFox just doesn't scroll on a flexbox with flex-direction:column-rev
 | on .history                   |                              | FireFox perfectly.          |
 | ----------------------------- | ---------------------------- | --------------------------- |
 | transform: scaleY(-1)         | Scroll direction is reversed | https://open.spotify.com/tr |
-| on .history and .message      | (doesn't affect mobile);     | ack/5foxQ24C0x7W0B2OD46AJg? | 
-|                               | it's just really dumb        | si=joaaiGIsTES52UQVX5bNoQ   | 
+| on .history and .message      | (doesn't affect mobile);     | ack/5foxQ24C0x7W0B2OD46AJg? |
+|                               | it's just really dumb        | si=joaaiGIsTES52UQVX5bNoQ   |
 
 https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
 */

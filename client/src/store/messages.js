@@ -1,5 +1,6 @@
 import COLOURS from "../assets/js/colours.js";
 import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
+import { Message, Announcement, Text } from "../assets/js/message.js";
 
 const state = {
   history: []
@@ -8,51 +9,34 @@ const state = {
 const getters = {};
 
 const actions = {
-  add: ({ commit }, d) => {
-    const pl = d.Payload;
-    pl.Message.data = RunlengthEncoder.decode(pl.Message.data);
-    const message = {
-      type: "normal",
-      author: pl.Sender,
-      colour: COLOURS[pl.ColourIndex],
-      data: pl.Message,
-      id: d.Time
-    };
+  add: ({ commit }, message) => {
     commit("add", message);
   },
-  addSelf: ({ rootState, commit }, pl) => {
-    console.log(pl);
-    const message = {
-      type: "normal",
-      author: rootState.client.users[rootState.client.index],
-      colour: COLOURS[rootState.client.index],
-      data: pl,
-      id: Date.now()
-    };
+  message: ({ commit }, d) => {
+    const pl = d.Payload;
+    console.log(d);
+    pl.Data = RunlengthEncoder.decode(pl.Data);
+    const message = new Message(
+      pl.Data,
+      pl.Span,
+      pl.Sender,
+      COLOURS[pl.ColourIndex],
+      d.Time
+    );
     commit("add", message);
   },
   announce: ({ commit }, d) => {
-    const pl = d.Payload;
-    const message = {
-      type: "announcement",
-      text: pl.Announcement,
-      id: d.Time
-    };
-    commit("add", message);
+    console.log(d)
+    const announce = new Announcement(d.Payload.Announcement, d.Time)
+    commit("add", announce);
   },
   join: ({ commit }, pl) => {
-    const message = {
-      text: `${pl.name} joined.`,
-      id: pl.time
-    };
-    commit("add", message);
+    const text = new Text(`${pl.name} joined.`, pl.time)
+    commit("add", text);
   },
   leave: ({ commit }, pl) => {
-    const message = {
-      text: `${pl.name} left.`,
-      id: pl.Time
-    };
-    commit("add", message);
+    const text = new Text(`${pl.name} left.`, pl.time)
+    commit("add", text);
   },
   reset: ({ commit }) => {
     commit("reset");

@@ -1,4 +1,4 @@
-import Message from "../assets/js/message.js";
+import { Message } from "../assets/js/message.js";
 
 const state = {
   tool: "pencil",
@@ -9,19 +9,25 @@ const state = {
 const getters = {};
 
 const actions = {
-  send: ({ dispatch }) => {
+  send: ({ dispatch, rootState, rootGetters }) => {
     const raw = window._sketch.getBakedImageData();
     if (raw == null) {
       // Don't send empty messages.
       return;
     }
-    const msg = new Message(raw.data, raw.span);
+
+    const msg = new Message(
+      raw.data,
+      raw.span,
+      rootGetters['client/username'],
+      rootState.client.colour
+    );
 
     dispatch("clear");
-    dispatch("messages/addSelf", msg, { root: true });
+    dispatch("messages/add", msg, { root: true });
     dispatch(
       "socket/send",
-      { event: "message", payload: { Message: msg.encoded() } },
+      { event: "message", payload: msg.encoded() },
       { root: true }
     );
   },
@@ -36,13 +42,13 @@ const actions = {
         .sort((a, b) => {
           a.id - b.id;
         })
-        .filter(a => a.type === "normal");
+        .filter(a => a.constructor.name === "Message");
       if (msgs.length < 1) {
         console.error("No messages to copy!");
         return;
       }
       const msg = msgs[0];
-      window._sketch.loadImageData(msg.data.raw());
+      window._sketch.loadImageData(msg.raw());
     }
   },
   pencil: ({ commit, state }) => {

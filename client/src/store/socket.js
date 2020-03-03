@@ -47,7 +47,7 @@ const actions = {
 
     switch (pl.Event) {
       case "message":
-        dispatch("messages/add", pl, { root: true });
+        dispatch("messages/message", pl, { root: true });
         break;
       case "init":
         dispatch("client/init", pl, { root: true });

@@ -1,5 +1,6 @@
 import router from "../router";
 import COLOURS from "../assets/js/colours.js";
+import { Announcement } from "../assets/js/message.js";
 
 const state = {
   index: -1,
@@ -36,8 +37,9 @@ const actions = {
       router.replace(`/join/${router.currentRoute.params.id}`);
     }
   },
-  init: ({ commit }, payload) => {
+  init: ({ commit, dispatch }, payload) => {
     commit("init", payload);
+    dispatch("messages/add", new Announcement("Welcome to Picto!"), { root: true });
     router.push(`/room/${payload.Payload.RoomID}`);
   },
   updateUser: ({ commit, state, dispatch }, d) => {
