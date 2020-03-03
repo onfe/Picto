@@ -19,7 +19,7 @@ const actions = {
     const msg = new Message(
       raw.data,
       raw.span,
-      rootGetters['client/username'],
+      rootGetters["client/username"],
       rootState.client.colour
     );
 

@@ -26,16 +26,16 @@ const actions = {
     commit("add", message);
   },
   announce: ({ commit }, d) => {
-    console.log(d)
-    const announce = new Announcement(d.Payload.Announcement, d.Time)
+    console.log(d);
+    const announce = new Announcement(d.Payload.Announcement, d.Time);
     commit("add", announce);
   },
   join: ({ commit }, pl) => {
-    const text = new Text(`${pl.name} joined.`, pl.time)
+    const text = new Text(`${pl.name} joined.`, pl.time);
     commit("add", text);
   },
   leave: ({ commit }, pl) => {
-    const text = new Text(`${pl.name} left.`, pl.time)
+    const text = new Text(`${pl.name} left.`, pl.time);
     commit("add", text);
   },
   reset: ({ commit }) => {

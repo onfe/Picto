@@ -39,7 +39,9 @@ const actions = {
   },
   init: ({ commit, dispatch }, payload) => {
     commit("init", payload);
-    dispatch("messages/add", new Announcement("Welcome to Picto!"), { root: true });
+    dispatch("messages/add", new Announcement("Welcome to Picto!"), {
+      root: true
+    });
     router.push(`/room/${payload.Payload.RoomID}`);
   },
   updateUser: ({ commit, state, dispatch }, d) => {

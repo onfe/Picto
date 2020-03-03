@@ -48,8 +48,4 @@ class Text extends Core {
   }
 }
 
-export {
-  Message,
-  Announcement,
-  Text
-}
+export { Message, Announcement, Text };
