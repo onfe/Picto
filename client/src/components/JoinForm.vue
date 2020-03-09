@@ -73,7 +73,6 @@ export default {
     const id = this.$route.params.id;
     if (!id) {
       // if we're not trying to join a room we don't need to check it exists.
-      this.loading = false;
       return;
     }
     const url =

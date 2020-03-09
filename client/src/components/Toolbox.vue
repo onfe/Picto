@@ -1,6 +1,6 @@
 <template>
   <section class="toolbox">
-    <ul class="tool">
+    <ul class="tool btn">
       <li v-bind:class="{ selected: isPencil, rainbow: isRainbow }">
         <font-awesome-icon @click="pencil" class="icn" icon="pencil-alt" />
       </li>
@@ -9,7 +9,7 @@
       </li>
     </ul>
 
-    <ul class="size">
+    <ul class="size btn">
       <li v-bind:class="{ selected: isSmall }">
         <font-awesome-icon
           @click="small"
@@ -21,7 +21,7 @@
         <font-awesome-icon @click="large" class="icn" icon="circle" />
       </li>
     </ul>
-    <ul class="keyboard">
+    <ul class="keyboard btn">
       <li>
         <font-awesome-icon @click="keyboard" class="icn" icon="keyboard" />
       </li>
@@ -101,50 +101,6 @@ section {
   flex-direction: column;
   background: #fff;
   padding: $spacer;
-}
-
-ul {
-  border-radius: $spacer;
-  overflow: hidden;
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-  position: relative;
-  background: $almost-white;
-  margin-bottom: 1vw;
-
-  &:last-of-type {
-    margin: 0;
-  }
-
-  li {
-    width: 100%;
-    padding-bottom: 100%;
-    position: relative;
-    border-bottom: 1px solid #fff;
-
-    &:last-of-type {
-      border: 0;
-    }
-
-    .icn {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      padding: $spacer;
-    }
-
-    &.selected {
-      background: $grey-l;
-    }
-
-    &.rainbow .icn {
-      animation: rainbowbg 8s infinite;
-      animation-timing-function: linear;
-    }
-  }
 }
 
 .keyboard {
