@@ -26,32 +26,41 @@ export default {
           "q w e r t y u i o p",
           "a s d f g h j k l",
           "{shift} z x c v b n m {backspace}",
-          "{numbers} {space} . ,"
+          "{alt} {space} . ,"
         ],
         shift: [
           "Q W E R T Y U I O P",
           "A S D F G H J K L",
           "{shift} Z X C V B N M {backspace}",
-          "{numbers} {space} . ,"
+          "{alt} {space} . ,"
         ],
-        numbers: ["1 2 3", "4 5 6", "7 8 9", "{abc} 0 {backspace}"]
+        specials: [
+          "1 2 3 4 5 6 7 8 9 0",
+          "@ # £ _ & - + ( ) /",
+          "{specials2} * \" ' : ; ! ? {backspace}",
+          "{abc} {space} . ,"
+        ],
+        specials2: [
+          "~ ` | • < > ÷ × ¶ ?",
+          "€ ¥ $ ¢ ^ ° = { } \\",
+          "{specials} % © ® [ ] ¡ ¿ {backspace}",
+          "{abc} {space} . ,"
+        ]
       },
+      buttonTheme: [
+        {
+          class: "small",
+          buttons: ". , {abc} {alt}"
+        }
+      ],
       display: {
-        "{numbers}": "123",
-        "{space}": "space",
-        "{send}": "Send",
-        "{escape}": "esc ⎋",
-        "{tab}": "tab ⇥",
-        "{backspace}": "⌫",
-        "{capslock}": "caps lock ⇪",
-        "{shift}": "⇧",
-        "{controlleft}": "ctrl ⌃",
-        "{controlright}": "ctrl ⌃",
-        "{altleft}": "alt ⌥",
-        "{altright}": "alt ⌥",
-        "{metaleft}": "cmd ⌘",
-        "{metaright}": "cmd ⌘",
-        "{abc}": "ABC"
+        "{specials}": "123",
+        "{alt}": "123",
+        "{specials2}": "=\\<",
+        "{space}": "SPACE",
+        "{backspace}": "DEL",
+        "{shift}": "SHIFT",
+        "{abc}": "abc"
       }
     });
   },
@@ -62,14 +71,19 @@ export default {
        */
       console.log(button);
       if (button === "{shift}") this.handleShift();
-      else if (button === "{numbers}") this.handleNumber();
+      else if (button === "{alt}") this.handleLayoutChange("specials");
+      else if (button === "{specials}") this.handleLayoutChange("specials");
+      else if (button === "{specials2}") this.handleLayoutChange("specials2");
+      else if (button === "{abc}") this.handleLayoutChange("default");
       else if (button === "{backspace}")
         this.$store.dispatch("compose/backspace");
       else if (button === "{send}") this.$store.dispatch("compose/send");
       else if (button === "{space}") this.$store.dispatch("compose/write", " ");
       else {
         this.$store.dispatch("compose/write", button);
+        if (this.keyboard.options.layoutName == "shift") {
         this.handleShift(false);
+      }
       }
     },
     handleShift(force) {
@@ -85,8 +99,10 @@ export default {
         layoutName: shiftToggle
       });
     },
-    handleNumber() {
-      console.log("number");
+    handleLayoutChange(layout) {
+      this.keyboard.setOptions({
+        layoutName: layout
+      });
     }
   },
   watch: {
