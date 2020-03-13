@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       showKeyboard: false
-    }
+    };
   },
   methods: {
     handleKeys() {

@@ -2,7 +2,11 @@
   <aside>
     <ul class="btn">
       <li>
-        <font-awesome-icon @click="$emit('hide')" class="icn" icon="times-circle" />
+        <font-awesome-icon
+          @click="$emit('hide')"
+          class="icn"
+          icon="times-circle"
+        />
       </li>
     </ul>
     <p>
@@ -12,8 +16,7 @@
 </template>
 
 <script>
-export default {
-}
+export default {};
 </script>
 
 <style lang="scss" scoped>
@@ -30,6 +33,6 @@ aside {
 }
 
 ul {
-  width: $sidebar-width - 2*$spacer;
+  width: $sidebar-width - 2 * $spacer;
 }
 </style>

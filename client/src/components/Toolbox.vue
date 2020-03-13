@@ -62,7 +62,7 @@ export default {
       this.$store.dispatch("compose/large");
     },
     keyboard() {
-      this.$emit("keyboard")
+      this.$emit("keyboard");
     }
   }
 };

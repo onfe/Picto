@@ -36,7 +36,7 @@ export default {
         ],
         numbers: ["1 2 3", "4 5 6", "7 8 9", "{abc} 0 {backspace}"]
       },
-          display: {
+      display: {
         "{numbers}": "123",
         "{space}": "space",
         "{send}": "Send",
@@ -57,19 +57,19 @@ export default {
   },
   methods: {
     onKeyPress(button) {
-
       /**
        * If you want to handle the shift and caps lock buttons
        */
-       console.log(button);
+      console.log(button);
       if (button === "{shift}") this.handleShift();
       else if (button === "{numbers}") this.handleNumber();
-      else if (button === "{backspace}") this.$store.dispatch("compose/backspace");
+      else if (button === "{backspace}")
+        this.$store.dispatch("compose/backspace");
       else if (button === "{send}") this.$store.dispatch("compose/send");
       else if (button === "{space}") this.$store.dispatch("compose/write", " ");
       else {
         this.$store.dispatch("compose/write", button);
-        this.handleShift(false)
+        this.handleShift(false);
       }
     },
     handleShift(force) {
@@ -86,8 +86,8 @@ export default {
       });
     },
     handleNumber() {
-      console.log("number")
-    },
+      console.log("number");
+    }
   },
   watch: {
     input(input) {
@@ -98,7 +98,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .keyboard {
   max-height: 0;
   overflow: scroll;
