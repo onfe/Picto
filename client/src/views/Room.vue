@@ -5,10 +5,11 @@
       <MessageHistory class="hist" />
     </div>
     <div class="edit">
-      <Toolbox class="toolbox" />
+      <Toolbox @keyboard="handleKeys" class="toolbox" />
       <Compose class="compose" />
       <Footer class="foot" />
     </div>
+    <Keyboard :show="showKeyboard" class="keyboard"></Keyboard>
   </main>
 </template>
 
@@ -18,6 +19,7 @@ import MessageHistory from "@/components/MessageHistory.vue";
 import Footer from "@/components/Footer.vue";
 import Toolbox from "@/components/Toolbox.vue";
 import Navbar from "@/components/Navbar.vue";
+import Keyboard from "@/components/Keyboard.vue";
 
 export default {
   components: {
@@ -25,7 +27,18 @@ export default {
     MessageHistory,
     Footer,
     Toolbox,
-    Navbar
+    Navbar,
+    Keyboard
+  },
+  data() {
+    return {
+      showKeyboard: false
+    }
+  },
+  methods: {
+    handleKeys() {
+      this.showKeyboard = !this.showKeyboard;
+    }
   },
   mounted() {
     if (this.$store.state.client.room == null) {
@@ -43,12 +56,14 @@ main {
   width: 100%;
   height: 100%;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .view {
   position: relative;
-  overflow: hidden;
-  height: $height-upper;
+  flex: 1;
+  min-height: 0;
 }
 
 .nav {
@@ -70,7 +85,11 @@ main {
 .edit {
   display: grid;
   grid-template: "T C" "T E";
-  height: $height-lower;
+  flex: 0;
+}
+
+.keyboard {
+  flex: 0;
 }
 
 .toolbox {

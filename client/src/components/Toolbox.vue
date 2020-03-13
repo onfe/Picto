@@ -26,7 +26,6 @@
         <font-awesome-icon @click="keyboard" class="icn" icon="keyboard" />
       </li>
     </ul>
-    <input autocapitalize="none" id="text-input" />
   </section>
 </template>
 
@@ -63,33 +62,7 @@ export default {
       this.$store.dispatch("compose/large");
     },
     keyboard() {
-      const el = document.getElementById("text-input");
-      el.focus();
-    },
-    handleInput(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const el = document.getElementById("text-input");
-      if (el.value.length < 1) {
-        this.$store.dispatch("compose/backspace");
-      } else {
-        let s = el.value.replace("℗", "");
-        [...s].forEach(chr => {
-          this.$store.dispatch("compose/write", chr);
-        });
-      }
-      el.value = "℗";
-    }
-  },
-  mounted() {
-    const el = document.getElementById("text-input");
-    el.value = "℗";
-    el.addEventListener("input", this.handleInput);
-  },
-  beforeDestroy() {
-    const el = document.getElementById("text-input");
-    if (el) {
-      el.removeEventListener("input", this.handleInput);
+      this.$emit("keyboard")
     }
   }
 };
@@ -108,13 +81,6 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-#text-input {
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  position: absolute;
 }
 
 @include rainbow("rainbowbg", "color");
