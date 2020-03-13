@@ -124,5 +124,30 @@ export default {
   }
 
   transition: max-height 300ms ease;
+
+  >* {
+    font-family: "pixel 5x7" !important;
+    font-size: 1.5em;
+}
+}
+</style>
+
+<style lang="scss">
+.simple-keyboard .small {
+  flex-grow:0 !important;
+  padding: 0 1em;
+}
+.simple-keyboard .hg-button {
+  border-radius: 0;
+  box-shadow: none;
+  border: 0.5vw solid white;
+  margin:0 !important;
+  background: $almost-white;
+}
+.simple-keyboard .hg-row {
+  margin:0 !important;
+}
+.simple-keyboard {
+  background: white;
 }
 </style>
