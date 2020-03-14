@@ -82,8 +82,8 @@ export default {
       else {
         this.$store.dispatch("compose/write", button);
         if (this.keyboard.options.layoutName == "shift") {
-        this.handleShift(false);
-      }
+          this.handleShift(false);
+        }
       }
     },
     handleShift(force) {
@@ -125,27 +125,27 @@ export default {
 
   transition: max-height 300ms ease;
 
-  >* {
+  > * {
     font-family: "pixel 5x7" !important;
     font-size: 1.5em;
-}
+  }
 }
 </style>
 
 <style lang="scss">
 .simple-keyboard .small {
-  flex-grow:0 !important;
+  flex-grow: 0 !important;
   padding: 0 1em;
 }
 .simple-keyboard .hg-button {
   border-radius: 0;
   box-shadow: none;
   border: 0.5vw solid white;
-  margin:0 !important;
+  margin: 0 !important;
   background: $almost-white;
 }
 .simple-keyboard .hg-row {
-  margin:0 !important;
+  margin: 0 !important;
 }
 .simple-keyboard {
   background: white;
