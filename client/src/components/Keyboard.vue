@@ -26,25 +26,25 @@ export default {
           "q w e r t y u i o p",
           "a s d f g h j k l",
           "{shift} z x c v b n m {backspace}",
-          "{alt} {space} . ,"
+          "{alt} {space} , ."
         ],
         shift: [
           "Q W E R T Y U I O P",
           "A S D F G H J K L",
           "{shift} Z X C V B N M {backspace}",
-          "{alt} {space} . ,"
+          "{alt} {space} , ."
         ],
         specials: [
           "1 2 3 4 5 6 7 8 9 0",
           "@ # £ _ & - + ( ) /",
           "{specials2} * \" ' : ; ! ? {backspace}",
-          "{abc} {space} . ,"
+          "{abc} {space} , ."
         ],
         specials2: [
           "~ ` | • < > ÷ × ¶ ?",
           "€ ¥ $ ¢ ^ ° = { } \\",
           "{specials} % © ® [ ] ¡ ¿ {backspace}",
-          "{abc} {space} . ,"
+          "{abc} {space} , ."
         ]
       },
       buttonTheme: [
@@ -145,9 +145,11 @@ export default {
   border: 0.5vw solid white;
   border-radius: 1vw;
   background: $almost-white;
+  transition: 2s linear;
 }
 .simple-keyboard .hg-button:active {
   background: $grey-l;
+  transition: 2s linear;
 }
 .simple-keyboard .hg-row {
   margin: 0 !important;
