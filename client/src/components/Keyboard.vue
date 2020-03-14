@@ -145,11 +145,9 @@ export default {
   border: 0.5vw solid white;
   border-radius: 1vw;
   background: $almost-white;
-  transition: 2s linear;
 }
 .simple-keyboard .hg-button:active {
   background: $grey-l;
-  transition: 2s linear;
 }
 .simple-keyboard .hg-row {
   margin: 0 !important;
