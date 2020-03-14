@@ -115,6 +115,8 @@ export default {
 
 <style lang="scss" scoped>
 .keyboard {
+  border-top: 1px solid $almost-white;
+
   max-height: 0;
   overflow: scroll;
 
@@ -138,11 +140,14 @@ export default {
   padding: 0 1em;
 }
 .simple-keyboard .hg-button {
-  border-radius: 0;
   box-shadow: none;
-  border: 0.5vw solid white;
   margin: 0 !important;
+  border: 0.5vw solid white;
+  border-radius: 1vw;
   background: $almost-white;
+}
+.simple-keyboard .hg-button:active {
+  background: $grey-l;
 }
 .simple-keyboard .hg-row {
   margin: 0 !important;
