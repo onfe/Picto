@@ -6,13 +6,17 @@ const state = {
   index: -1,
   colour: COLOURS[0],
   room: null,
+  roomName: "",
   status: "idle",
   users: [],
   showInfo: false
 };
 
 const getters = {
-  username: state => state.users[state.index] || ""
+  username: state => state.users[state.index] || "",
+  roomTitle: state => (state.roomName.length > 0 ? state.roomName : state.room),
+  userColours: state =>
+    state.users.filter(e => e).map((k, i) => [k, COLOURS[i]])
 };
 
 const actions = {
@@ -71,6 +75,7 @@ const mutations = {
     state.index = d.Payload.UserIndex;
     state.users = d.Payload.Users;
     state.colour = COLOURS[d.Payload.UserIndex];
+    state.roomName = d.Payload.RoomName;
     state.joinTime = d.Time;
   },
   updateUser: (state, payload) => {

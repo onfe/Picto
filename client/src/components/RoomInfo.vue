@@ -2,17 +2,21 @@
   <aside :class="{ expand: expand }">
     <div class="wrap">
       <h1 class="room-title">
-        Picto Room
+        {{ $store.getters["client/roomTitle"] }}
       </h1>
       <div class="body">
-        These are some further details that we want to show
+        <UserList />
       </div>
     </div>
   </aside>
 </template>
 
 <script>
+import UserList from "@/components/UserList.vue"
 export default {
+  components: {
+    UserList
+  },
   computed: {
     expand() {
       return this.$store.state.client.showInfo;
@@ -31,7 +35,7 @@ aside {
   transition: max-height 400ms ease-in-out;
 
   &.expand {
-    max-height: calc(#{$sidebar-width} + 5em);
+    max-height: calc(#{$sidebar-width} + 10em);
   }
 }
 
@@ -40,6 +44,10 @@ aside {
   min-height: $sidebar-width;
   background: #fff;
   padding: $spacer;
+}
+
+.body {
+  font-family: monospace;
 }
 
 .room-title {
