@@ -116,8 +116,7 @@ section {
   overflow: hidden;
 
   &.show {
-    max-height: 100vh;
-    // overflow: visible;
+    max-height: 15em;
   }
 
   transition: max-height 400ms ease-in-out;
