@@ -40,7 +40,7 @@ const actions = {
         .sort((a, b) => {
           a.id - b.id;
         })
-        .filter(a => a.constructor.name === "Message");
+        .filter(a => a.type === "Message");
       if (msgs.length < 1) {
         // eslint-disable-next-line no-console
         console.error("No messages to copy!");
