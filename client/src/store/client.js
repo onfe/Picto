@@ -7,7 +7,8 @@ const state = {
   colour: COLOURS[0],
   room: null,
   status: "idle",
-  users: []
+  users: [],
+  showInfo: false
 };
 
 const getters = {
@@ -58,6 +59,9 @@ const actions = {
     if (d.Time > state.joinTime) {
       commit("updateUser", pl);
     }
+  },
+  toggleInfo: ({ commit }) => {
+    commit("toggleInfo");
   }
 };
 
@@ -81,6 +85,9 @@ const mutations = {
   },
   updateStatus: (state, payload) => {
     state.status = payload;
+  },
+  toggleInfo: state => {
+    state.showInfo = !state.showInfo;
   }
 };
 

@@ -1,34 +1,34 @@
 <template>
   <section class="nav">
-    <RoomInfo v-on:hide="hideInfo" v-show="showInfo" />
-    <ul class="btn">
+    <ToggleButton
+      @click.native="toggleInfo"
+      icon="info-circle"
+      iconActive="times-circle"
+      :active="showInfo"
+    />
+    <hr />
+    <ul class="btn" @click="link">
       <li>
-        <font-awesome-icon @click="info" class="icn" icon="info-circle" />
-      </li>
-      <li>
-        <font-awesome-icon @click="link" class="icn" icon="user-plus" />
+        <font-awesome-icon class="icn" icon="user-plus" />
       </li>
     </ul>
   </section>
 </template>
 
 <script>
-import RoomInfo from "@/components/RoomInfo.vue";
+import ToggleButton from "@/components/ToggleButton.vue";
 export default {
   components: {
-    RoomInfo
+    ToggleButton
   },
-  data() {
-    return {
-      showInfo: false
-    };
+  computed: {
+    showInfo() {
+      return this.$store.state.client.showInfo;
+    }
   },
   methods: {
-    info() {
-      this.showInfo = true;
-    },
-    hideInfo() {
-      this.showInfo = false;
+    toggleInfo() {
+      this.$store.dispatch("client/toggleInfo");
     },
     link() {
       return;
@@ -40,5 +40,11 @@ export default {
 <style lang="scss" scoped>
 section {
   padding: $spacer;
+}
+
+hr {
+  border: 0;
+  border-bottom: 1px solid $almost-white;
+  margin: $spacer;
 }
 </style>
