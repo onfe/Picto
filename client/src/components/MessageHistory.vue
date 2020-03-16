@@ -28,11 +28,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-section {
-  position: relative;
-  height: 100%;
-}
-
 .history {
   padding: 1vw;
   overflow-y: scroll;

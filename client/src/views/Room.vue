@@ -2,7 +2,10 @@
   <main>
     <div class="view">
       <Navbar class="nav" />
-      <MessageHistory class="hist" />
+      <div class="feed">
+        <RoomInfo class="info" />
+        <MessageHistory class="hist" />
+      </div>
     </div>
     <div class="edit">
       <Toolbox @keyboard="handleKeys" class="toolbox" />
@@ -20,6 +23,7 @@ import Footer from "@/components/Footer.vue";
 import Toolbox from "@/components/Toolbox.vue";
 import Navbar from "@/components/Navbar.vue";
 import Keyboard from "@/components/Keyboard.vue";
+import RoomInfo from "@/components/RoomInfo.vue";
 
 export default {
   components: {
@@ -28,7 +32,8 @@ export default {
     Footer,
     Toolbox,
     Navbar,
-    Keyboard
+    Keyboard,
+    RoomInfo
   },
   data() {
     return {
@@ -63,23 +68,36 @@ main {
 .view {
   position: relative;
   flex: 1;
+  display: flex;
+  flex-direction: row;
   min-height: 0;
 }
 
 .nav {
   width: $sidebar-width;
   height: 100%;
+  border-right: 1px solid $almost-white;
+}
+
+.feed {
+  position: relative;
+  flex: 0;
+  width: $ratio-width;
+  min-height: 0;
+}
+
+.info {
   position: absolute;
   top: 0;
   left: 0;
-  display: inline-block;
-  border-right: 1px solid $almost-white;
+  width: 100%;
 }
 
 .hist {
   width: $ratio-width;
-  margin-left: $sidebar-width;
   border-bottom: 1px solid $almost-white;
+  height: calc(100% - #{$sidebar-width});
+  margin-top: $sidebar-width;
 }
 
 .edit {
