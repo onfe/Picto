@@ -35,9 +35,7 @@ const actions = {
     window._sketch.clear();
   },
   copy: ({ rootState }, id) => {
-    if (id != null) {
-      // var msg = console.log('id');
-    } else {
+    if (id == null) {
       var msgs = rootState.messages.history
         .sort((a, b) => {
           a.id - b.id;

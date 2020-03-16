@@ -67,10 +67,6 @@ export default {
   },
   methods: {
     onKeyPress(button) {
-      /**
-       * If you want to handle the shift and caps lock buttons
-       */
-      console.log(button);
       if (button === "{shift}") this.handleShift();
       else if (button === "{alt}") this.handleLayoutChange("specials");
       else if (button === "{specials}") this.handleLayoutChange("specials");

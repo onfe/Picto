@@ -14,7 +14,6 @@ const actions = {
   },
   message: ({ commit }, d) => {
     const pl = d.Payload;
-    console.log(d);
     pl.Data = RunlengthEncoder.decode(pl.Data);
     const message = new Message(
       pl.Data,
@@ -26,7 +25,6 @@ const actions = {
     commit("add", message);
   },
   announce: ({ commit }, d) => {
-    console.log(d);
     const announce = new Announcement(d.Payload.Announcement, d.Time);
     commit("add", announce);
   },
