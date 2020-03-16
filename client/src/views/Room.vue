@@ -89,7 +89,9 @@ main {
 }
 
 .keyboard {
-  flex: 0;
+  flex: 1 auto auto;
+  min-height: 0;
+  border-top: 1px solid $almost-white;
 }
 
 .toolbox {

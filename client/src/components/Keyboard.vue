@@ -1,12 +1,12 @@
 <template lang="html">
-  <section v-bind:class="{ keyboard: true, show }">
-    <div class="simple-keyboard"></div>
+  <section v-bind:class="{ show }">
+    <div id="picto-keyboard" class="simple-keyboard"></div>
   </section>
 </template>
 
 <script>
 import Keyboard from "simple-keyboard";
-import "simple-keyboard/build/css/index.css";
+import "@/assets/scss/keyboard.scss";
 
 export default {
   name: "SimpleKeyboard",
@@ -21,6 +21,7 @@ export default {
       onChange: this.onChange,
       onKeyPress: this.onKeyPress,
       layoutName: "default",
+      theme: "picto-keyboard",
       layout: {
         default: [
           "q w e r t y u i o p",
@@ -114,45 +115,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.keyboard {
-  border-top: 1px solid $almost-white;
-
-  max-height: 0;
-  overflow: scroll;
+section {
+  max-height: 0vh;
+  overflow: hidden;
 
   &.show {
     max-height: 100vh;
-    overflow: visible;
+    // overflow: visible;
   }
 
-  transition: max-height 300ms ease;
-
-  > * {
-    font-family: "pixel 5x7" !important;
-    font-size: 1.5em;
-  }
-}
-</style>
-
-<style lang="scss">
-.simple-keyboard .small {
-  flex-grow: 0 !important;
-  padding: 0 1em;
-}
-.simple-keyboard .hg-button {
-  box-shadow: none;
-  margin: 0 !important;
-  border: 0.5vw solid white;
-  border-radius: 1vw;
-  background: $almost-white;
-}
-.simple-keyboard .hg-button:active {
-  background: $grey-l;
-}
-.simple-keyboard .hg-row {
-  margin: 0 !important;
-}
-.simple-keyboard {
-  background: white;
+  transition: max-height 400ms ease-in-out;
 }
 </style>
