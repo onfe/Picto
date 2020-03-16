@@ -2,11 +2,8 @@
   <section>
     <div class="history">
       <div class="message" v-for="msg in history" v-bind:key="msg.time">
-        <CanvasMessage v-if="msg.constructor.name == 'Message'" :msg="msg" />
-        <Announcement
-          v-else-if="msg.constructor.name == 'Announcement'"
-          v-bind="msg"
-        />
+        <CanvasMessage v-if="msg.type == 'Message'" :msg="msg" />
+        <Announcement v-else-if="msg.type == 'Announcement'" v-bind="msg" />
         <div class="text" v-else>{{ msg.text }}</div>
       </div>
     </div>

@@ -1,14 +1,15 @@
 import RunlengthEncoder from "./runlengthEncoder.js";
 
 class Core {
-  constructor(time) {
+  constructor(type, time) {
+    this.type = type;
     this.time = time || Date.now();
   }
 }
 
 class Message extends Core {
   constructor(data, span, author, colour, time) {
-    super(time);
+    super("Message", time);
     this._data = data;
     this.span = span;
     this.author = author;
@@ -36,14 +37,14 @@ class Message extends Core {
 
 class Announcement extends Core {
   constructor(text, time) {
-    super(time);
+    super("Announcement", time);
     this.text = text;
   }
 }
 
 class Text extends Core {
   constructor(text, time) {
-    super(time);
+    super("Text", time);
     this.text = text;
   }
 }
