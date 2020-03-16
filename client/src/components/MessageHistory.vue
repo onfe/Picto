@@ -31,6 +31,7 @@ export default {
 .history {
   padding: 1vw;
   overflow-y: scroll;
+  overflow-x: hidden;
   display: flex;
   height: 100%;
   flex-direction: column;
