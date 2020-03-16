@@ -1,53 +1,40 @@
 import COLOURS from "../assets/js/colours.js";
 import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
+import { Message, Announcement, Text } from "../assets/js/message.js";
 
 const state = {
-  history: [],
-  iter: 0
+  history: []
 };
 
 const getters = {};
 
 const actions = {
-  add: ({ state, commit }, pl) => {
-    pl.Message.data = RunlengthEncoder.decode(pl.Message.data);
-    const message = {
-      type: "normal",
-      author: pl.Sender,
-      colour: COLOURS[pl.ColourIndex],
-      data: pl.Message,
-      id: state.iter
-    };
+  add: ({ commit }, message) => {
     commit("add", message);
   },
-  addSelf: ({ rootState, commit }, pl) => {
-    const message = {
-      type: "normal",
-      author: rootState.client.users[rootState.client.index],
-      colour: COLOURS[rootState.client.index],
-      data: pl.Message,
-      id: state.iter
-    };
+  message: ({ commit }, d) => {
+    const pl = d.Payload;
+    pl.Data = RunlengthEncoder.decode(pl.Data);
+    const message = new Message(
+      pl.Data,
+      pl.Span,
+      pl.Sender,
+      COLOURS[pl.ColourIndex],
+      d.Time
+    );
     commit("add", message);
   },
-  announce: ({ commit }, pl) => {
-    const message = {
-      type: "announcement",
-      text: pl.Announcement
-    };
-    commit("add", message);
+  announce: ({ commit }, d) => {
+    const announce = new Announcement(d.Payload.Announcement, d.Time);
+    commit("add", announce);
   },
   join: ({ commit }, pl) => {
-    const message = {
-      text: `${pl} joined.`
-    };
-    commit("add", message);
+    const text = new Text(`${pl.name} joined.`, pl.time);
+    commit("add", text);
   },
   leave: ({ commit }, pl) => {
-    const message = {
-      text: `${pl} left.`
-    };
-    commit("add", message);
+    const text = new Text(`${pl.name} left.`, pl.time);
+    commit("add", text);
   },
   reset: ({ commit }) => {
     commit("reset");
@@ -57,11 +44,10 @@ const actions = {
 const mutations = {
   add: (state, message) => {
     state.history.unshift(message);
-    state.iter += 1;
+    state.history.sort((a, b) => b.id - a.id);
   },
   reset: state => {
     state.history = [];
-    state.iter = 0;
   }
 };
 

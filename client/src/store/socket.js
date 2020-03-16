@@ -1,11 +1,10 @@
-import router from "../router";
-
 const state = {
   _socket: null
 };
 
 const getters = {
-  open: state => state._socket.readyState === WebSocket.OPEN
+  open: state =>
+    state._socket !== null && state._socket.readyState === WebSocket.OPEN
 };
 
 const actions = {
@@ -22,13 +21,16 @@ const actions = {
       window._sock = sock;
 
       sock.onmessage = m => dispatch("_onMessage", m);
-      sock.onopen = res;
-      sock.onerror = rej;
+      sock.onopen = () => res();
+      sock.onerror = () => rej();
       sock.onclose = () => dispatch("_onClose");
     });
   },
-  disconnect: ({ state }) => {
-    state._socket.close();
+  disconnect: ({ state, commit }) => {
+    if (state._socket !== null) {
+      state._socket.close();
+    }
+    commit("destroy");
   },
   _onMessage: ({ dispatch }, pl) => {
     pl = JSON.parse(pl.data);
@@ -45,7 +47,7 @@ const actions = {
 
     switch (pl.Event) {
       case "message":
-        dispatch("messages/add", pl.Payload, { root: true });
+        dispatch("messages/message", pl, { root: true });
         break;
       case "init":
         dispatch("client/init", pl, { root: true });
@@ -54,7 +56,7 @@ const actions = {
         dispatch("client/updateUser", pl, { root: true });
         break;
       case "announcement":
-        dispatch("messages/announce", pl.Payload, { root: true });
+        dispatch("messages/announce", pl, { root: true });
         break;
       case "rename":
         // TODO: ADD Rename event.
@@ -64,23 +66,22 @@ const actions = {
         console.log(pl);
     }
   },
-  _onClose: ({ commit }) => {
-    if (router.currentRoute.name == "room") {
-      router.replace(`/join/${router.currentRoute.params.id}`);
-    }
+  _onClose: ({ commit, dispatch }) => {
     commit("destroy");
+    dispatch("client/leave", {}, { root: true });
   },
-  send: ({ state }, pl) => {
-    // TODO: check if connected, if not, dispatch socket/reconnect
-    if (!pl.Event) {
-      throw "Payload does not contain event field.";
-    }
+  send: ({ state }, { event, payload }) => {
+    const packet = {
+      Time: Date.now(),
+      Event: event,
+      Payload: payload
+    };
 
-    state._socket.send(JSON.stringify(pl));
+    state._socket.send(JSON.stringify(packet));
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
-      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${pl}`
+      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${packet}`
     );
   },
   reconnect: () => {}

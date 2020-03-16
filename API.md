@@ -27,6 +27,8 @@ Server ​​-> client
 
 The server will be in charge of dating events as it receives them.
 
+`time` is in UNIX time to millisecond precision.
+
 
 
 ### `init` - Joining a room
@@ -71,7 +73,8 @@ Client -> Server:
 
 ```JSON
 {
-  "Message": "NPXkOU8..."
+  "Data": [255, 255, ...],
+  "Span": 192
 }
 ```
 
@@ -81,11 +84,14 @@ Server -> Client:
 {
   "ColourIndex": 2,
   "Sender": "Josh",
-  "Message": "NPXkOU8..."
+  "Data": "///...",
+  "Span": 192
 }
 ```
 
 `ColourIndex` was the index of the user that sent the message in the `users` array when they sent it, it differs from `UserIndex` in that there may or may not be the same user that sent the message in that index in the `Users` array. 
+
+See the [Message Encoding](#Message-Encoding) section for a description of the `Data` field.
 
 
 

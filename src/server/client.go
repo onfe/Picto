@@ -159,7 +159,7 @@ func (c *Client) recieveLoop() {
 				message := MessageEvent{}
 				mapstructure.Decode(event.Payload, &message)
 				//If the message is empty, we ignore it...
-				if d, valid := message.Message["data"].(string); valid && d == EmptyMessage {
+				if message.isEmpty() {
 					continue
 				}
 				//...otherwise we fill in the ColourIndex and Sender fields,

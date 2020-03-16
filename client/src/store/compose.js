@@ -1,4 +1,4 @@
-import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
+import { Message } from "../assets/js/message.js";
 
 const state = {
   tool: "pencil",
@@ -9,47 +9,45 @@ const state = {
 const getters = {};
 
 const actions = {
-  send: ({ dispatch }) => {
-    const msg = window._sketch.getBakedImageData();
-    if (msg != null) {
-      //We don't send empty messages.
-      const pl = {
-        Event: "message",
-        Time: 1000,
-        Payload: {
-          Message: {
-            data: msg.data,
-            span: msg.span
-          }
-        }
-      };
-      const socket_pl = {
-        Event: "message",
-        Time: 1000,
-        Payload: {
-          Message: {
-            data: RunlengthEncoder.encode(msg.data),
-            span: msg.span
-          }
-        }
-      };
-
-      dispatch("clear");
-      dispatch("messages/addSelf", pl.Payload, { root: true });
-      dispatch("socket/send", socket_pl, { root: true });
+  send: ({ dispatch, rootState, rootGetters }) => {
+    const raw = window._sketch.getBakedImageData();
+    if (raw == null) {
+      // Don't send empty messages.
+      return;
     }
+
+    const msg = new Message(
+      raw.data,
+      raw.span,
+      rootGetters["client/username"],
+      rootState.client.colour
+    );
+
+    dispatch("clear");
+    dispatch("messages/add", msg, { root: true });
+    dispatch(
+      "socket/send",
+      { event: "message", payload: msg.encoded() },
+      { root: true }
+    );
   },
   clear: () => {
     window._sketch.clear();
   },
   copy: ({ rootState }, id) => {
-    if (id != null) {
-      // var msg = console.log('id');
-    } else {
-      var msg = rootState.messages.history.sort((a, b) => {
-        a.id - b.id;
-      })[0];
-      window._sketch.loadImageData(msg.data);
+    if (id == null) {
+      var msgs = rootState.messages.history
+        .sort((a, b) => {
+          a.id - b.id;
+        })
+        .filter(a => a.constructor.name === "Message");
+      if (msgs.length < 1) {
+        // eslint-disable-next-line no-console
+        console.error("No messages to copy!");
+        return;
+      }
+      const msg = msgs[0];
+      window._sketch.loadImageData(msg.raw());
     }
   },
   pencil: ({ commit, state }) => {

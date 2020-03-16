@@ -1,5 +1,5 @@
 <template lang="html">
-  <Message :author="author" :colour="colour">
+  <Message :author="msg.author" :colour="msg.colour">
     <canvas v-bind:id="idHash"></canvas>
   </Message>
 </template>
@@ -13,22 +13,9 @@ export default {
     Message
   },
   props: {
-    data: {
+    msg: {
       type: Object,
-      default: () => {
-        return {
-          span: 384,
-          data: Array(384 * 128).fill(0)
-        };
-      }
-    },
-    author: {
-      type: String,
-      default: "Author"
-    },
-    colour: {
-      type: String,
-      default: "#e97777"
+      default: () => new Message()
     }
   },
   data() {
@@ -44,7 +31,7 @@ export default {
   mounted() {
     const canv = document.getElementById(this.idHash);
     this.notepad = new Notepad(384, 128, canv);
-    this.notepad.loadImageData(this.data);
+    this.notepad.loadImageData(this.msg.raw());
   }
 };
 </script>

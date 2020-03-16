@@ -46,13 +46,11 @@ export default {
   },
   data() {
     return {
-      name: "",
-      loading: true
+      name: ""
     };
   },
   methods: {
     join() {
-      this.loading = true;
       const room = this.$route.params.id;
       const name = this.name;
       if (room) {
@@ -62,12 +60,19 @@ export default {
       }
     }
   },
+  computed: {
+    loading() {
+      return this.$store.state.client.status === "connecting";
+    },
+    error() {
+      return this.$store.state.client.status === "fail";
+    }
+  },
   mounted() {
     // check the room exists that we're about to join.
     const id = this.$route.params.id;
     if (!id) {
       // if we're not trying to join a room we don't need to check it exists.
-      this.loading = false;
       return;
     }
     const url =
