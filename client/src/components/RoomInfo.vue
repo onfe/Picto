@@ -31,7 +31,7 @@ aside {
   transition: max-height 400ms ease-in-out;
 
   &.expand {
-    max-height: 8em;
+    max-height: calc(#{$sidebar-width} + 5em);
   }
 }
 
@@ -48,7 +48,7 @@ aside {
   align-items: center;
   justify-content: center;
   font-family: "pixel 5x7";
-  font-size: 1.5em;
+  font-size: 6vw;
   margin: 0;
   padding-bottom: $spacer;
   font-weight: normal;

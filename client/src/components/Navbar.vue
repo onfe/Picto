@@ -28,11 +28,9 @@ export default {
   },
   methods: {
     toggleInfo() {
-      console.log("hello")
       this.$store.dispatch("client/toggleInfo");
     },
     link() {
-      console.log('lnk')
       return;
     }
   }
