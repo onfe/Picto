@@ -42,6 +42,7 @@ const actions = {
         })
         .filter(a => a.constructor.name === "Message");
       if (msgs.length < 1) {
+        // eslint-disable-next-line no-console
         console.error("No messages to copy!");
         return;
       }
