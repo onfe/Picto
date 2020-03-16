@@ -76,6 +76,11 @@ section {
   padding: $spacer;
 }
 
+.btn .rainbow .icn {
+  animation: rainbowbg 8s infinite;
+  animation-timing-function: linear;
+}
+
 .keyboard {
   flex: 1;
   display: flex;
