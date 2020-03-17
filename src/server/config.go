@@ -9,6 +9,10 @@ const (
 	RoomTimeout = 600 * time.Second
 	//DefaultRoomSize = Default size of default room.
 	DefaultRoomSize = 8
+	//MaxRoomNameLength = the max length of a room name.
+	MaxRoomNameLength = 32
+	//MaxClientNameLength = the max length of a client name.
+	MaxClientNameLength = 16
 	//MaxMessageSize = Max size of a picto image in Bytes from the client.
 	MaxMessageSize = 100000
 	//MinMessageInterval = Minimum interval between messages sent by a client to be acknowledged.

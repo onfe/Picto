@@ -164,7 +164,14 @@ func (c *Client) recieveLoop() {
 				message.Sender = c.Name
 				c.recieve(wrapEvent("message", message))
 			case "rename":
-				c.room.changeName(event, c.ID)
+				rename := RenameEvent{}
+				mapstructure.Decode(event.Payload, &rename)
+				//If the new name is too long, we ignore it...
+				if len(rename.RoomName) > MaxRoomNameLength {
+					continue
+				}
+				//...otherwise we rewrap the event and pass it on with the new room name...
+				c.room.changeName(wrapEvent("rename", rename), rename.RoomName)
 			}
 		}
 	}

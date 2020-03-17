@@ -13,8 +13,9 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	name, hasName := r.Form["name"]
 	roomID, hasRoom := r.Form["room"]
 
+	//If a name is provided, first check that it is a valid one.
 	if hasName {
-		hasName = !(name[0] == "")
+		hasName = !(name[0] == "") && (len(name[0]) <= MaxClientNameLength)
 	}
 
 	if hasName {
@@ -60,7 +61,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 		if hasRoom {
 			log.Println("[JOIN FAIL] - Client attempted to join room ID" + roomID[0] + " without a name.")
 		} else {
-			log.Println("[JOIN FAIL] - Client attempted to join without a name or room.")
+			log.Println("[JOIN FAIL] - Client attempted to join without a valid name or room.")
 		}
 	}
 }

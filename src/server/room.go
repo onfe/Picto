@@ -48,11 +48,11 @@ func (r *Room) getClientNames() []string {
 	return names
 }
 
-func (r *Room) changeName(event EventWrapper, nameChangerID int) {
-	//Get the new room name and update it. This method might not be particularly safe?
-	r.Name = (event.Payload.(map[string]interface{}))["RoomName"].(string)
+func (r *Room) changeName(event []byte, newName string) {
+	//Update the room's name.
+	r.Name = newName
 	//Distribute the rename event to all the users.
-	r.distributeEvent(event.toBytes(), true, nameChangerID)
+	r.distributeEvent(event, true, -1)
 }
 
 func (r *Room) addClient(c *Client) error {
