@@ -4,7 +4,7 @@ import "time"
 
 const (
 	//MaxRooms = maximum amount of rooms the server may have at any one time
-	MaxRooms = 10
+	MaxRooms = 1024
 	//DefaultRoomSize = Default size of default room.
 	DefaultRoomSize = 8
 	//MaxMessageSize = Max size of a picto image in Bytes from the client.
