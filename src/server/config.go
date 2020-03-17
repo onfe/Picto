@@ -12,7 +12,7 @@ const (
 	//MinMessageInterval = Minimum interval between messages sent by a client to be acknowledged.
 	MinMessageInterval = time.Second
 	//ChatHistoryLen = Number of messages kept by server per room.
-	ChatHistoryLen = 10
+	ChatHistoryLen = 64
 	//ClientSendTimeout is the time allotted for a message to be sent.
 	ClientSendTimeout = 10 * time.Second
 	//ClientTimeout = Max interval allotted between pings and pongs.
