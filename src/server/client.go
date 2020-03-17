@@ -43,6 +43,27 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 		LastPong:    time.Now(),
 	}
 
+	//'If a message read from the client exceeds this limit, the connection sends a close message to the peer and returns ErrReadLimit to the application'
+	c.ws.SetReadLimit(MaxMessageSize)
+
+	//If no message is recieved before this deadline, the websocket is corrupt and all future reads will return an error.
+	c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
+
+	//When a pong is recieved, the read deadline is updated.
+	c.ws.SetPongHandler(func(string) error {
+		c.LastPong = time.Now()
+		c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
+		return nil
+	})
+
+	c.ws.SetCloseHandler(func(code int, reason string) error {
+		log.Println("[CLIENT] - Closed connection to "+c.getDetails()+" with code", code, "and reason:", reason)
+		if c.room != nil {
+			c.room.removeClient(c.ID)
+		}
+		return c.send(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
+	})
+
 	if err == nil {
 		go c.sendLoop()
 		go c.recieveLoop()
@@ -58,8 +79,7 @@ func (c *Client) getDetails() string {
 	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 }
 
-func (c *Client) closeConnection(reason string) {
-	c.closeReason = reason
+func (c *Client) closeConnection() {
 	close(c.sendBuffer)
 }
 
@@ -71,23 +91,21 @@ func (c *Client) sendLoop() {
 	//When the send loop loses connection to the client or sendBuffer is closed.
 	defer func() {
 		ticker.Stop()
-
-		log.Println("[CLIENT] - Sending close message to", c.Name, "for reason:", c.closeReason)
-		c.send(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, c.closeReason))
-		c.ws.Close()
 	}()
 
 	for {
 		select {
 		case message, open := <-c.sendBuffer:
 			if !open {
-				log.Println("[CLIENT] - Failed to get message from sendBuffer belonging to " + c.getDetails())
+				log.Println("[CLIENT] - sendBuffer closed of " + c.getDetails())
+				c.ws.CloseHandler()(websocket.CloseNormalClosure, "Connection Closed By Server")
 				return
 			}
 
 			err := c.send(websocket.TextMessage, message)
 			if err != nil {
 				log.Println("[CLIENT] - Failed to distribute message to "+c.getDetails()+", error:", err.Error())
+				c.ws.CloseHandler()(websocket.CloseGoingAway, "Internal Server Error #1")
 				return
 			}
 
@@ -99,6 +117,7 @@ func (c *Client) sendLoop() {
 			err := c.send(websocket.PingMessage, nil)
 			if err != nil {
 				log.Println("[CLIENT] - Failed to send ping to "+c.getDetails()+", error:", err.Error())
+				c.ws.CloseHandler()(websocket.CloseGoingAway, "Failed to ping")
 				return
 			}
 		}
@@ -113,37 +132,14 @@ func (c *Client) send(messageType int, payload []byte) error {
 //----------------------------------------------------------------------------------------------------RECIEVELOOP
 
 func (c *Client) recieveLoop() {
-	//'If a message read from the client exceeds this limit, the connection sends a close message to the peer and returns ErrReadLimit to the application'
-	c.ws.SetReadLimit(MaxMessageSize)
-
-	//If no message is recieved before this deadline, the websocket is corrupt and all future reads will return an error.
-	c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
-
-	//When a pong is recieved, the read deadline is updated.
-	c.ws.SetPongHandler(func(string) error {
-		c.LastPong = time.Now()
-		c.ws.SetReadDeadline(time.Now().Add(ClientTimeout))
-		return nil
-	})
-
-	//When a close message is recieved, the client is removed from the room (if it's in one).
-	c.ws.SetCloseHandler(func(code int, reason string) error {
-		log.Println("[CLIENT] - Closed connection to "+c.getDetails()+" with code", code, "and reason:", reason)
-		if c.closeReason == "" {
-			c.closeReason = reason
-			close(c.sendBuffer)
-		}
-		if c.room != nil {
-			c.room.removeClient(c.ID)
-		}
-		return nil
-	})
-
 	//Loops, pulling messages from the websocket.
 	for {
 		_, data, err := c.ws.ReadMessage()
 		if err != nil {
 			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
+			if err != websocket.ErrCloseSent {
+				close(c.sendBuffer)
+			}
 			break
 		}
 		event := EventWrapper{}

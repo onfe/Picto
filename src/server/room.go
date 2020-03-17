@@ -143,8 +143,10 @@ func (r *Room) announce(message string) {
 	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
-func (r *Room) closeAllConnections() {
+func (r *Room) close() {
 	for _, client := range r.Clients {
-		client.closeConnection("Room closed by server.")
+		if client != nil {
+			client.closeConnection()
+		}
 	}
 }

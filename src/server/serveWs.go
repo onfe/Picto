@@ -29,7 +29,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			newRoom, err := rm.createRoom("Picto Room", false, DefaultRoomSize)
 			if err != nil {
 				log.Println("[JOIN FAIL] - Failed to create room:", err)
-				client.closeConnection(err.Error())
+				client.closeConnection()
 				return
 			}
 
@@ -44,7 +44,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				err = room.addClient(client)
 				if err != nil {
 					log.Println("[JOIN FAIL] - Someone failed to join room ID"+roomID[0], "with name '"+client.Name+"':", err)
-					client.closeConnection(err.Error())
+					client.closeConnection()
 					return
 				}
 
@@ -53,7 +53,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 			} else { //If room doesn't exist...
 				log.Println("[JOIN FAIL] - Client with name '" + name[0] + "' tried to join a room doesn't exist.")
-				client.closeConnection("Room doesn't exist")
+				client.closeConnection()
 			}
 		}
 	} else {
