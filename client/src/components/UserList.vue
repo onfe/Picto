@@ -13,8 +13,7 @@
 </template>
 
 <script>
-export default {
-}
+export default {};
 </script>
 
 <style lang="scss" scoped>
@@ -32,7 +31,7 @@ ul {
 
 li {
   display: inline-block;
-  font-family: 'pixel 5x7';
+  font-family: "pixel 5x7";
   font-size: 1.5em;
   color: #fff;
   padding: 0.125em 0.25em;

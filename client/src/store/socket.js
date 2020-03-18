@@ -59,7 +59,7 @@ const actions = {
         dispatch("messages/announce", pl, { root: true });
         break;
       case "rename":
-        // TODO: ADD Rename event.
+        dispatch("client/renameRoom", pl, { root: true });
         break;
       default:
         // eslint-disable-next-line no-console

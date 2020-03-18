@@ -1,9 +1,7 @@
 <template lang="html">
   <aside :class="{ expand: expand }">
     <div class="wrap">
-      <h1 class="room-title">
-        {{ $store.getters["client/roomTitle"] }}
-      </h1>
+      <RoomTitle :edit="expand" />
       <div class="body">
         <UserList />
       </div>
@@ -12,10 +10,12 @@
 </template>
 
 <script>
-import UserList from "@/components/UserList.vue"
+import UserList from "@/components/UserList.vue";
+import RoomTitle from "@/components/RoomTitle.vue";
 export default {
   components: {
-    UserList
+    UserList,
+    RoomTitle
   },
   computed: {
     expand() {
@@ -48,17 +48,5 @@ aside {
 
 .body {
   font-family: monospace;
-}
-
-.room-title {
-  height: $sidebar-width - $spacer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "pixel 5x7";
-  font-size: 6vw;
-  margin: 0;
-  padding-bottom: $spacer;
-  font-weight: normal;
 }
 </style>
