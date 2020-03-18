@@ -70,7 +70,11 @@ const actions = {
   renameRoom: ({ commit, dispatch }, pl) => {
     const user = pl.Payload.UserName;
     const name = pl.Payload.RoomName;
-    dispatch("messages/add", new Text(`${user} named the room '${name}'.`, pl.Time), { root: true })
+    dispatch(
+      "messages/add",
+      new Text(`${user} named the room '${name}'.`, pl.Time),
+      { root: true }
+    );
     commit("renameRoom", name);
   }
 };
