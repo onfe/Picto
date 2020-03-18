@@ -23,7 +23,6 @@ export default {
   watch: {
     edit(val) {
       if (val) {
-        console.log(this.$refs);
         this.$refs["input"].value = this.$store.getters["client/roomTitle"];
       }
     }
