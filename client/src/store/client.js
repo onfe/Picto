@@ -1,18 +1,22 @@
 import router from "../router";
 import COLOURS from "../assets/js/colours.js";
-import { Announcement } from "../assets/js/message.js";
+import { Announcement, Text } from "../assets/js/message.js";
 
 const state = {
   index: -1,
   colour: COLOURS[0],
   room: null,
+  roomName: "",
   status: "idle",
   users: [],
   showInfo: false
 };
 
 const getters = {
-  username: state => state.users[state.index] || ""
+  username: state => state.users[state.index] || "",
+  roomTitle: state => (state.roomName.length > 0 ? state.roomName : state.room),
+  userColours: state =>
+    state.users.filter(e => e).map((k, i) => [k, COLOURS[i]])
 };
 
 const actions = {
@@ -62,6 +66,16 @@ const actions = {
   },
   toggleInfo: ({ commit }) => {
     commit("toggleInfo");
+  },
+  renameRoom: ({ commit, dispatch }, pl) => {
+    const user = pl.Payload.UserName;
+    const name = pl.Payload.RoomName;
+    dispatch(
+      "messages/add",
+      new Text(`${user} named the room '${name}'.`, pl.Time),
+      { root: true }
+    );
+    commit("renameRoom", name);
   }
 };
 
@@ -71,7 +85,9 @@ const mutations = {
     state.index = d.Payload.UserIndex;
     state.users = d.Payload.Users;
     state.colour = COLOURS[d.Payload.UserIndex];
+    state.roomName = d.Payload.RoomName;
     state.joinTime = d.Time;
+    state.showInfo = false;
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;
@@ -88,6 +104,9 @@ const mutations = {
   },
   toggleInfo: state => {
     state.showInfo = !state.showInfo;
+  },
+  renameRoom: (state, name) => {
+    state.roomName = name;
   }
 };
 

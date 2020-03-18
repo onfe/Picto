@@ -48,13 +48,6 @@ func (r *Room) getClientNames() []string {
 	return names
 }
 
-func (r *Room) changeName(event EventWrapper, nameChangerID int) {
-	//Get the new room name and update it. This method might not be particularly safe?
-	r.Name = (event.Payload.(map[string]interface{}))["RoomName"].(string)
-	//Distribute the rename event to all the users.
-	r.distributeEvent(event.toBytes(), true, nameChangerID)
-}
-
 func (r *Room) addClient(c *Client) error {
 	if r.ClientCount < r.MaxClients {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
@@ -143,8 +136,10 @@ func (r *Room) announce(message string) {
 	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
-func (r *Room) closeAllConnections() {
+func (r *Room) close() {
 	for _, client := range r.Clients {
-		client.closeConnection("Room closed by server.")
+		if client != nil {
+			client.closeConnection()
+		}
 	}
 }

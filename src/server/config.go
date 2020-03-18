@@ -4,15 +4,21 @@ import "time"
 
 const (
 	//MaxRooms = maximum amount of rooms the server may have at any one time
-	MaxRooms = 10
+	MaxRooms = 1024
+	//RoomTimeout = maximum amount of time a room may stay open without any activity before being automatically closed
+	RoomTimeout = 600 * time.Second
 	//DefaultRoomSize = Default size of default room.
 	DefaultRoomSize = 8
-	//MaxMessageSize = Max size of a message from the client.
-	MaxMessageSize = 100000 //Max size of a picto image in Bytes
+	//MaxRoomNameLength = the max length of a room name.
+	MaxRoomNameLength = 32
+	//MaxClientNameLength = the max length of a client name.
+	MaxClientNameLength = 16
+	//MaxMessageSize = Max size of a picto image in Bytes from the client.
+	MaxMessageSize = 100000
 	//MinMessageInterval = Minimum interval between messages sent by a client to be acknowledged.
 	MinMessageInterval = time.Second
 	//ChatHistoryLen = Number of messages kept by server per room.
-	ChatHistoryLen = 10
+	ChatHistoryLen = 64
 	//ClientSendTimeout is the time allotted for a message to be sent.
 	ClientSendTimeout = 10 * time.Second
 	//ClientTimeout = Max interval allotted between pings and pongs.

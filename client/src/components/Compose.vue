@@ -52,14 +52,12 @@ export default {
       } else {
         this.$store.dispatch("compose/write", e.key);
       }
-      e.preventDefault();
       e.stopPropagation();
     },
     handleBack(e) {
       if (e.which == 8) {
         // desktop backspace
         this.$store.dispatch("compose/backspace");
-        e.preventDefault();
         e.stopPropagation();
       }
     }

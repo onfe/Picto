@@ -35,7 +35,7 @@ func (rm *RoomManager) roomMonitorLoop() {
 		select {
 		case <-ticker.C:
 			for roomID, room := range rm.Rooms {
-				if room.ClientCount == -1 && !room.Static {
+				if (room.ClientCount == -1 && !room.Static) || time.Since(room.LastUpdate) > RoomTimeout {
 					rm.closeRoom(roomID)
 				}
 			}
@@ -72,7 +72,7 @@ func (rm *RoomManager) createRoom(roomName string, static bool, maxClients int) 
 
 func (rm *RoomManager) closeRoom(roomID string) {
 	if rm.Rooms[roomID].ClientCount > 0 {
-		rm.Rooms[roomID].closeAllConnections()
+		rm.Rooms[roomID].close()
 	}
 	delete(rm.Rooms, roomID)
 	log.Println("[ROOM CLOSED] - Closed room ID \""+roomID+"\" | There are now", len(rm.Rooms), "active rooms.")

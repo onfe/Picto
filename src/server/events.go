@@ -91,14 +91,14 @@ func newAnnouncementEvent(announcement string) []byte {
 
 //RenameEvent is sent to clients to inform them of the name of their room being changed.
 type RenameEvent struct {
-	UserIndex int
-	RoomName  string
+	UserName string
+	RoomName string
 }
 
-func newRenameEvent(userIndex int, roomName string) []byte {
+func newRenameEvent(userName string, roomName string) []byte {
 	renameEvent := RenameEvent{
-		UserIndex: userIndex,
-		RoomName:  roomName,
+		UserName: userName,
+		RoomName: roomName,
 	}
 	return wrapEvent("rename", renameEvent)
 }
