@@ -118,7 +118,7 @@ Server -> client
 
 ```json
 {
-  "UserIndex": 2,
+  "UserName": "Josj",
   "RoomName": "Denver Airport"
 }
 ```

@@ -48,13 +48,6 @@ func (r *Room) getClientNames() []string {
 	return names
 }
 
-func (r *Room) changeName(event []byte, newName string) {
-	//Update the room's name.
-	r.Name = newName
-	//Distribute the rename event to all the users.
-	r.distributeEvent(event, true, -1)
-}
-
 func (r *Room) addClient(c *Client) error {
 	if r.ClientCount < r.MaxClients {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.

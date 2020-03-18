@@ -170,8 +170,10 @@ func (c *Client) recieveLoop() {
 				if len(rename.RoomName) > MaxRoomNameLength {
 					continue
 				}
-				//...otherwise we rewrap the event and pass it on with the new room name...
-				c.room.changeName(wrapEvent("rename", rename), rename.RoomName)
+				//...otherwise we change the room's name,
+				// fill in the UserName field, rewrap it and distribute it...
+				c.room.Name = rename.RoomName
+				c.room.distributeEvent(wrapEvent("rename", rename), true, -1)
 			}
 		}
 	}
