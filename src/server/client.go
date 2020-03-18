@@ -173,6 +173,7 @@ func (c *Client) recieveLoop() {
 				//...otherwise we change the room's name,
 				// fill in the UserName field, rewrap it and distribute it...
 				c.room.Name = rename.RoomName
+				rename.UserName = c.Name
 				c.room.distributeEvent(wrapEvent("rename", rename), true, -1)
 			}
 		}
