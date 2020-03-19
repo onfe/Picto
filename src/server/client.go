@@ -139,6 +139,7 @@ func (c *Client) recieveLoop() {
 			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
 			if err != websocket.ErrCloseSent {
 				close(c.sendBuffer)
+				return
 			}
 			break
 		}
