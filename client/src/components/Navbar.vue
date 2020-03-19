@@ -7,19 +7,17 @@
       :active="showInfo"
     />
     <hr />
-    <ul class="btn" @click="link">
-      <li>
-        <font-awesome-icon class="icn" icon="user-plus" />
-      </li>
-    </ul>
+    <InviteButton />
   </section>
 </template>
 
 <script>
 import ToggleButton from "@/components/ToggleButton.vue";
+import InviteButton from "@/components/InviteButton.vue";
 export default {
   components: {
-    ToggleButton
+    ToggleButton,
+    InviteButton
   },
   computed: {
     showInfo() {
