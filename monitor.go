@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+//Monitor objects hold all the performance stats we intend to monitor.
 type Monitor struct {
 	Alloc,
 	TotalAlloc,
@@ -19,6 +20,8 @@ type Monitor struct {
 	NumGoroutine int
 }
 
+/*NewMonitor creates a new monitor object and starts monitoring.
+Should be called with the go- prefix, otherwise it will halt flow.*/
 func NewMonitor(duration int) {
 	var m Monitor
 	var rtm runtime.MemStats
