@@ -16,6 +16,15 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	//If a name is provided, first check that it is a valid one.
 	if hasName {
 		hasName = !(name[0] == "") && (len(name[0]) <= MaxClientNameLength)
+	} else {
+		if hasRoom {
+			log.Println("[JOIN FAIL] - Client attempted to join room ID" + roomID[0] + " without a username.")
+			http.Error(w, "You can't join a room without a username!", 400)
+			return
+		}
+		log.Println("[JOIN FAIL] - Client attempted to create a room without a username.")
+		http.Error(w, "You can't create a room without a username!", 400)
+		return
 	}
 
 	if hasName {
@@ -54,14 +63,19 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 			} else { //If room doesn't exist...
 				log.Println("[JOIN FAIL] - Client with name '" + name[0] + "' tried to join a room doesn't exist.")
+				http.Error(w, "That room doesn't exist.", 404)
 				client.closeConnection()
 			}
 		}
 	} else {
 		if hasRoom {
-			log.Println("[JOIN FAIL] - Client attempted to join room ID" + roomID[0] + " without a name.")
+			log.Println("[JOIN FAIL] - Client attempted to join room ID" + roomID[0] + " without a valid username.")
+			http.Error(w, "You can't join a room without a valid username!", 422)
+			return
 		} else {
-			log.Println("[JOIN FAIL] - Client attempted to join without a valid name or room.")
+			log.Println("[JOIN FAIL] - Client attempted to create a room without a valid username.")
+			http.Error(w, "You can't create a room without a valid username!", 422)
+			return
 		}
 	}
 }
