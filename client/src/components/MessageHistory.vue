@@ -1,7 +1,12 @@
 <template lang="html">
   <section>
     <div class="history">
-      <div class="message" v-for="msg in history" v-bind:key="msg.time">
+      <div
+        class="message"
+        v-for="msg in history"
+        v-bind:key="msg.time"
+        :id="getID(msg)"
+      >
         <CanvasMessage v-if="msg.type == 'Message'" :msg="msg" />
         <Announcement v-else-if="msg.type == 'Announcement'" v-bind="msg" />
         <div class="text" v-else>{{ msg.text }}</div>
@@ -22,6 +27,11 @@ export default {
   computed: {
     history() {
       return this.$store.state.messages.history;
+    }
+  },
+  methods: {
+    getID(msg) {
+      return "msg-" + msg.hash;
     }
   }
 };

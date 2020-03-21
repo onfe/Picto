@@ -1,6 +1,6 @@
 <template lang="html">
   <Message :author="msg.author" :colour="msg.colour">
-    <canvas v-bind:id="idHash"></canvas>
+    <canvas :id="getID(msg)"></canvas>
   </Message>
 </template>
 
@@ -18,18 +18,13 @@ export default {
       default: () => new Message()
     }
   },
-  data() {
-    return {
-      idHash: null
-    };
-  },
-  beforeMount() {
-    this.idHash = Math.random()
-      .toString(36)
-      .substring(2, 15);
+  methods: {
+    getID(msg) {
+      return "canvas-" + msg.hash;
+    }
   },
   mounted() {
-    const canv = document.getElementById(this.idHash);
+    const canv = document.getElementById(this.getID(this.msg));
     this.notepad = new Notepad(384, 128, canv);
     this.notepad.loadImageData(this.msg.raw());
   }
