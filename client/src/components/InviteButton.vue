@@ -26,4 +26,17 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// bit jank but ensures animation is consistent and immediate.
+.icn {
+  background: $almost-white;
+  animation: hi-fade-active 400ms;
+  &:active {
+    animation: none;
+    animation: hi-fade-hover 400ms;
+  }
+}
+
+@include highlightFade("hi-fade-hover", "background", $grey-l, $almost-white);
+@include highlightFade("hi-fade-active", "background", $grey-l, $almost-white);
+</style>
