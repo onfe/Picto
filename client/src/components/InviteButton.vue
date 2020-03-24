@@ -44,6 +44,8 @@ ul {
   padding: 0 $spacer;
 
   background: $almost-white;
+
+  z-index:6;
 }
 
 // bit jank but ensures animation is consistent and immediate.
