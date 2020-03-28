@@ -30,7 +30,7 @@ html {
   line-height: 0.625;
 }
 
-ul.btn {
+.btn {
   border-radius: $spacer;
   overflow: hidden;
   list-style-type: none;
@@ -38,7 +38,8 @@ ul.btn {
   margin: 0;
   position: relative;
   background: $almost-white;
-  margin-bottom: 1vw;
+  margin-bottom: $spacer;
+  cursor: pointer;
 
   &:last-of-type {
     margin: 0;

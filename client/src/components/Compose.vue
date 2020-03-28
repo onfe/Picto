@@ -73,7 +73,7 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
-  padding: 1vw;
+  padding: $spacer;
 }
 
 canvas {
@@ -84,7 +84,8 @@ canvas {
   height: 100%;
   image-rendering: pixelated;
   touch-action: none;
-  background-image: linear-gradient($grey-l 0.25vw, transparent 0);
+  background-image: linear-gradient($grey-l #{$spacer / 4}, transparent 0);
   background-size: 100% 19%;
+  cursor: crosshair;
 }
 </style>

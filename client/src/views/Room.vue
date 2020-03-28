@@ -58,11 +58,23 @@ export default {
 
 <style lang="scss" scoped>
 main {
-  width: 100%;
+  width: 100vmin;
   height: 100%;
+  margin: 0 auto;
+  background: #fff;
   min-height: 0;
   display: flex;
   flex-direction: column;
+
+  // @include md {
+  //   flex-direction: row;
+  // }
+  //
+  // > * {
+  //   @include md {
+  //     width: 50%;
+  //   }
+  // }
 }
 
 .view {
@@ -102,7 +114,10 @@ main {
 
 .edit {
   display: grid;
+  position: relative;
   grid-template: "T C" "T E";
+  grid-auto-columns: min-content;
+  grid-auto-rows: min-content;
   flex: 0;
 }
 

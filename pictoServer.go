@@ -71,6 +71,8 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 
+	go NewMonitor(60)
+
 	wordsList := loadWordsList("words.txt")
 
 	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.

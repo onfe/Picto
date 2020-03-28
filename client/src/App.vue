@@ -10,5 +10,6 @@
   position: relative;
   display: block;
   min-height: 0;
+  background: $grey-d;
 }
 </style>

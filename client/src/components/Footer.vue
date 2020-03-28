@@ -34,7 +34,7 @@ section {
 .cont {
   border-radius: $spacer;
   padding: $spacer;
-  border: 0.5vw solid $grey-l;
+  border: $spacer / 2 solid $grey-l;
   background: $almost-white;
   height: 100%;
   display: flex;
@@ -46,8 +46,8 @@ section {
     flex: 1;
     text-align: center;
     font-family: "pixel 5x7";
-    font-size: 4vw;
-    border-right: 0.5vw solid $grey-l;
+    font-size: $spacer * 4;
+    border-right: $spacer / 2 solid $grey-l;
     user-select: none;
 
     &:last-of-type {

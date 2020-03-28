@@ -67,7 +67,7 @@ func (rm *RoomManager) createRoom(roomName string, static bool, maxClients int) 
 		log.Println("[ROOM CREATED] - Created room ID \""+newRoomID+"\" | There are now", len(rm.Rooms), "active rooms.")
 		return newRoom, nil
 	}
-	return nil, errors.New("reached MaxRooms limit")
+	return nil, errors.New("the server is at maximum rooms capacity")
 }
 
 func (rm *RoomManager) closeRoom(roomID string) {

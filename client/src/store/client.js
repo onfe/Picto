@@ -16,7 +16,8 @@ const getters = {
   username: state => state.users[state.index] || "",
   roomTitle: state => (state.roomName.length > 0 ? state.roomName : state.room),
   userColours: state =>
-    state.users.filter(e => e).map((k, i) => [k, COLOURS[i]])
+    state.users.filter(e => e).map((k, i) => [k, COLOURS[i]]),
+  inviteLink: state => `${window.location.origin}/join/${state.room}`
 };
 
 const actions = {

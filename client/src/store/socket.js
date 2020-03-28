@@ -13,16 +13,21 @@ const actions = {
       const proto = window.location.protocol == "https:" ? "wss" : "ws";
       const here = window.location.host;
       const roomarg = room ? `&room=${room}` : "";
-      const sock = new WebSocket(
-        `${proto}://${here}/ws?name=${name}${roomarg}`
-      );
+      var sock;
+      try {
+        sock = new WebSocket(`${proto}://${here}/ws?name=${name}${roomarg}`);
+      } catch (e) {
+        throw e;
+      }
 
       commit("create", sock);
       window._sock = sock;
 
       sock.onmessage = m => dispatch("_onMessage", m);
-      sock.onopen = () => res();
-      sock.onerror = () => rej();
+      sock.onopen = () => {
+        res();
+      };
+      sock.onerror = e => rej(e);
       sock.onclose = () => dispatch("_onClose");
     });
   },

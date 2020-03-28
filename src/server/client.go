@@ -34,6 +34,10 @@ type Client struct {
 func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
+	if err != nil {
+		return nil, err
+	}
+
 	c := Client{
 		Name:       Name,
 		ws:         ws,
@@ -61,13 +65,9 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 		if c.room != nil {
 			c.room.removeClient(c.ID)
 		}
-		return c.send(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
+		c.ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
+		return c.ws.Close()
 	})
-
-	if err == nil {
-		go c.sendLoop()
-		go c.recieveLoop()
-	}
 
 	return &c, err
 }
@@ -77,6 +77,17 @@ func (c *Client) getDetails() string {
 		return "(Room ID \"" + c.room.ID + "\" ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 	}
 	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
+}
+
+//Cancel should only be called before GO.
+func (c *Client) Cancel(code int, text string) {
+	c.ws.CloseHandler()(code, text)
+}
+
+//GO starts the client's send and recieve goroutines.
+func (c *Client) GO() {
+	go c.sendLoop()
+	go c.recieveLoop()
 }
 
 func (c *Client) closeConnection() {
@@ -139,6 +150,7 @@ func (c *Client) recieveLoop() {
 			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
 			if err != websocket.ErrCloseSent {
 				close(c.sendBuffer)
+				return
 			}
 			break
 		}
