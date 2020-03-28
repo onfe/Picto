@@ -65,7 +65,8 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 		if c.room != nil {
 			c.room.removeClient(c.ID)
 		}
-		return c.send(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
+		c.ws.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
+		return c.ws.Close()
 	})
 
 	return &c, err
