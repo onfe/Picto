@@ -129,6 +129,18 @@ Server -> client
 
 
 
+## WebSocket Errors
+
+| Code | Description                                                  |
+| ---- | ------------------------------------------------------------ |
+| 4400 | Invalid username provided (too long/empty string etc).       |
+| 4404 | The server can't find the room specified.                    |
+| 4409 | The server can't add the client to the room (the name is already taken or the room is full). |
+| 4503 | The server can't create a room (has reached maximum rooms capacity). |
+| 4666 | If this happens, an error isn't being handled appropriately by the server. |
+
+
+
 ## API - Public
 
 ### room_exists
@@ -188,4 +200,4 @@ A byte is used per pixel.
 | 4-62  | Rainbow colours                           |
 | 63    | RLE encoding start character              |
 
-RLE encoding is `255 [counts] 0 [value]` where the total count is the sum of `counts`, plus 4 (if four or less characters are repeated they're not RLE'd as it'd be less efficient, and 0 is an illegal character in `[counts]`, so we know there's at least 5). The sum of `[counts]` is used as opposed to a product as to avoid having to complicate message checking for illegally large images.
+RLE encoding is `255 [counts] 0 [value]` where the total count is the sum of `counts`, plus 4 (if four or less characters are repeated they're not RLE'd as it'd be less efficient, and 0 is an illegal character in `[counts]`, so we know there's at least 5). The sum of `[counts]` is used as opposed to a product as to avoid having to complicate message checking for illegally large images
