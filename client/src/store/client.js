@@ -29,8 +29,9 @@ const actions = {
         // eslint-disable-next-line no-console
         console.log("Connected to Picto.");
       })
-      .catch(() => {
+      .catch((e) => {
         commit("updateStatus", "fail");
+        console.log(e)
         // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
