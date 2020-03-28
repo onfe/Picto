@@ -68,7 +68,7 @@ export default {
     align-items: center;
     justify-content: center;
     font-family: "pixel 5x7";
-    font-size: 6vw;
+    font-size: $size-pixel;
     margin: 0;
     font-weight: normal;
   }

@@ -53,7 +53,7 @@ $perc-spacer: 1%;
   height: 100%;
   background: #fff;
   border-radius: $spacer;
-  border: 0.5vw solid desaturate(darken(#e97777, 20%), 20%);
+  border: $spacer / 2 solid desaturate(darken(#e97777, 20%), 20%);
   overflow: hidden;
 }
 
@@ -71,8 +71,8 @@ $perc-spacer: 1%;
   font-size: $size-pixel;
   line-height: 0.625;
   background: #e97777;
-  border-bottom: 0.5vw solid transparent;
-  border-right: 0.5vw solid transparent;
+  border-bottom: $spacer / 2 solid transparent;
+  border-right: $spacer / 2 solid transparent;
   border-color: inherit;
   border-bottom-right-radius: $spacer;
   color: #fff;

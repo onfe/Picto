@@ -2,7 +2,7 @@
   <ul class="btn" @click="copy" :class="{ copied: copied }">
     <div v-if="copied" class="notif">Copied Join Link!</div>
     <li class="btn">
-      <font-awesome-icon class="icn" icon="user-plus"/>
+      <font-awesome-icon class="icn" icon="user-plus" />
     </li>
   </ul>
 </template>
@@ -33,6 +33,8 @@ ul {
 }
 .notif {
   position: absolute;
+  display: block;
+  width: 22.5vw;
   left: calc(100% + #{$spacer} * 2);
   margin-top: calc(#{$spacer}/ 2);
 
@@ -45,7 +47,7 @@ ul {
 
   background: $almost-white;
 
-  z-index:6;
+  z-index: 1000;
 }
 
 // bit jank but ensures animation is consistent and immediate.

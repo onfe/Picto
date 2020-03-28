@@ -38,7 +38,7 @@ html {
   margin: 0;
   position: relative;
   background: $almost-white;
-  margin-bottom: 1vw;
+  margin-bottom: $spacer;
   cursor: pointer;
 
   &:last-of-type {

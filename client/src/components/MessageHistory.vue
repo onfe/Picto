@@ -39,7 +39,7 @@ export default {
 
 <style lang="scss" scoped>
 .history {
-  padding: 1vw;
+  padding: $spacer;
   overflow-y: scroll;
   overflow-x: hidden;
   display: flex;
@@ -48,7 +48,7 @@ export default {
 }
 
 .message {
-  margin-top: 1vw;
+  margin-top: $spacer;
 }
 
 /*
