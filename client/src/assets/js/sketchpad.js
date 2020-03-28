@@ -313,7 +313,7 @@ class Sketchpad {
           oldData["data"][i + 1] != newData["data"][i + 1] ||
           oldData["data"][i + 2] != newData["data"][i + 2] ||
           oldData["data"][i + 3] != newData["data"][i + 3]) &&
-        newData["data"][i + 3] == 255
+        newData["data"][i + 3] > 127 //This is a wide margin for error to allow for browsers placing the text a little bit off.
       ) {
         newText["data"][Math.floor(i / 4)] = this.colourIndex;
         diff = true;
