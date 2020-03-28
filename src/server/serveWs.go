@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -17,6 +18,17 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("[JOIN FAIL] - Failed to create websocket:", err)
 		return
+	}
+
+	//Check the client was actually given a valid name.
+	if len(client.Name) > MaxClientNameLength {
+		err = errors.New("username too long")
+	} else if client.Name == "" {
+		err = errors.New("username not provided")
+	}
+	if err != nil {
+		log.Println("[JOIN FAIL] - Invalid username:", err)
+		client.Cancel(4400, err.Error())
 	}
 
 	if err == nil {

@@ -4,7 +4,6 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -68,16 +67,6 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 		}
 		return c.send(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
 	})
-
-	if len(Name) > MaxClientNameLength {
-		err = errors.New("username too long")
-	} else if Name == "" {
-		err = errors.New("username not provided")
-	}
-
-	if err != nil {
-		c.ws.CloseHandler()(4400, err.Error())
-	}
 
 	return &c, err
 }
