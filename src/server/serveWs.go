@@ -39,7 +39,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				- The server has reached maximum rooms capacity.
 				*/
 				log.Println("[JOIN FAIL] - Failed to create room:", err)
-				client.Cancel(4001, err.Error())
+				client.Cancel(4503, err.Error())
 				return
 			}
 
@@ -53,7 +53,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			err = newRoom.addClient(client)
 			if err != nil {
 				log.Println("[JOIN FAIL] - Failed to add client to new room:", err)
-				client.Cancel(4001, err.Error())
+				client.Cancel(4666, err.Error())
 				return
 			}
 			log.Println("[JOIN SUCCESS] - Created room \""+newRoom.ID+"\" for client with name:", client.Name)
@@ -70,7 +70,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 					- The room is already full
 					*/
 					log.Println("[JOIN FAIL] - Someone failed to join room ID"+roomID[0], "with name '"+client.Name+"':", err)
-					client.Cancel(4001, err.Error())
+					client.Cancel(4409, err.Error())
 					return
 				}
 
