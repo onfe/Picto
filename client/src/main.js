@@ -23,7 +23,7 @@ Vue.use(VueAnalytics, {
   debug: false,
   vueRouter: router, // Pass the router instance to automatically sync with router (optional)
   // ignoredViews: ['homepage'], // If router, you can exclude some routes name (case insensitive) (optional)
-  trackPage: false, // Whether you want page changes to be recorded as pageviews (website) or screenviews (app), default: false
+  trackPage: true, // Whether you want page changes to be recorded as pageviews (website) or screenviews (app), default: false
   createOptions: {
     // Optional, Option when creating GA tracker, ref: https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
     siteSpeedSampleRate: 10
