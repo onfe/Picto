@@ -13,17 +13,27 @@ const actions = {
       const proto = window.location.protocol == "https:" ? "wss" : "ws";
       const here = window.location.host;
       const roomarg = room ? `&room=${room}` : "";
-      const sock = new WebSocket(
-        `${proto}://${here}/ws?name=${name}${roomarg}`
-      );
+      var sock;
+      try {
+        sock = new WebSocket(
+          `${proto}://${here}/ws?name=${name}${roomarg}`
+        );
+      } catch (e) {
+        console.log(e);
+        console.log('encountered error')
+        throw e;
+      }
 
       commit("create", sock);
       window._sock = sock;
 
       sock.onmessage = m => dispatch("_onMessage", m);
-      sock.onopen = () => res();
-      sock.onerror = () => rej();
-      sock.onclose = () => dispatch("_onClose");
+      sock.onopen = () => {
+        console.log("open");
+        res();
+      };
+      sock.onerror = (e) => rej(e);
+      sock.onclose = (e) => dispatch("_onClose", e);
     });
   },
   disconnect: ({ state, commit }) => {
@@ -66,7 +76,8 @@ const actions = {
         console.log(pl);
     }
   },
-  _onClose: ({ commit, dispatch }) => {
+  _onClose: ({ commit, dispatch }, e) => {
+    console.log(e)
     commit("destroy");
     dispatch("client/leave", {}, { root: true });
   },

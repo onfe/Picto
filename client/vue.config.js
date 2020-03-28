@@ -19,5 +19,8 @@ module.exports = {
         prependData: `@import "~@/assets/scss/mixins";`
       }
     }
+  },
+  pwa: {
+    themeColor: '#4d4d4d'
   }
 };
