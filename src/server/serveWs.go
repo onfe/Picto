@@ -31,8 +31,19 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
+			/*As of 28/03/20 addClient should never return an error here as:
+			  - The new room should be empty as it was just created
+			  and
+			  - addClient only returns an error if the room is already full.
+			  However, this may change in future. So the error is still handled.
+			*/
 			client.room = newRoom
-			newRoom.addClient(client)
+			err = newRoom.addClient(client)
+			if err != nil {
+				log.Println("[JOIN FAIL] - Failed to add client to new room:", err)
+				client.Cancel(4001, err.Error())
+				return
+			}
 			log.Println("[JOIN SUCCESS] - Created room \""+newRoom.ID+"\" for client with name:", client.Name)
 			client.GO()
 
