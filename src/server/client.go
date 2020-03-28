@@ -35,6 +35,10 @@ type Client struct {
 func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
+	if err != nil {
+		return nil, err
+	}
+
 	c := Client{
 		Name:       Name,
 		ws:         ws,
