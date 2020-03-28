@@ -10,42 +10,28 @@ import (
 func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
-	name, hasName := r.Form["name"]
+	name, _ := r.Form["name"]
 	roomID, hasRoom := r.Form["room"]
 
-	//If a name is provided, first check that it is a valid one.
-	if hasName {
-		hasName = !(name[0] == "") && (len(name[0]) <= MaxClientNameLength)
-	} else {
-		if hasRoom {
-			log.Println("[JOIN FAIL] - Client attempted to join room ID" + roomID[0] + " without a username.")
-			http.Error(w, "You can't join a room without a username!", 400)
-			return
-		}
-		log.Println("[JOIN FAIL] - Client attempted to create a room without a username.")
-		http.Error(w, "You can't create a room without a username!", 400)
+	client, err := newClient(w, r, name[0])
+	if err != nil {
+		log.Println("[JOIN FAIL] - Failed to create websocket:", err)
 		return
 	}
 
-	if hasName {
-		client, err := newClient(w, r, name[0])
-		if err != nil {
-			log.Println("[JOIN FAIL] - Failed to create websocket:", err)
-			return
-		}
-
+	if err == nil {
 		if !hasRoom { //Client is trying to create a new room.
-
 			newRoom, err := rm.createRoom("Picto Room", false, DefaultRoomSize)
 			if err != nil {
 				log.Println("[JOIN FAIL] - Failed to create room:", err)
-				client.closeConnection()
+				client.Cancel(4001, err.Error())
 				return
 			}
 
 			client.room = newRoom
 			newRoom.addClient(client)
 			log.Println("[JOIN SUCCESS] - Created room \""+newRoom.ID+"\" for client with name:", client.Name)
+			client.GO()
 
 		} else { //Client is attempting to join a room.
 			if room, roomExists := rm.Rooms[roomID[0]]; roomExists {
@@ -54,28 +40,18 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				err = room.addClient(client)
 				if err != nil {
 					log.Println("[JOIN FAIL] - Someone failed to join room ID"+roomID[0], "with name '"+client.Name+"':", err)
-					client.closeConnection()
+					client.Cancel(4001, err.Error())
 					return
 				}
 
 				client.room = room
 				log.Println("[JOIN SUCCESS] - Added client '"+client.Name+"' (ID:"+strconv.Itoa(client.ID)+") to room", roomID[0])
+				client.GO()
 
 			} else { //If room doesn't exist...
 				log.Println("[JOIN FAIL] - Client with name '" + name[0] + "' tried to join a room doesn't exist.")
-				http.Error(w, "That room doesn't exist.", 404)
-				client.closeConnection()
+				client.Cancel(4404, "that room doesn't exist")
 			}
-		}
-	} else {
-		if hasRoom {
-			log.Println("[JOIN FAIL] - Client attempted to join room ID" + roomID[0] + " without a valid username.")
-			http.Error(w, "You can't join a room without a valid username!", 422)
-			return
-		} else {
-			log.Println("[JOIN FAIL] - Client attempted to create a room without a valid username.")
-			http.Error(w, "You can't create a room without a valid username!", 422)
-			return
 		}
 	}
 }

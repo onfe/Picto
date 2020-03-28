@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -64,9 +65,14 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 		return c.send(websocket.CloseMessage, websocket.FormatCloseMessage(code, reason))
 	})
 
-	if err == nil {
-		go c.sendLoop()
-		go c.recieveLoop()
+	if len(Name) > MaxClientNameLength {
+		err = errors.New("username too long")
+	} else if Name == "" {
+		err = errors.New("username not provided")
+	}
+
+	if err != nil {
+		c.ws.CloseHandler()(4400, err.Error())
 	}
 
 	return &c, err
@@ -77,6 +83,17 @@ func (c *Client) getDetails() string {
 		return "(Room ID \"" + c.room.ID + "\" ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
 	}
 	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
+}
+
+//Cancel should only be called before GO.
+func (c *Client) Cancel(code int, text string) {
+	c.ws.CloseHandler()(code, text)
+}
+
+//GO starts the client's send and recieve goroutines.
+func (c *Client) GO() {
+	go c.sendLoop()
+	go c.recieveLoop()
 }
 
 func (c *Client) closeConnection() {
