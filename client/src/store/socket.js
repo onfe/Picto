@@ -15,12 +15,10 @@ const actions = {
       const roomarg = room ? `&room=${room}` : "";
       var sock;
       try {
-        sock = new WebSocket(
-          `${proto}://${here}/ws?name=${name}${roomarg}`
-        );
+        sock = new WebSocket(`${proto}://${here}/ws?name=${name}${roomarg}`);
       } catch (e) {
         console.log(e);
-        console.log('encountered error')
+        console.log("encountered error");
         throw e;
       }
 
@@ -32,8 +30,8 @@ const actions = {
         console.log("open");
         res();
       };
-      sock.onerror = (e) => rej(e);
-      sock.onclose = (e) => dispatch("_onClose", e);
+      sock.onerror = e => rej(e);
+      sock.onclose = e => dispatch("_onClose", e);
     });
   },
   disconnect: ({ state, commit }) => {
@@ -77,7 +75,7 @@ const actions = {
     }
   },
   _onClose: ({ commit, dispatch }, e) => {
-    console.log(e)
+    console.log(e);
     commit("destroy");
     dispatch("client/leave", {}, { root: true });
   },

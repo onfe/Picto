@@ -21,6 +21,19 @@ module.exports = {
     }
   },
   pwa: {
-    themeColor: '#4d4d4d'
+    themeColor: "#4d4d4d",
+    icons: [
+      {
+        src: "img/icons/maskable-1024x1024.png",
+        sizes: "1024x1024",
+        type: "image/png",
+        purpose: "maskable"
+      }
+    ],
+    iconPaths: {
+      favicon32: "img/icons/favicon-32x32.png",
+      favicon16: "img/icons/favicon-16x16.png",
+      maskIcon: "img/icons/favicon.svg"
+    }
   }
 };
