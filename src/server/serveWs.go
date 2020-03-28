@@ -23,6 +23,9 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 		if !hasRoom { //Client is trying to create a new room.
 			newRoom, err := rm.createRoom("Picto Room", false, DefaultRoomSize)
 			if err != nil {
+				/*Current possible errors here:
+				- The server has reached maximum rooms capacity.
+				*/
 				log.Println("[JOIN FAIL] - Failed to create room:", err)
 				client.Cancel(4001, err.Error())
 				return
@@ -39,6 +42,10 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 				//Attempt to add client to the room (typically will fail if someone has already taken the name they're trying to join with)
 				err = room.addClient(client)
 				if err != nil {
+					/*Current possible errors here:
+					- The name the client wanted is already taken in this room
+					- The room is already full
+					*/
 					log.Println("[JOIN FAIL] - Someone failed to join room ID"+roomID[0], "with name '"+client.Name+"':", err)
 					client.Cancel(4001, err.Error())
 					return
