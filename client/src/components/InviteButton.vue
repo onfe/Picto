@@ -34,15 +34,15 @@ ul {
 .notif {
   position: absolute;
   display: block;
-  width: 22.5vw;
+  white-space: nowrap;
   left: calc(100% + #{$spacer} * 2);
   margin-top: calc(#{$spacer}/ 2);
 
   font-family: "pixel 5x7";
-  font-size: 4vw;
+  font-size: $size-pixel;
 
   border-radius: $spacer;
-  border: 0.5vw solid $grey-l;
+  border: $spacer / 2 solid $grey-l;
   padding: 0 $spacer;
 
   background: $almost-white;
