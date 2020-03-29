@@ -59,6 +59,7 @@ export default {
         // desktop backspace
         this.$store.dispatch("compose/backspace");
         e.stopPropagation();
+        e.preventDefault();
       }
     }
   },
