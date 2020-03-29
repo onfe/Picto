@@ -10,7 +10,7 @@ const state = {
   status: "idle",
   users: [],
   showInfo: false,
-  errorMessage: "",
+  errorMessage: ""
 };
 
 const getters = {
@@ -32,7 +32,7 @@ const actions = {
       })
       .catch(() => {
         commit("updateStatus", "fail");
-        commit("updateError", "Couldn't connect to Picto.")
+        commit("updateError", "Couldn't connect to Picto.");
         // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
@@ -81,8 +81,8 @@ const actions = {
     commit("renameRoom", name);
   },
   error: ({ commit }, error) => {
-    commit("updateError", error.reason)
-    commit("updateStatus", "fail")
+    commit("updateError", error.reason);
+    commit("updateStatus", "fail");
   }
 };
 
