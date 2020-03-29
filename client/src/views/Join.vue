@@ -3,21 +3,25 @@
     <div class="container">
       <img class="logo" src="/img/logo.svg" alt="picto" />
       <p>
-        Picto is an online blah blah words send photos but none of that naughty
-        stuff eh?
+        Send doodles to your friends and chat with Picto, the scribble-powered
+        online messenger.
       </p>
-      <Join />
+      <hr />
+      <JoinForm />
+      <PublicRooms v-if="!$route.params.id" />
     </div>
   </div>
 </template>
 
 <script>
-import Join from "@/components/JoinForm.vue";
+import JoinForm from "@/components/JoinForm.vue";
+import PublicRooms from "@/components/PublicRooms.vue";
 
 export default {
   name: "home",
   components: {
-    Join
+    JoinForm,
+    PublicRooms
   }
 };
 </script>
@@ -46,8 +50,13 @@ export default {
   color: $grey-d;
 }
 
+hr {
+  border: 0;
+  border-bottom: 1px dashed $grey-l;
+}
+
 p {
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   line-height: 1.2;
 }
 

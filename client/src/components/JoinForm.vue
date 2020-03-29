@@ -1,5 +1,5 @@
 <template>
-  <div class="join-form">
+  <section class="join-form">
     <p v-if="$route.params.id">
       You're joining room: <br /><strong>{{ $route.params.id }}</strong>
     </p>
@@ -38,7 +38,10 @@
         {{ error }}
       </div>
     </div>
-  </div>
+    <router-link v-if="$route.params.id" class="home" to="/">
+      I don't want to join this room
+    </router-link>
+  </section>
 </template>
 
 <script>
@@ -179,5 +182,14 @@ button {
 
 p {
   line-height: 1.2;
+}
+
+.home {
+  line-height: 1.2;
+  display: block;
+  color: $grey;
+  font-size: 0.85rem;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
 }
 </style>
