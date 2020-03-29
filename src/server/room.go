@@ -58,7 +58,7 @@ func (r *Room) addClient(c *Client) error {
 			if client != nil && client.Name == c.Name {
 				//If it is, then ClientCount can be decremented as they've failed to join the room.
 				r.ClientCount--
-				return errors.New("name already taken")
+				return errors.New("username already taken in this room")
 			}
 		}
 
@@ -98,7 +98,7 @@ func (r *Room) addClient(c *Client) error {
 
 		return nil
 	}
-	return errors.New("room already full")
+	return errors.New("this room is full")
 }
 
 func (r *Room) removeClient(clientID int) error {
@@ -117,7 +117,7 @@ func (r *Room) removeClient(clientID int) error {
 		r.distributeEvent(newUserEvent(clientID, client.Name, r.getClientNames()), true, -1)
 		return nil
 	}
-	return errors.New("Room does not have such a client")
+	return errors.New("room does not have such a client")
 }
 
 func (r *Room) distributeEvent(event []byte, cached bool, sender int) {
