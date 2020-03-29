@@ -5,34 +5,39 @@
     </p>
     <p v-else>Enter a nickname to create a room</p>
 
-    <form @submit.prevent="join">
-      <input
-        v-model="name"
-        class="font-pixel"
-        name="name"
-        placeholder="Type a nickname"
-        autocorrect="off"
-        autocapitalize="off"
-        autofocus
-        :disabled="loading"
-      />
+    <div class="joinbox font-pixel" :class="{ error: error }">
+      <form @submit.prevent="join">
+        <input
+          v-model="name"
+          name="name"
+          class="font-pixel"
+          placeholder="Type a nickname"
+          autocorrect="off"
+          autocapitalize="off"
+          autofocus
+          :disabled="loading"
+        />
 
-      <button type="submit" name="button" :disabled="loading">
-        <svg
-          v-if="!loading"
-          xmlns="http://www.w3.org/2000/svg"
-          width="21"
-          height="35"
-          viewBox="0 0 21 35"
-        >
-          <path
-            d="M551,25 L551,18 L544,18 L544,25 L551,25 Z M558,32 L558,25 L551,25 L551,32 L558,32 Z M565,39 L565,32 L558,32 L558,39 L565,39 Z M558,46 L558,39 L551,39 L551,46 L558,46 Z M551,53 L551,46 L544,46 L544,53 L551,53 Z"
-            transform="translate(-544 -18)"
-          />
-        </svg>
-        <Spinner v-else />
-      </button>
-    </form>
+        <button type="submit" name="button" :disabled="loading">
+          <svg
+            v-if="!loading"
+            xmlns="http://www.w3.org/2000/svg"
+            width="21"
+            height="35"
+            viewBox="0 0 21 35"
+          >
+            <path
+              d="M551,25 L551,18 L544,18 L544,25 L551,25 Z M558,32 L558,25 L551,25 L551,32 L558,32 Z M565,39 L565,32 L558,32 L558,39 L565,39 Z M558,46 L558,39 L551,39 L551,46 L558,46 Z M551,53 L551,46 L544,46 L544,53 L551,53 Z"
+              transform="translate(-544 -18)"
+            />
+          </svg>
+          <Spinner v-else />
+        </button>
+      </form>
+      <div class="error-message" v-if="error">
+        {{ error }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -65,7 +70,7 @@ export default {
       return this.$store.state.client.status === "connecting";
     },
     error() {
-      return this.$store.state.client.status === "fail";
+      return this.$store.state.client.errorMessage;
     }
   },
   mounted() {
@@ -99,6 +104,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.joinbox {
+  background: $grey-d;
+  transition: background 200ms ease-in-out;
+  padding: 0.5rem;
+
+  &.error {
+    background: $red-d;
+  }
+}
+
+.error-message {
+  padding-top: 0.75rem;
+  color: $almost-white;
+  font-size: 1.5rem;
+}
+
 form {
   display: flex;
 }
@@ -110,13 +131,11 @@ input {
   min-width: 0;
 
   font-size: 2rem;
-  border: 5px solid $grey-d;
   background-color: transparent;
 
-  transition: background-color 0.15s ease-in-out;
-
   padding: 0.25rem 0.5rem;
-  box-sizing: border-box;
+  border: 0;
+  background: $almost-white;
 
   border-radius: 0;
   -webkit-appearance: none;
@@ -132,27 +151,28 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 
+  max-width: 2em;
+  min-width: 1em;
   width: 20%;
 
-  background-color: $grey-d;
+  background-color: transparent;
   border: none;
   color: white;
 
   font-size: 2.5rem;
 
-  // margin: 0;
-  vertical-align: middle;
-
   svg {
     fill: $almost-white;
     height: 25px;
+    transition: transform 400ms ease-in-out;
   }
 
   &:hover,
   &:active {
     svg {
-      transform: scale(1.1);
+      transform: translateX(0.125em);
     }
   }
 }

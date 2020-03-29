@@ -9,7 +9,8 @@ const state = {
   roomName: "",
   status: "idle",
   users: [],
-  showInfo: false
+  showInfo: false,
+  errorMessage: "",
 };
 
 const getters = {
@@ -31,6 +32,7 @@ const actions = {
       })
       .catch(() => {
         commit("updateStatus", "fail");
+        commit("updateError", "Couldn't connect to Picto.")
         // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
@@ -77,6 +79,10 @@ const actions = {
     }
     dispatch("messages/add", new Text(message, pl.Time), { root: true });
     commit("renameRoom", name);
+  },
+  error: ({ commit }, error) => {
+    commit("updateError", error.reason)
+    commit("updateStatus", "fail")
   }
 };
 
@@ -89,6 +95,8 @@ const mutations = {
     state.roomName = d.Payload.RoomName;
     state.joinTime = d.Time;
     state.showInfo = false;
+    state.errorMessage = "";
+    state.errorCode = -1;
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;
@@ -98,7 +106,10 @@ const mutations = {
     state.index = -1;
     state.users = [];
     state.colour = COLOURS[0];
-    state.status = "idle";
+    state.status = state.status == "connected" ? "idle" : state.status;
+  },
+  updateError: (state, error) => {
+    state.errorMessage = error;
   },
   updateStatus: (state, payload) => {
     state.status = payload;
