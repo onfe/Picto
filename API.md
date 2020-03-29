@@ -126,9 +126,7 @@ Server -> client
 }
 ```
 
-`UserIndex` is the index of the user in the users array who changed the room's name.
-
-`rename` events are not cached, so we don't need to worry about `UserIndex` becoming incorrect on user join/leaves.
+`rename` events are ignored in static rooms.
 
 
 
