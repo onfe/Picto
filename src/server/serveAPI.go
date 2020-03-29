@@ -87,7 +87,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				response, err = json.Marshal("size supplied isn't an integer value.")
 			} else {
-				newRoom, err := rm.createRoom(roomName, true, maxClients)
+				newRoom, err := rm.createRoom(roomName, maxClients, true)
 				if err == nil {
 					response, err = json.Marshal("New room created with id '" + newRoom.ID + "'.")
 				}
@@ -128,21 +128,40 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
-	} else if !tokenSupplied && methodSupplied && method[0] == "room_exists" {
+	} else if !tokenSupplied && methodSupplied {
 		var response []byte
 		var err error
 
-		roomID, roomIDSupplied := r.Form["room_id"]
+		switch method[0] {
+		case "room_exists":
+			roomID, roomIDSupplied := r.Form["room_id"]
 
-		if roomIDSupplied {
-			_, hasRoom := rm.Rooms[roomID[0]]
-			response, err = json.Marshal(hasRoom)
-		} else {
-			response, err = json.Marshal("Malformed API call. Please supply a room_id.")
-		}
+			if roomIDSupplied {
+				_, hasRoom := rm.Rooms[roomID[0]]
+				response, err = json.Marshal(hasRoom)
+			} else {
+				response, err = json.Marshal("Malformed API call. Please supply a room_id.")
+			}
 
-		if err != nil {
-			response, _ = json.Marshal(err)
+			if err != nil {
+				response, _ = json.Marshal(err)
+			}
+
+		case "get_public_rooms":
+			type roomState struct {
+				Name string
+				Cap  int
+				Pop  int
+			}
+			roomStates := make([]roomState, len(rm.PublicRooms))
+			for i, r := range rm.PublicRooms {
+				roomStates[i] = roomState{
+					Name: r.Name,
+					Cap:  r.Cap,
+					Pop:  rm.Rooms[r.Name].ClientCount,
+				}
+			}
+			response, _ = json.Marshal(roomStates)
 		}
 
 		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))

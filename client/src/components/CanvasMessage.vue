@@ -25,7 +25,7 @@ export default {
   },
   mounted() {
     const canv = document.getElementById(this.getID(this.msg));
-    this.notepad = new Notepad(384, 128, canv);
+    this.notepad = new Notepad(192, 64, canv);
     this.notepad.loadImageData(this.msg.raw());
   }
 };

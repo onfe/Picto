@@ -23,7 +23,7 @@ func newRoom(manager *RoomManager, roomID string, name string, static bool, maxC
 	r := Room{
 		manager:     manager,
 		ID:          roomID,
-		Name:        "Picto Room",
+		Name:        "",
 		Static:      static,
 		Clients:     make([]*Client, maxClients),
 		ClientCount: 0,
@@ -49,7 +49,7 @@ func (r *Room) getClientNames() []string {
 }
 
 func (r *Room) addClient(c *Client) error {
-	if r.ClientCount < r.MaxClients {
+	if r.ClientCount < r.MaxClients && r.ClientCount >= 0 {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
 		r.ClientCount++
 
@@ -58,7 +58,7 @@ func (r *Room) addClient(c *Client) error {
 			if client != nil && client.Name == c.Name {
 				//If it is, then ClientCount can be decremented as they've failed to join the room.
 				r.ClientCount--
-				return errors.New("name already taken")
+				return errors.New("username already taken in this room")
 			}
 		}
 
@@ -80,7 +80,7 @@ func (r *Room) addClient(c *Client) error {
 		clientNames[newClientID] = c.Name
 
 		//Updating the new client as to the room state with an init event.
-		c.sendBuffer <- newInitEvent(r.ID, r.Name, newClientID, clientNames)
+		c.sendBuffer <- newInitEvent(r.ID, r.Name, r.Static, newClientID, clientNames)
 
 		//Updating the new client with all the messages from the message cache.
 		for _, M := range r.EventCache.getAll() {
@@ -98,7 +98,7 @@ func (r *Room) addClient(c *Client) error {
 
 		return nil
 	}
-	return errors.New("room already full")
+	return errors.New("this room is full")
 }
 
 func (r *Room) removeClient(clientID int) error {
@@ -110,14 +110,14 @@ func (r *Room) removeClient(clientID int) error {
 		log.Println("[ROOM] - Removed client:", client.getDetails())
 
 		r.ClientCount--
-		if r.ClientCount == 0 {
+		if r.ClientCount == 0 && !r.Static {
 			r.ClientCount--
 		}
 
 		r.distributeEvent(newUserEvent(clientID, client.Name, r.getClientNames()), true, -1)
 		return nil
 	}
-	return errors.New("Room does not have such a client")
+	return errors.New("room does not have such a client")
 }
 
 func (r *Room) distributeEvent(event []byte, cached bool, sender int) {
@@ -139,7 +139,7 @@ func (r *Room) announce(message string) {
 func (r *Room) close() {
 	for _, client := range r.Clients {
 		if client != nil {
-			client.closeConnection()
+			client.close()
 		}
 	}
 }

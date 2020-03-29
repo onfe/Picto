@@ -1,22 +1,24 @@
 import router from "../router";
-import COLOURS from "../assets/js/colours.js";
+import colour from "../assets/js/colours.js";
 import { Announcement, Text } from "../assets/js/message.js";
 
 const state = {
   index: -1,
-  colour: COLOURS[0],
+  colour: colour(0),
   room: null,
   roomName: "",
   status: "idle",
   users: [],
-  showInfo: false
+  showInfo: false,
+  errorMessage: "",
+  static: false
 };
 
 const getters = {
   username: state => state.users[state.index] || "",
   roomTitle: state => (state.roomName.length > 0 ? state.roomName : state.room),
   userColours: state =>
-    state.users.filter(e => e).map((k, i) => [k, COLOURS[i]]),
+    state.users.filter(e => e).map((k, i) => [k, colour(i)]),
   inviteLink: state => `${window.location.origin}/join/${state.room}`
 };
 
@@ -31,6 +33,7 @@ const actions = {
       })
       .catch(() => {
         commit("updateStatus", "fail");
+        commit("updateError", "Couldn't connect to Picto.");
         // eslint-disable-next-line no-console
         console.log("Failed to connect to Picto");
       });
@@ -71,12 +74,16 @@ const actions = {
   renameRoom: ({ commit, dispatch }, pl) => {
     const user = pl.Payload.UserName;
     const name = pl.Payload.RoomName;
-    dispatch(
-      "messages/add",
-      new Text(`${user} named the room '${name}'.`, pl.Time),
-      { root: true }
-    );
+    var message = `${user} named the room '${name}'.`;
+    if (name.length == 0) {
+      message = `${user} removed the room name.`;
+    }
+    dispatch("messages/add", new Text(message, pl.Time), { root: true });
     commit("renameRoom", name);
+  },
+  error: ({ commit }, error) => {
+    commit("updateError", error.reason);
+    commit("updateStatus", "fail");
   }
 };
 
@@ -85,10 +92,13 @@ const mutations = {
     state.room = d.Payload.RoomID;
     state.index = d.Payload.UserIndex;
     state.users = d.Payload.Users;
-    state.colour = COLOURS[d.Payload.UserIndex];
+    state.colour = colour(d.Payload.UserIndex);
     state.roomName = d.Payload.RoomName;
     state.joinTime = d.Time;
     state.showInfo = false;
+    state.errorMessage = "";
+    state.errorCode = -1;
+    state.static = d.Payload.Static;
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;
@@ -97,8 +107,11 @@ const mutations = {
     state.room = null;
     state.index = -1;
     state.users = [];
-    state.colour = COLOURS[0];
-    state.status = "idle";
+    state.colour = colour(0);
+    state.status = state.status == "connected" ? "idle" : state.status;
+  },
+  updateError: (state, error) => {
+    state.errorMessage = error;
   },
   updateStatus: (state, payload) => {
     state.status = payload;

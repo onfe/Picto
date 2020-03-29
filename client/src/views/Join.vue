@@ -3,21 +3,32 @@
     <div class="container">
       <img class="logo" src="/img/logo.svg" alt="picto" />
       <p>
-        Picto is an online blah blah words send photos but none of that naughty
-        stuff eh?
+        Send doodles to your friends and chat with Picto, the scribble-powered
+        online messenger.
       </p>
-      <Join />
+      <hr />
+      <JoinForm />
+      <PublicRooms v-if="!$route.params.id" />
     </div>
   </div>
 </template>
 
 <script>
-import Join from "@/components/JoinForm.vue";
+import JoinForm from "@/components/JoinForm.vue";
+import PublicRooms from "@/components/PublicRooms.vue";
 
 export default {
   name: "home",
   components: {
-    Join
+    JoinForm,
+    PublicRooms
+  },
+  metaInfo() {
+    if (this.$route.params.id) {
+      return {
+        title: `Join ${this.$route.params.id} - Picto`
+      };
+    }
   }
 };
 </script>
@@ -25,6 +36,7 @@ export default {
 <style lang="scss" scoped>
 .join {
   height: 100%;
+  overflow: scroll;
   background-color: $almost-white;
 
   background-image: url("/img/stripe.svg");
@@ -35,7 +47,7 @@ export default {
 .container {
   max-width: 600px;
 
-  padding: 0 2.5rem 0 3.5rem;
+  padding: 0 2.5rem 1rem 3.5rem;
 
   @media (min-width: 992px) {
     padding-left: 8rem;
@@ -46,8 +58,13 @@ export default {
   color: $grey-d;
 }
 
+hr {
+  border: 0;
+  border-bottom: 1px dashed $grey-l;
+}
+
 p {
-  margin-bottom: 3rem;
+  margin-bottom: 1.5rem;
   line-height: 1.2;
 }
 

@@ -28,7 +28,7 @@ const actions = {
         res();
       };
       sock.onerror = e => rej(e);
-      sock.onclose = () => dispatch("_onClose");
+      sock.onclose = e => dispatch("_onClose", e);
     });
   },
   disconnect: ({ state, commit }) => {
@@ -71,8 +71,12 @@ const actions = {
         console.log(pl);
     }
   },
-  _onClose: ({ commit, dispatch }) => {
+  _onClose: ({ commit, dispatch }, e) => {
     commit("destroy");
+    if (4000 <= e.code && e.code < 5000) {
+      // If 4000 <= code < 5000, it's a custom code to display an error
+      dispatch("client/error", e, { root: true });
+    }
     dispatch("client/leave", {}, { root: true });
   },
   send: ({ state }, { event, payload }) => {

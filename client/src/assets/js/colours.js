@@ -1,3 +1,5 @@
+import Color from "color";
+
 const COLOURS = [
   "#E97777",
   "#008DAB",
@@ -9,4 +11,18 @@ const COLOURS = [
   "#CF8EA4"
 ];
 
-export default COLOURS;
+function colour(n) {
+  /*
+    Returns a hex colour that will always be the same for a given n.
+    The first 3 colours are set for branding purposes.
+    n is zero indexed.
+  */
+  if (n < 3) {
+    return COLOURS[n];
+  } else {
+    var hue = Math.floor(((360 / (Math.E / 2)) * n) % 360);
+    return Color.hsl([hue, 72, 69]).hex();
+  }
+}
+
+export default colour;

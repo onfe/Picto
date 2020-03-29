@@ -44,8 +44,8 @@ class Sketchpad {
     };
 
     /*Text styling */
-    this.textMargin = 8;
-    this.lineSpacing = 24;
+    this.textMargin = 4;
+    this.lineSpacing = 12;
 
     this.nameWidth = nameWidth || 0;
 
@@ -245,9 +245,9 @@ class Sketchpad {
     char = char.slice(0, 1);
     /*Setting up the styling for the text and ascertaining its size*/
     if (this.pensize == 0) {
-      this.notepad.ctx.font = "32px 'pixel 5x7'";
+      this.notepad.ctx.font = "16px 'pixel 5x7'";
     } else {
-      this.notepad.ctx.font = "64px 'pixel 5x7'";
+      this.notepad.ctx.font = "32px 'pixel 5x7'";
     }
     this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
     this.notepad.ctx.textBaseline = "alphabetic";

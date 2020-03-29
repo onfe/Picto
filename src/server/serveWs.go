@@ -33,7 +33,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil {
 		if !hasRoom { //Client is trying to create a new room.
-			newRoom, err := rm.createRoom("Picto Room", false, DefaultRoomSize)
+			newRoom, err := rm.createRoom("Picto Room", DefaultRoomSize, false)
 			if err != nil {
 				/*Current possible errors here:
 				- The server has reached maximum rooms capacity.
@@ -80,7 +80,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 			} else { //If room doesn't exist...
 				log.Println("[JOIN FAIL] - Client with name '" + name[0] + "' tried to join a room doesn't exist.")
-				client.Cancel(4404, "that room doesn't exist")
+				client.Cancel(4404, "this room doesn't exist (it may have closed)")
 			}
 		}
 	}
