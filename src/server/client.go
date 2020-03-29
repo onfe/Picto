@@ -176,6 +176,10 @@ func (c *Client) recieveLoop() {
 				message.Sender = c.Name
 				c.recieve(wrapEvent("message", message))
 			case "rename":
+				//We can't rename static rooms.
+				if c.room.Static {
+					continue
+				}
 				rename := RenameEvent{}
 				mapstructure.Decode(event.Payload, &rename)
 				//If the new name is too long, we ignore it...
