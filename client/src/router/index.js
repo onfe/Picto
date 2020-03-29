@@ -1,9 +1,14 @@
 import Vue from "vue";
-import VueRouter from "vue-router";
+import Router from "vue-router";
+import Meta from "vue-meta";
 import store from "../store";
 import Join from "../views/Join.vue";
 
-Vue.use(VueRouter);
+Vue.use(Router);
+Vue.use(Meta, {
+  // optional pluginOptions
+  refreshOnceOnNavigation: true
+})
 
 const routes = [
   {
@@ -27,7 +32,7 @@ const routes = [
   }
 ];
 
-const router = new VueRouter({
+const router = new Router({
   mode: "history",
   base: process.env.BASE_URL,
   routes

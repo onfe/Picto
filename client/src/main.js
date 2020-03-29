@@ -1,5 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
+import VueAnalytics from "vue-ua";
 import "./registerServiceWorker";
 import store from "./store";
 import router from "./router";
@@ -13,8 +14,6 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount("#app");
-
-import VueAnalytics from "vue-ua";
 
 Vue.use(VueAnalytics, {
   appName: "Picto",

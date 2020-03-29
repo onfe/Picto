@@ -22,6 +22,13 @@ export default {
   components: {
     JoinForm,
     PublicRooms
+  },
+  metaInfo() {
+    if (this.$route.params.id) {
+      return {
+        title: `Join ${this.$route.params.id} - Picto`
+      }
+    }
   }
 };
 </script>

@@ -52,6 +52,13 @@ export default {
   },
   beforeDestroy() {
     this.$store.dispatch("client/leave");
+  },
+  metaInfo() {
+    if (this.$route.params.id) {
+      return {
+        title: this.$store.getters["client/roomTitle"] + " - Picto"
+      }
+    }
   }
 };
 </script>
