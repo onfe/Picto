@@ -1,6 +1,6 @@
 <template lang="html">
   <section v-if="this.rooms.length > 0">
-    <p>or join a public room and get drawing</p>
+    <p>...or join a public room and get drawing</p>
     <ol class="public-rooms">
       <li
         v-for="(room, index) in this.rooms"
@@ -13,6 +13,7 @@
         >
           {{ room.Name }}
         </router-link>
+        <div v-if="room.Full">Full!</div>
         <div>{{ room.Pop }}/{{ room.Cap }}</div>
       </li>
     </ol>
@@ -65,8 +66,11 @@ li {
   color: $grey-d;
 
   &.full {
-    text-decoration: line-through;
     color: $grey;
+  }
+
+  &.full > a {
+    text-decoration: line-through;
   }
 
   > * {
