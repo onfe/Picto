@@ -41,7 +41,7 @@ The server will be in charge of dating events as it receives them.
   "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
 }
 ```
-`Users` has length equal to the max number of users in a room. Colours are assigned using the index of the user. You have the index `UserIndex` in the array. The `RoomID` is the value for `/room/code` and serves as the link for inviting friends to the room.
+`Users` has length equal to the max number of users in a room. Colours are assigned using the index of the user. You have the index `UserIndex` in the array. The `RoomID` is the value for `/room/RoomID` and serves as the link for inviting friends to the room.
 
 
 
@@ -66,6 +66,8 @@ User leave:
 ```
 
 Including `UserName` may seem a bit redundant but it is necessary in the case of cached join/leave events. 
+
+
 
 ### `message` - Client Message
 
@@ -156,7 +158,7 @@ If `ROOM_ID` exists, returns `true`. Otherwise `false`.
 ### get_state
 
 `/api/?token=API_TOKEN&method=get_state`
-Returns the state of the entire server by marshalling the roomManager. Not wise to use in prod.
+Returns the state of the entire server by marshalling the roomManager. Not permitted in prod.
 
 ### get_room_ids
 
@@ -171,7 +173,7 @@ Returns the state of the `ROOM_ID` specified by marshalling the room object.
 ### announce
 
 `/api/?token=API_TOKEN&method=announce&message=MESSAGE`
-Announces `MESSAGE` to ALL ROOMS.
+Announces `MESSAGE` to ALL ROOMS - careful!
 
 `/api/?token=API_TOKEN&method=announce&message=MESSAGE&room_id=ROOM_ID`
 Announces `MESSAGE` to the `ROOM_ID` specified.
