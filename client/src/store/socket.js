@@ -28,7 +28,7 @@ const actions = {
         res();
       };
       sock.onerror = e => rej(e);
-      sock.onclose = (e) => dispatch("_onClose", e);
+      sock.onclose = e => dispatch("_onClose", e);
     });
   },
   disconnect: ({ state, commit }) => {
