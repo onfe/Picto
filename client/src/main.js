@@ -18,7 +18,7 @@ new Vue({
 Vue.use(VueAnalytics, {
   appName: "Picto",
   appVersion: "0.0.1",
-  trackingId: "UA-108088302-3",
+  trackingId: "UA-108088302-4",
   debug: false,
   vueRouter: router, // Pass the router instance to automatically sync with router (optional)
   // ignoredViews: ['homepage'], // If router, you can exclude some routes name (case insensitive) (optional)
@@ -27,12 +27,4 @@ Vue.use(VueAnalytics, {
     // Optional, Option when creating GA tracker, ref: https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
     siteSpeedSampleRate: 10
   }
-  // globalDimensions: [ // Optional
-  //   {dimension: 1, value: 'MyDimensionValue'},
-  //   {dimension: 2, value: 'AnotherDimensionValue'}
-  // ],
-  // globalMetrics: [ // Optional
-  //     {metric: 1, value: 'MyMetricValue'},
-  //     {metric: 2, value: 'AnotherMetricValue'}
-  //   ]
 });
