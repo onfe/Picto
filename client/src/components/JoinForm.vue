@@ -135,7 +135,7 @@ input {
 
   padding: 0.25rem 0.5rem;
   border: 0;
-  background: $almost-white;
+  background: #fff;
 
   border-radius: 0;
   -webkit-appearance: none;
