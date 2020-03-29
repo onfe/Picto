@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="room-title">
-    <h1 class="room-title" v-show="!edit">
+    <h1 class="room-title" v-show="!editable">
       {{ $store.getters["client/roomTitle"] }}
     </h1>
     <!-- Stop events here, to prevent propogation to compose element. -->
@@ -10,7 +10,7 @@
       ref="input"
       @keypress.stop
       @keydown="handleEnter"
-      v-show="edit"
+      v-show="editable"
     />
   </div>
 </template>
@@ -25,6 +25,12 @@ export default {
       if (val) {
         this.$refs["input"].value = this.$store.getters["client/roomTitle"];
       }
+    }
+  },
+  computed: {
+    editable() {
+      // static rooms are not renamable!
+      return this.edit && !this.$store.state.client.static;
     }
   },
   methods: {

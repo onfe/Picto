@@ -57,7 +57,7 @@ export default {
     if (this.$route.params.id) {
       return {
         title: this.$store.getters["client/roomTitle"] + " - Picto"
-      }
+      };
     }
   }
 };

@@ -6,10 +6,10 @@
 
 <script>
 export default {
-    metaInfo: {
-      title: "Picto - Draw & chat with friends",
-    }
+  metaInfo: {
+    title: "Picto - Draw & chat with friends"
   }
+};
 </script>
 
 <style lang="scss">

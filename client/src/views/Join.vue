@@ -27,7 +27,7 @@ export default {
     if (this.$route.params.id) {
       return {
         title: `Join ${this.$route.params.id} - Picto`
-      }
+      };
     }
   }
 };

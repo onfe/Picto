@@ -10,7 +10,8 @@ const state = {
   status: "idle",
   users: [],
   showInfo: false,
-  errorMessage: ""
+  errorMessage: "",
+  static: false
 };
 
 const getters = {
@@ -97,6 +98,7 @@ const mutations = {
     state.showInfo = false;
     state.errorMessage = "";
     state.errorCode = -1;
+    state.static = d.Payload.Static;
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;

@@ -8,7 +8,7 @@ Vue.use(Router);
 Vue.use(Meta, {
   // optional pluginOptions
   refreshOnceOnNavigation: true
-})
+});
 
 const routes = [
   {
