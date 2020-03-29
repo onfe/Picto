@@ -23,7 +23,7 @@ func newRoom(manager *RoomManager, roomID string, name string, static bool, maxC
 	r := Room{
 		manager:     manager,
 		ID:          roomID,
-		Name:        "Picto Room",
+		Name:        "",
 		Static:      static,
 		Clients:     make([]*Client, maxClients),
 		ClientCount: 0,
