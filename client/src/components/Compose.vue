@@ -32,7 +32,7 @@ export default {
           .querySelector(".author");
         const perc = nametag.clientWidth / canv.clientWidth;
 
-        this.sketchpad = new Sketchpad(384, 128, canv, perc);
+        this.sketchpad = new Sketchpad(192, 64, canv, perc);
         window._sketch = this.sketchpad;
 
         document.addEventListener("keypress", this.handleKeys);
