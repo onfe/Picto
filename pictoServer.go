@@ -63,6 +63,7 @@ func loadWordsList(fp string) []string {
 }
 
 func main() {
+	//Logfile setup
 	logFile, err := os.OpenFile("info.log", os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -71,10 +72,13 @@ func main() {
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
 
+	//Starting performance monitor
 	go NewMonitor(60)
 
+	//Loading words list
 	wordsList := loadWordsList("words.txt")
 
+	//Creating room manager instance
 	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
 	if prod {
 		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList)
@@ -82,6 +86,7 @@ func main() {
 		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
 	}
 
+	//Seeing random number generator
 	seedString, seeded := os.LookupEnv("RAND_SEED")
 	if seeded {
 		seed, err := strconv.ParseInt(seedString, 10, 64)
@@ -93,6 +98,7 @@ func main() {
 		}
 	}
 
+	//Setting up routing
 	fs := getFileHandler(http.FileServer(http.Dir("client/dist")))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", roomManager.ServeWs)
