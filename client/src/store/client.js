@@ -71,11 +71,11 @@ const actions = {
   renameRoom: ({ commit, dispatch }, pl) => {
     const user = pl.Payload.UserName;
     const name = pl.Payload.RoomName;
-    dispatch(
-      "messages/add",
-      new Text(`${user} named the room '${name}'.`, pl.Time),
-      { root: true }
-    );
+    var message = `${user} named the room '${name}'.`;
+    if (name.length == 0) {
+      message = `${user} removed the room name.`;
+    }
+    dispatch("messages/add", new Text(message, pl.Time), { root: true });
     commit("renameRoom", name);
   }
 };
