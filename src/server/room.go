@@ -110,7 +110,7 @@ func (r *Room) removeClient(clientID int) error {
 		log.Println("[ROOM] - Removed client:", client.getDetails())
 
 		r.ClientCount--
-		if r.ClientCount == 0 {
+		if r.ClientCount == 0 && !r.Static {
 			r.ClientCount--
 		}
 
