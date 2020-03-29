@@ -29,6 +29,7 @@ export default {
 <style lang="scss" scoped>
 .join {
   height: 100%;
+  overflow: scroll;
   background-color: $almost-white;
 
   background-image: url("/img/stripe.svg");
@@ -39,7 +40,7 @@ export default {
 .container {
   max-width: 600px;
 
-  padding: 0 2.5rem 0 3.5rem;
+  padding: 0 2.5rem 1rem 3.5rem;
 
   @media (min-width: 992px) {
     padding-left: 8rem;
