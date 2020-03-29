@@ -17,6 +17,8 @@ const (
 	MaxMessageSize = 100000
 	//MinMessageInterval = Minimum interval between messages sent by a client to be acknowledged.
 	MinMessageInterval = time.Second
+	//MinMessageIntervalStatic = Minimum interval between messages sent by a client to be acknowledged in a static room.
+	MinMessageIntervalStatic = time.Second * 5
 	//ChatHistoryLen = Number of messages kept by server per room.
 	ChatHistoryLen = 64
 	//ClientSendTimeout is the time allotted for a message to be sent.

@@ -81,9 +81,9 @@ func main() {
 	//Creating room manager instance
 	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
 	if prod {
-		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList)
+		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList, "PUBLIC_ROOMS")
 	} else {
-		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
+		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList, "PUBLIC_ROOMS")
 	}
 
 	//Seeing random number generator

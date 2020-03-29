@@ -87,7 +87,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				response, err = json.Marshal("size supplied isn't an integer value.")
 			} else {
-				newRoom, err := rm.createRoom(roomName, true, maxClients)
+				newRoom, err := rm.createRoom(roomName, maxClients, true)
 				if err == nil {
 					response, err = json.Marshal("New room created with id '" + newRoom.ID + "'.")
 				}

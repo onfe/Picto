@@ -80,7 +80,7 @@ func (r *Room) addClient(c *Client) error {
 		clientNames[newClientID] = c.Name
 
 		//Updating the new client as to the room state with an init event.
-		c.sendBuffer <- newInitEvent(r.ID, r.Name, newClientID, clientNames)
+		c.sendBuffer <- newInitEvent(r.ID, r.Name, r.Static, newClientID, clientNames)
 
 		//Updating the new client with all the messages from the message cache.
 		for _, M := range r.EventCache.getAll() {

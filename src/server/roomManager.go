@@ -1,23 +1,32 @@
 package server
 
 import (
+	"encoding/json"
 	"errors"
 	"log"
 	"math/rand"
+	"os"
+	"strings"
 	"time"
 )
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms     map[string]*Room `json:"Rooms"`
-	MaxRooms  int              `json:"MaxRooms"`
-	apiToken  string
-	Mode      string
-	wordsList []string
+	Rooms       map[string]*Room `json:"Rooms"`
+	MaxRooms    int              `json:"MaxRooms"`
+	apiToken    string
+	Mode        string
+	wordsList   []string
+	PublicRooms []room
+}
+
+type room struct {
+	Name string
+	Cap  int
 }
 
 //NewRoomManager creates a new room manager.
-func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string) RoomManager {
+func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string, publicRoomConfigVar string) RoomManager {
 	rm := RoomManager{
 		Rooms:     make(map[string]*Room, MaxRooms),
 		MaxRooms:  MaxRooms,
@@ -25,8 +34,29 @@ func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []stri
 		Mode:      Mode,
 		wordsList: wordsList,
 	}
+	rm.loadPublicRoomConfig(publicRoomConfigVar)
 	go rm.roomMonitorLoop()
 	return rm
+}
+
+func (rm *RoomManager) loadPublicRoomConfig(varname string) {
+	config, configured := os.LookupEnv(varname)
+	if configured {
+		var rooms []room
+		configBytes := []byte(config)
+
+		err := json.Unmarshal(configBytes, &rooms)
+		if err != nil {
+			log.Println("[SYSTEM] - Couldn't unmarshal room config:", err)
+		}
+
+		for _, r := range rooms {
+			rm.createRoom(r.Name, r.Cap, true)
+		}
+		rm.PublicRooms = rooms
+	} else {
+		log.Println("[SYSTEM] - Couldn't find public room config env var.")
+	}
 }
 
 func (rm *RoomManager) roomMonitorLoop() {
@@ -58,9 +88,16 @@ func (rm *RoomManager) generateNewRoomID() string {
 	return newRoomID
 }
 
-func (rm *RoomManager) createRoom(roomName string, static bool, maxClients int) (*Room, error) {
+func (rm *RoomManager) createRoom(roomName string, maxClients int, static bool) (*Room, error) {
 	if len(rm.Rooms) < rm.MaxRooms {
-		newRoomID := rm.generateNewRoomID()
+		newRoomID := roomName
+		if !static {
+			newRoomID = rm.generateNewRoomID()
+		} else {
+			if strings.Contains(newRoomID, "-") {
+				return nil, errors.New("static room names may not contain hyphens")
+			}
+		}
 		newRoom := newRoom(rm, newRoomID, roomName, static, maxClients)
 		rm.Rooms[newRoom.ID] = newRoom
 

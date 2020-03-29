@@ -33,7 +33,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 
 	if err == nil {
 		if !hasRoom { //Client is trying to create a new room.
-			newRoom, err := rm.createRoom("Picto Room", false, DefaultRoomSize)
+			newRoom, err := rm.createRoom("Picto Room", DefaultRoomSize, false)
 			if err != nil {
 				/*Current possible errors here:
 				- The server has reached maximum rooms capacity.
