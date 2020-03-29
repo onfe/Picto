@@ -28,7 +28,7 @@ type Client struct {
 	sendBuffer  chan []byte
 	LastMessage time.Time `json:"LastMessage"`
 	LastPong    time.Time `json:"LastPong"`
-	closeReason string
+	closed      bool
 }
 
 func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
@@ -90,8 +90,8 @@ func (c *Client) GO() {
 	go c.recieveLoop()
 }
 
-func (c *Client) closeConnection() {
-	close(c.sendBuffer)
+func (c *Client) close() {
+	c.closed = true
 }
 
 //----------------------------------------------------------------------------------------------------SENDLOOP
@@ -125,6 +125,9 @@ func (c *Client) sendLoop() {
 			log.Println("[CLIENT] - Distributed message to "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
 
 		case <-ticker.C:
+			if c.closed {
+				close(c.sendBuffer)
+			}
 			err := c.send(websocket.PingMessage, nil)
 			if err != nil {
 				log.Println("[CLIENT] - Failed to send ping to "+c.getDetails()+", error:", err.Error())
@@ -148,10 +151,7 @@ func (c *Client) recieveLoop() {
 		_, data, err := c.ws.ReadMessage()
 		if err != nil {
 			log.Println("[CLIENT] - Readloop got error from websocket connection and stopped:", err)
-			if err != websocket.ErrCloseSent {
-				close(c.sendBuffer)
-				return
-			}
+			c.closed = true
 			break
 		}
 		event := EventWrapper{}

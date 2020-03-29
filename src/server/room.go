@@ -139,7 +139,7 @@ func (r *Room) announce(message string) {
 func (r *Room) close() {
 	for _, client := range r.Clients {
 		if client != nil {
-			client.closeConnection()
+			client.close()
 		}
 	}
 }
