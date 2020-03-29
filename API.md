@@ -66,7 +66,7 @@ User leave:
 }
 ```
 
-Including `UserName` may seem a bit redundant but it is necessary in the case of cached join/leave events. 
+Including `UserName` may seem a bit redundant but it is necessary in the case of cached join/leave events.
 
 
 
@@ -149,6 +149,34 @@ Server -> client
 `/api/?method=room_exists&room_id=ROOM_ID`
 
 If `ROOM_ID` exists, returns `true`. Otherwise `false`.
+
+
+
+### get_public_rooms
+
+`api/?method=get_public_rooms`
+
+Returns a list of public rooms including their population and capacity, as follows:
+
+```json
+[
+	{
+		"Name":"Parlor",
+		"Cap":64,
+		"Pop":12
+	},
+	{
+		"Name":"Library",
+		"Cap":64,
+		"Pop":43
+	},
+	{
+		"Name":"Garden",
+		"Cap":64,
+		"Pop":27
+	}
+]
+```
 
 
 
