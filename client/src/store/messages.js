@@ -1,4 +1,4 @@
-import COLOURS from "../assets/js/colours.js";
+import GET_COLOUR from "../assets/js/colours.js";
 import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
 import { Message, Announcement, Text } from "../assets/js/message.js";
 
@@ -19,7 +19,7 @@ const actions = {
       pl.Data,
       pl.Span,
       pl.Sender,
-      COLOURS[pl.ColourIndex],
+      GET_COLOUR(pl.ColourIndex),
       d.Time
     );
     commit("add", message);

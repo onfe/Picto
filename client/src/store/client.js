@@ -1,10 +1,10 @@
 import router from "../router";
-import COLOURS from "../assets/js/colours.js";
+import GET_COLOUR from "../assets/js/colours.js";
 import { Announcement, Text } from "../assets/js/message.js";
 
 const state = {
   index: -1,
-  colour: COLOURS[0],
+  colour: GET_COLOUR(0),
   room: null,
   roomName: "",
   status: "idle",
@@ -17,7 +17,7 @@ const getters = {
   username: state => state.users[state.index] || "",
   roomTitle: state => (state.roomName.length > 0 ? state.roomName : state.room),
   userColours: state =>
-    state.users.filter(e => e).map((k, i) => [k, COLOURS[i]]),
+    state.users.filter(e => e).map((k, i) => [k, GET_COLOUR(i)]),
   inviteLink: state => `${window.location.origin}/join/${state.room}`
 };
 
@@ -91,7 +91,7 @@ const mutations = {
     state.room = d.Payload.RoomID;
     state.index = d.Payload.UserIndex;
     state.users = d.Payload.Users;
-    state.colour = COLOURS[d.Payload.UserIndex];
+    state.colour = GET_COLOUR(d.Payload.UserIndex);
     state.roomName = d.Payload.RoomName;
     state.joinTime = d.Time;
     state.showInfo = false;
@@ -105,7 +105,7 @@ const mutations = {
     state.room = null;
     state.index = -1;
     state.users = [];
-    state.colour = COLOURS[0];
+    state.colour = GET_COLOUR(0);
     state.status = state.status == "connected" ? "idle" : state.status;
   },
   updateError: (state, error) => {

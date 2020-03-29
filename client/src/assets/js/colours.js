@@ -9,4 +9,13 @@ const COLOURS = [
   "#CF8EA4"
 ];
 
-export default COLOURS;
+function GET_COLOUR(index) {
+  if (index < 3) {
+    return COLOURS[index];
+  }
+  return (
+    "hsl(" + Math.floor(((255 / (Math.E / 2)) * index) % 255) + ",90%,65%)"
+  );
+}
+
+export default GET_COLOUR;
