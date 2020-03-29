@@ -1,6 +1,6 @@
 <template lang="html">
   <section v-if="this.rooms.length > 0">
-    <p>or join a public room and get drawing</p>
+    <p>...or join a public room and get drawing</p>
     <ol class="public-rooms">
       <li
         v-for="(room, index) in this.rooms"
