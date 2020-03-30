@@ -45,6 +45,7 @@ const mutations = {
   add: (state, message) => {
     state.history.unshift(message);
     state.history.sort((a, b) => b.time - a.time);
+    state.history.length = Math.min(state.history.length, 32);
   },
   reset: state => {
     state.history = [];
