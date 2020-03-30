@@ -1,5 +1,5 @@
 import { Message } from "../assets/js/message.js";
-import { event } from "vue-analytics";
+import Vue from "vue";
 
 const state = {
   tool: "pencil",
@@ -25,7 +25,7 @@ const actions = {
     );
 
     dispatch("clear");
-    event("message", "send", rootState.client.room);
+    Vue.analytics.trackEvent("message", "send");
     dispatch("messages/add", msg, { root: true });
     dispatch(
       "socket/send",

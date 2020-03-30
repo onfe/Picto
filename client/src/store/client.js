@@ -1,7 +1,7 @@
 import router from "../router";
 import colour from "../assets/js/colours.js";
-import { event } from "vue-analytics";
 import { Announcement, Text } from "../assets/js/message.js";
+import Vue from "vue";
 
 const state = {
   index: -1,
@@ -28,11 +28,11 @@ const actions = {
     commit("updateStatus", "connecting");
     dispatch("socket/connect", { name, room }, { root: true })
       .then(() => {
-        event("room", "connect", "success");
+        Vue.analytics.trackEvent("room", "connect", "success");
         commit("updateStatus", "connected");
       })
       .catch(() => {
-        event("room", "connect", "failure");
+        Vue.analytics.trackEvent("room", "connect", "failure");
         commit("updateStatus", "fail");
         commit("updateError", "Couldn't connect to Picto.");
         // eslint-disable-next-line no-console
@@ -42,7 +42,7 @@ const actions = {
   leave: ({ commit, dispatch }) => {
     dispatch("socket/disconnect", {}, { root: true });
     dispatch("messages/reset", {}, { root: true });
-    event("room", "leave", "success");
+    Vue.analytics.trackEvent("room", "leave");
     commit("leave");
     if (router.currentRoute.name == "room") {
       router.replace(`/join/${router.currentRoute.params.id}`);
@@ -50,7 +50,7 @@ const actions = {
   },
   init: ({ commit, dispatch }, payload) => {
     commit("init", payload);
-    event("room", "join", "success");
+    Vue.analytics.trackEvent("room", "join", "success");
     // eslint-disable-next-line no-console
     console.log("Connected to Picto.");
     dispatch("messages/add", new Announcement("Welcome to Picto!"), {
@@ -83,12 +83,12 @@ const actions = {
     if (name.length == 0) {
       message = `${user} removed the room name.`;
     }
-    event("room", "rename", "");
+    Vue.analytics.trackEvent("room", "rename");
     dispatch("messages/add", new Text(message, pl.Time), { root: true });
     commit("renameRoom", name);
   },
   error: ({ commit }, error) => {
-    event("room", "join", "error", error.code);
+    Vue.analytics.trackEvent("room", "join", "error", error.code);
     commit("updateError", error.reason);
     commit("updateStatus", "fail");
   },
