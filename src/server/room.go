@@ -73,6 +73,16 @@ func (r *Room) addClient(c *Client) error {
 		r.LastUpdate = time.Now()
 
 		/*
+			2 * the apropriate min message interval is subtracted from the client's lastmessage time to ensure they
+			can immediately send a message upon join.
+		*/
+		if r.Static {
+			c.LastMessage.Add(-2 * MinMessageIntervalStatic)
+		} else {
+			c.LastMessage.Add(-2 * MinMessageInterval)
+		}
+
+		/*
 			The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
 			To do this, an array of strings of all the clients' usernames (including the new client's) has to be constructed.
 		*/
