@@ -1,5 +1,7 @@
 <template>
   <section class="nav">
+    <ExitButton class="fix" />
+    <hr />
     <ToggleButton
       @click.native="toggleInfo"
       icon="info-circle"
@@ -15,11 +17,13 @@
 
 <script>
 import ToggleButton from "@/components/ToggleButton.vue";
+import ExitButton from "@/components/ExitButton.vue";
 import InviteButton from "@/components/InviteButton.vue";
 import SidebarHistory from "@/components/SidebarHistory.vue";
 export default {
   components: {
     ToggleButton,
+    ExitButton,
     InviteButton,
     SidebarHistory
   },

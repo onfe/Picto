@@ -8,7 +8,8 @@ import {
   faKeyboard,
   faInfoCircle,
   faUserPlus,
-  faTimesCircle
+  faTimesCircle,
+  faHome
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -22,7 +23,8 @@ library.add(
   faKeyboard,
   faInfoCircle,
   faUserPlus,
-  faTimesCircle
+  faTimesCircle,
+  faHome
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
