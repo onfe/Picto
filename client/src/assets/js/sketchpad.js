@@ -249,7 +249,9 @@ class Sketchpad {
     } else {
       this.notepad.ctx.font = "32px 'pixel 5x7'";
     }
-    this.notepad.ctx.fillStyle = this.notepad.getColour(this.colourIndex);
+    this.notepad.ctx.fillStyle = this.notepad.getColour(
+      this.colourIndex == 0 ? 1 : this.colourIndex
+    );
     this.notepad.ctx.textBaseline = "alphabetic";
     this.notepad.ctx.textAlign = "end";
     var charWidth = Math.round(this.notepad.ctx.measureText(char).width);
@@ -315,7 +317,8 @@ class Sketchpad {
           oldData["data"][i + 3] != newData["data"][i + 3]) &&
         newData["data"][i + 3] > 127 //This is a wide margin for error to allow for browsers placing the text a little bit off.
       ) {
-        newText["data"][Math.floor(i / 4)] = this.colourIndex;
+        newText["data"][Math.floor(i / 4)] =
+          this.colourIndex == 0 ? 1 : this.colourIndex;
         diff = true;
       }
     }
