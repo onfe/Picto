@@ -78,9 +78,7 @@ $perc-spacer: 1%;
   color: #fff;
   font-family: "pixel 5x7";
   user-select: none;
-  text-shadow: -1px  0px $spacer / 3 #0002,
-                1px  0px $spacer / 3 #0002,
-                0px -1px $spacer / 3 #0002,
-                0px  1px $spacer / 3 #0002;
+  text-shadow: -1px 0px $spacer / 3 #0002, 1px 0px $spacer / 3 #0002,
+    0px -1px $spacer / 3 #0002, 0px 1px $spacer / 3 #0002;
 }
 </style>
