@@ -41,7 +41,7 @@ const router = new Router({
 router.afterEach(() => {
   if (store.state.client.errorMessage != "") {
     // when going to a new page, clear the error.
-    store.dispatch("client/error", { code: -1, reason: "" });
+    store.dispatch("client/clearError");
   }
 });
 
