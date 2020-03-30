@@ -38,6 +38,7 @@ ul {
   display: flex;
   flex-direction: column-reverse;
   overflow: hidden;
+  
   a {
     display: block;
     width: 100%;

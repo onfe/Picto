@@ -49,7 +49,8 @@ section {
 hr {
   border: 0;
   border-bottom: 1px solid $almost-white;
-  margin: $spacer;
+  width: 100%;
+  margin: 0 0 $spacer 0;
 }
 
 .fix {
@@ -59,6 +60,5 @@ hr {
 .hist {
   flex-shrink: 1;
   flex-grow: 1;
-  margin-top: $spacer;
 }
 </style>
