@@ -77,9 +77,9 @@ func (r *Room) addClient(c *Client) error {
 			can immediately send a message upon join.
 		*/
 		if r.Static {
-			c.LastMessage.Add(-2 * MinMessageIntervalStatic)
+			c.LastMessage = c.LastMessage.Add(-2 * MinMessageIntervalStatic)
 		} else {
-			c.LastMessage.Add(-2 * MinMessageInterval)
+			c.LastMessage = c.LastMessage.Add(-2 * MinMessageInterval)
 		}
 
 		/*
