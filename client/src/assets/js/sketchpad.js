@@ -219,7 +219,13 @@ class Sketchpad {
             yo <= tempy + this.pensize;
             yo++
           ) {
-            this.imageData["data"][yo * this.width + xo] = this.colourIndex;
+            /**
+             * We need to check the offset x (xo) is >=0, otherwise it'll wrap
+             * back round to the previous line!
+             */
+            if (xo >= 0) {
+              this.imageData["data"][yo * this.width + xo] = this.colourIndex;
+            }
           }
         }
         this.notepad.setPixel(tempx, tempy, this.colourIndex, this.pensize);
