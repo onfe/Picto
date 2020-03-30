@@ -220,10 +220,10 @@ class Sketchpad {
             yo++
           ) {
             /**
-             * We need to check the offset x (xo) is >=0, otherwise it'll wrap
-             * back round to the previous line!
+             * We need to check the offset x (xo) is >=0 and < width,
+             * otherwise it'll wrap back round to the previous line!
              */
-            if (xo >= 0) {
+            if (0 <= xo && xo < this.width) {
               this.imageData["data"][yo * this.width + xo] = this.colourIndex;
             }
           }
