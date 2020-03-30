@@ -15,6 +15,7 @@ Vue.use(VueAnalytics, {
   trackingId: "UA-108088302-4",
   vueRouter: router, // Pass the router instance to automatically sync with router (optional)
   trackPage: true, // Whether you want page changes to be recorded as pageviews (website) or screenviews (app), default: false
+  debug: false,
   createOptions: {
     // Optional, Option when creating GA tracker, ref: https://developers.google.com/analytics/devguides/collection/analyticsjs/field-reference
     siteSpeedSampleRate: 10
