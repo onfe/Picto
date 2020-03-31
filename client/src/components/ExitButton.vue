@@ -4,7 +4,7 @@
       <router-link
         title="Leave room"
         class="home"
-        :to="{ name: 'join', params: { id: $route.params.id }}"
+        :to="{ name: 'join', params: { id: $route.params.id } }"
       >
         <font-awesome-icon class="icn" :icon="'door-open'" />
       </router-link>

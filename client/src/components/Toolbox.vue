@@ -1,7 +1,10 @@
 <template>
   <section class="toolbox">
     <ul class="tool btn">
-      <li title="Pencil" v-bind:class="{ selected: isPencil, rainbow: isRainbow }">
+      <li
+        title="Pencil"
+        v-bind:class="{ selected: isPencil, rainbow: isRainbow }"
+      >
         <font-awesome-icon @click="pencil" class="icn" icon="pencil-alt" />
       </li>
       <li title="Eraser" v-bind:class="{ selected: isEraser }">
