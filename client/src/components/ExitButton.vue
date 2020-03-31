@@ -2,11 +2,7 @@
   <ul class="btn">
     <li>
       <router-link v-if="$route.params.id" class="home" to="/">
-        <font-awesome-icon
-          class="icn"
-          :class="{ turn: active }"
-          :icon="'door-open'"
-        />
+        <font-awesome-icon class="icn" :icon="'door-open'" />
       </router-link>
     </li>
   </ul>
