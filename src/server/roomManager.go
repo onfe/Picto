@@ -69,6 +69,14 @@ func (rm *RoomManager) roomMonitorLoop() {
 					time.Since(room.LastUpdate) > RoomTimeout) &&
 					!room.Static {
 					rm.closeRoom(roomID)
+				} else {
+					for _, client := range room.Clients {
+						if client != nil {
+							if time.Since(client.LastMessage) > ClientMessageTimeout {
+								client.close()
+							}
+						}
+					}
 				}
 			}
 
