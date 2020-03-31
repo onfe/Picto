@@ -71,26 +71,31 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 		case "create_static_room":
-			roomName := "Picto Room"
+			roomName := ""
 			maxClients := DefaultRoomSize
 
 			_roomName, roomNameSupplied := r.Form["room_name"]
 			_maxClients, maxClientsSupplied := r.Form["room_size"]
 
-			if roomNameSupplied {
+			if !roomNameSupplied {
+				response, err = json.Marshal("a room name must be supplied")
+			} else {
 				roomName = _roomName[0]
-			}
+
 			if maxClientsSupplied {
 				maxClients, err = strconv.Atoi(_maxClients[0])
 			}
-
 			if err != nil {
-				response, err = json.Marshal("size supplied isn't an integer value.")
+					response, err = json.Marshal("size supplied couldn't be converted to an integer value: " + err.Error())
 			} else {
 				newRoom, err := rm.createRoom(roomName, maxClients, true)
-				if err == nil {
-					response, err = json.Marshal("New room created with id '" + newRoom.ID + "'.")
+					if err != nil {
+						response, err = json.Marshal("New room couldn't be created: " + err.Error())
+					} else {
+						response, err = json.Marshal("new room created with id '" + newRoom.ID + "'")
+					}
 				}
+
 			}
 
 		case "close_room":
