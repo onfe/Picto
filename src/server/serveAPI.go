@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 //ServeAPI handles API calls.
@@ -82,13 +83,13 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			} else {
 				roomName = _roomName[0]
 
-			if maxClientsSupplied {
-				maxClients, err = strconv.Atoi(_maxClients[0])
-			}
-			if err != nil {
+				if maxClientsSupplied {
+					maxClients, err = strconv.Atoi(_maxClients[0])
+				}
+				if err != nil {
 					response, err = json.Marshal("size supplied couldn't be converted to an integer value: " + err.Error())
-			} else {
-				newRoom, err := rm.createRoom(roomName, maxClients, true)
+				} else {
+					newRoom, err := rm.createRoom(roomName, maxClients, true)
 					if err != nil {
 						response, err = json.Marshal("New room couldn't be created: " + err.Error())
 					} else {
@@ -131,7 +132,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, _ = json.Marshal(err)
 		}
 
-		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
+		log.Println("[PRIVATE API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
@@ -169,9 +170,16 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 			response, _ = json.Marshal(roomStates)
+
+		default:
+			response, err = json.Marshal("Unrecognised API method")
 		}
 
-		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
+		if err != nil {
+			response, _ = json.Marshal(err)
+		}
+
+		log.Println("[PUBLIC API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
