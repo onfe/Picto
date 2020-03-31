@@ -8,8 +8,8 @@
       iconActive="times-circle"
       :active="showInfo"
       class="fix"
+      title="Toggle room info"
     />
-    <hr />
     <InviteButton class="fix" />
     <SidebarHistory class="hist" />
   </section>

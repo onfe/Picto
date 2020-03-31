@@ -1,5 +1,5 @@
 <template lang="html">
-  <ul class="btn" @click="copy" :class="{ copied: copied }">
+  <ul title="Copy invite link" class="btn" @click="copy" :class="{ copied: copied }">
     <div v-if="copied" class="notif">Copied Join Link!</div>
     <li class="btn">
       <font-awesome-icon class="icn" icon="user-plus" />
