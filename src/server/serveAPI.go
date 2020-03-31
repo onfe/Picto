@@ -133,6 +133,24 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
+		case "get_static_rooms":
+			type roomState struct {
+				Name   string
+				Public bool
+				Cap    int
+				Pop    int
+			}
+			roomStates := make([]roomState, len(rm.StaticRooms))
+			for i, r := range rm.StaticRooms {
+				roomStates[i] = roomState{
+					Name:   r.Name,
+					Public: r.Public,
+					Cap:    r.Cap,
+					Pop:    rm.Rooms[r.Name].ClientCount,
+				}
+			}
+			response, _ = json.Marshal(roomStates)
+
 		default:
 			response, err = json.Marshal("Unrecognised API method")
 
@@ -171,12 +189,16 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Cap  int
 				Pop  int
 			}
-			roomStates := make([]roomState, len(rm.PublicRooms))
-			for i, r := range rm.PublicRooms {
-				roomStates[i] = roomState{
-					Name: r.Name,
-					Cap:  r.Cap,
-					Pop:  rm.Rooms[r.Name].ClientCount,
+			var roomStates []roomState
+			for _, r := range rm.StaticRooms {
+				if r.Public {
+					roomStates = append(
+						roomStates,
+						roomState{
+							Name: r.Name,
+							Cap:  r.Cap,
+							Pop:  rm.Rooms[r.Name].ClientCount,
+						})
 				}
 			}
 			response, _ = json.Marshal(roomStates)
