@@ -25,7 +25,7 @@ import JoinForm from "@/components/JoinForm.vue";
 import PublicRooms from "@/components/PublicRooms.vue";
 
 export default {
-  name: "home",
+  name: "join",
   components: {
     JoinForm,
     PublicRooms

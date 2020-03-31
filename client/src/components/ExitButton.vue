@@ -1,7 +1,11 @@
 <template>
   <ul class="btn">
     <li>
-      <router-link v-if="$route.params.id" class="home" to="/">
+      <router-link
+        title="Leave room"
+        class="home"
+        :to="{ name: 'join', params: { id: $route.params.id } }"
+      >
         <font-awesome-icon class="icn" :icon="'door-open'" />
       </router-link>
     </li>

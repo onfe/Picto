@@ -207,8 +207,8 @@ Announces `MESSAGE` to the `ROOM_ID` specified.
 
 ### close_room
 
-`/api/?token=API_TOKEN&method=close_room&room_id=ROOM_ID&reason=REASON`
-Closes `ROOM_ID` and announces message `REASON` beforehand.
+`/api/?token=API_TOKEN&method=close_room&room_id=ROOM_ID&reason=REASON&close_time=TIME`
+Closes `ROOM_ID` and announces message `REASON` before closing the room after `TIME` seconds.
 
 ### create_static_room
 

@@ -107,6 +107,11 @@ func (rm *RoomManager) createRoom(roomName string, maxClients int, static bool) 
 			if strings.Contains(newRoomID, "-") {
 				return nil, errors.New("static room names may not contain hyphens")
 			}
+			for roomID := range rm.Rooms {
+				if roomID == newRoomID {
+					return nil, errors.New("a static room already exists with that name")
+				}
+			}
 		}
 		newRoom := newRoom(rm, newRoomID, roomName, static, maxClients)
 		rm.Rooms[newRoom.ID] = newRoom
