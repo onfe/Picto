@@ -1,28 +1,31 @@
 <template>
   <section class="toolbox">
     <ul class="tool btn">
-      <li v-bind:class="{ selected: isPencil, rainbow: isRainbow }">
+      <li
+        title="Pencil"
+        v-bind:class="{ selected: isPencil, rainbow: isRainbow }"
+      >
         <font-awesome-icon @click="pencil" class="icn" icon="pencil-alt" />
       </li>
-      <li v-bind:class="{ selected: isEraser }">
+      <li title="Eraser" v-bind:class="{ selected: isEraser }">
         <font-awesome-icon @click="eraser" class="icn" icon="eraser" />
       </li>
     </ul>
 
     <ul class="size btn">
-      <li v-bind:class="{ selected: isSmall }">
+      <li title="Small" v-bind:class="{ selected: isSmall }">
         <font-awesome-icon
           @click="small"
           class="icn"
           :icon="['far', 'dot-circle']"
         />
       </li>
-      <li v-bind:class="{ selected: isLarge }">
+      <li title="Large" v-bind:class="{ selected: isLarge }">
         <font-awesome-icon @click="large" class="icn" icon="circle" />
       </li>
     </ul>
     <ul class="keyboard btn">
-      <li>
+      <li title="Show on-screen keyboard">
         <font-awesome-icon @click="keyboard" class="icn" icon="keyboard" />
       </li>
     </ul>

@@ -2,9 +2,11 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 //ServeAPI handles API calls.
@@ -71,49 +73,83 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 		case "create_static_room":
-			roomName := "Picto Room"
+			roomName := ""
 			maxClients := DefaultRoomSize
 
 			_roomName, roomNameSupplied := r.Form["room_name"]
 			_maxClients, maxClientsSupplied := r.Form["room_size"]
 
-			if roomNameSupplied {
-				roomName = _roomName[0]
-			}
-			if maxClientsSupplied {
-				maxClients, err = strconv.Atoi(_maxClients[0])
-			}
-
-			if err != nil {
-				response, err = json.Marshal("size supplied isn't an integer value.")
+			if !roomNameSupplied {
+				response, err = json.Marshal("a room name must be supplied")
 			} else {
-				newRoom, err := rm.createRoom(roomName, maxClients, true)
-				if err == nil {
-					response, err = json.Marshal("New room created with id '" + newRoom.ID + "'.")
+				roomName = _roomName[0]
+
+				if maxClientsSupplied {
+					maxClients, err = strconv.Atoi(_maxClients[0])
 				}
+				if err != nil {
+					response, err = json.Marshal("size supplied couldn't be converted to an integer value: " + err.Error())
+				} else {
+					newRoom, err := rm.createRoom(roomName, maxClients, true)
+					if err != nil {
+						response, err = json.Marshal("New room couldn't be created: " + err.Error())
+					} else {
+						response, err = json.Marshal("new room created with id '" + newRoom.ID + "'")
+					}
+				}
+
 			}
 
 		case "close_room":
-			reason := "No reason supplied."
-
 			roomID, roomIDSupplied := r.Form["room_id"]
-			_reason, reasonSupplied := r.Form["reason"]
 
+			reason := "This room is being closed by the server."
+			_reason, reasonSupplied := r.Form["reason"]
 			if reasonSupplied {
 				reason = _reason[0]
 			}
 
-			if roomIDSupplied {
-				if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
-					rm.Rooms[roomID[0]].announce(reason)
-					rm.closeRoom(roomID[0])
-					response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
-				} else {
-					response, err = json.Marshal("room_id supplied doesn't exist.")
-				}
-			} else {
-				response, err = json.Marshal("Malformed API call. Please supply a room_id.")
+			closeTime := 10 //seconds
+			_closeTime, closeTimeSupplied := r.Form["close_time"]
+			if closeTimeSupplied {
+				closeTime, err = strconv.Atoi(_closeTime[0])
 			}
+
+			if err != nil {
+				response, err = json.Marshal("Malformed API call. close_time must be an integer value")
+			} else {
+				if roomIDSupplied {
+					if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
+						rm.Rooms[roomID[0]].announce(reason)
+						rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %d seconds...", closeTime))
+						time.Sleep(time.Duration(closeTime) * time.Second)
+						rm.closeRoom(roomID[0])
+						response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
+					} else {
+						response, err = json.Marshal("room_id supplied doesn't exist.")
+					}
+				} else {
+					response, err = json.Marshal("Malformed API call. Please supply a room_id.")
+				}
+			}
+
+		case "get_static_rooms":
+			type roomState struct {
+				Name   string
+				Public bool
+				Cap    int
+				Pop    int
+			}
+			roomStates := make([]roomState, len(rm.StaticRooms))
+			for i, r := range rm.StaticRooms {
+				roomStates[i] = roomState{
+					Name:   r.Name,
+					Public: r.Public,
+					Cap:    r.Cap,
+					Pop:    rm.Rooms[r.Name].ClientCount,
+				}
+			}
+			response, _ = json.Marshal(roomStates)
 
 		default:
 			response, err = json.Marshal("Unrecognised API method")
@@ -124,7 +160,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, _ = json.Marshal(err)
 		}
 
-		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
+		log.Println("[PRIVATE API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 
@@ -153,18 +189,29 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Cap  int
 				Pop  int
 			}
-			roomStates := make([]roomState, len(rm.PublicRooms))
-			for i, r := range rm.PublicRooms {
-				roomStates[i] = roomState{
-					Name: r.Name,
-					Cap:  r.Cap,
-					Pop:  rm.Rooms[r.Name].ClientCount,
+			var roomStates []roomState
+			for _, r := range rm.StaticRooms {
+				if r.Public {
+					roomStates = append(
+						roomStates,
+						roomState{
+							Name: r.Name,
+							Cap:  r.Cap,
+							Pop:  rm.Rooms[r.Name].ClientCount,
+						})
 				}
 			}
 			response, _ = json.Marshal(roomStates)
+
+		default:
+			response, err = json.Marshal("Unrecognised API method")
 		}
 
-		log.Println("[API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
+		if err != nil {
+			response, _ = json.Marshal(err)
+		}
+
+		log.Println("[PUBLIC API SUCCESS] - Method: " + method[0] + ", Result: " + string(response))
 		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 

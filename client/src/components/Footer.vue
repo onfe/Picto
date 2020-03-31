@@ -1,9 +1,9 @@
 <template>
   <section>
     <div class="cont">
-      <a @click="onClear">Clear</a>
-      <a @click="onCopy">Copy</a>
-      <a @click="onSend">Send</a>
+      <a title="Clear canvas" @click="onClear">Clear</a>
+      <a title="Copy last message to canvas" @click="onCopy">Copy</a>
+      <a title="Send message" @click="onSend">Send</a>
     </div>
   </section>
 </template>

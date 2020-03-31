@@ -1,5 +1,6 @@
 <template>
   <div class="join">
+    <a class="sr-only" href="#core">Skip to join form</a>
     <div class="container">
       <img class="logo" src="/img/logo.svg" alt="picto" />
       <p>
@@ -11,11 +12,23 @@
       <PublicRooms v-if="!$route.params.id" />
     </div>
     <footer>
-      <font-awesome-icon class="icn" :icon="'bug'" />
-      <a
-        href="https://github.com/onfe/Picto/issues?q=is%3Aissue+is%3Aopen+label%3Abug"
-        >Found a bug?</a
-      >
+      <div class="item">
+        <font-awesome-icon class="icn pad" icon="bug" />
+        <a
+          href="https://github.com/onfe/Picto/issues?q=is%3Aissue+is%3Aopen+label%3Abug"
+          >Found a bug?</a
+        >
+      </div>
+      <div class="item">
+        <font-awesome-icon class="icn pad" :icon="['fab', 'twitter']" />
+        <a href="https://twitter.com/PictoTweets">Twitter</a>
+      </div>
+      <div class="item">
+        Made with <font-awesome-icon class="icn" icon="heart" /> by
+        <a href="https://joshuarainbow.co.uk/">TheTeaCat</a>,
+        <a href="https://onfe.uk/">Onfe</a> &amp;
+        <a href="https://freddyheppell.com/">Freddy</a>
+      </div>
     </footer>
   </div>
 </template>
@@ -25,7 +38,7 @@ import JoinForm from "@/components/JoinForm.vue";
 import PublicRooms from "@/components/PublicRooms.vue";
 
 export default {
-  name: "home",
+  name: "join",
   components: {
     JoinForm,
     PublicRooms
@@ -56,7 +69,7 @@ export default {
 
 .container,
 footer {
-  max-width: 600px;
+  max-width: 650px;
 
   padding: 0 2.5rem 1rem 3.5rem;
 
@@ -70,9 +83,21 @@ footer {
 }
 
 footer {
-  font-size: 0.8rem;
-  .icn {
-    margin-right: 1ch;
+  color: $grey;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  display: flex;
+  flex-wrap: wrap;
+  .item {
+    margin-right: 1rem;
+    margin-top: 0.75rem;
+    .icn.pad {
+      margin-right: 1ch;
+    }
+
+    a {
+      color: $grey;
+    }
   }
 }
 
@@ -84,6 +109,12 @@ hr {
 p {
   margin-bottom: 1.5rem;
   line-height: 1.2;
+}
+
+a {
+  color: $grey-d;
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }
 
 .logo {
