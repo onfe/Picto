@@ -17,6 +17,7 @@ type Room struct {
 	MaxClients  int            `json:"MaxClients"`
 	EventCache  *CircularQueue `json:"EventCache"`
 	LastUpdate  time.Time      `json:"LastUpdate"`
+	Closing     bool
 }
 
 func newRoom(manager *RoomManager, roomID string, name string, static bool, maxClients int) *Room {
@@ -30,6 +31,7 @@ func newRoom(manager *RoomManager, roomID string, name string, static bool, maxC
 		MaxClients:  maxClients,
 		EventCache:  newCircularQueue(ChatHistoryLen),
 		LastUpdate:  time.Now(),
+		Closing:     false,
 	}
 	return &r
 }

@@ -119,14 +119,21 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				response, err = json.Marshal("Malformed API call. close_time must be an integer value")
 			} else {
 				if roomIDSupplied {
-					if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
+					if _, roomExists := rm.Rooms[roomID[0]]; roomExists && !rm.Rooms[roomID[0]].Closing {
+						rm.Rooms[roomID[0]].Closing = true
 						rm.Rooms[roomID[0]].announce(reason)
 						rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %d seconds...", closeTime))
-						time.Sleep(time.Duration(closeTime) * time.Second)
-						rm.closeRoom(roomID[0])
-						response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
+						go func(rm *RoomManager) {
+							time.Sleep(time.Duration(closeTime) * time.Second)
+							rm.closeRoom(roomID[0])
+						}(rm)
+						response, err = json.Marshal("closed room of id '" + roomID[0] + "'.")
 					} else {
-						response, err = json.Marshal("room_id supplied doesn't exist.")
+						if rm.Rooms[roomID[0]].Closing {
+							response, err = json.Marshal("room is already closing.")
+						} else {
+							response, err = json.Marshal("room_id supplied doesn't exist.")
+						}
 					}
 				} else {
 					response, err = json.Marshal("Malformed API call. Please supply a room_id.")
