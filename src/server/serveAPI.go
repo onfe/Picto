@@ -119,19 +119,44 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				response, err = json.Marshal("Malformed API call. close_time must be an integer value")
 			} else {
 				if roomIDSupplied {
-					if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
+					if _, roomExists := rm.Rooms[roomID[0]]; roomExists && !rm.Rooms[roomID[0]].Closing {
+						rm.Rooms[roomID[0]].Closing = true
 						rm.Rooms[roomID[0]].announce(reason)
 						rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %d seconds...", closeTime))
-						time.Sleep(time.Duration(closeTime) * time.Second)
-						rm.closeRoom(roomID[0])
-						response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
+						go func(rm *RoomManager) {
+							time.Sleep(time.Duration(closeTime) * time.Second)
+							rm.closeRoom(roomID[0])
+						}(rm)
+						response, err = json.Marshal("closed room of id '" + roomID[0] + "'.")
 					} else {
-						response, err = json.Marshal("room_id supplied doesn't exist.")
+						if rm.Rooms[roomID[0]].Closing {
+							response, err = json.Marshal("room is already closing.")
+						} else {
+							response, err = json.Marshal("room_id supplied doesn't exist.")
+						}
 					}
 				} else {
 					response, err = json.Marshal("Malformed API call. Please supply a room_id.")
 				}
 			}
+
+		case "get_static_rooms":
+			type roomState struct {
+				Name   string
+				Public bool
+				Cap    int
+				Pop    int
+			}
+			roomStates := make([]roomState, len(rm.StaticRooms))
+			for i, r := range rm.StaticRooms {
+				roomStates[i] = roomState{
+					Name:   r.Name,
+					Public: r.Public,
+					Cap:    r.Cap,
+					Pop:    rm.Rooms[r.Name].ClientCount,
+				}
+			}
+			response, _ = json.Marshal(roomStates)
 
 		default:
 			response, err = json.Marshal("Unrecognised API method")
@@ -171,12 +196,16 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Cap  int
 				Pop  int
 			}
-			roomStates := make([]roomState, len(rm.PublicRooms))
-			for i, r := range rm.PublicRooms {
-				roomStates[i] = roomState{
-					Name: r.Name,
-					Cap:  r.Cap,
-					Pop:  rm.Rooms[r.Name].ClientCount,
+			var roomStates []roomState
+			for _, r := range rm.StaticRooms {
+				if r.Public {
+					roomStates = append(
+						roomStates,
+						roomState{
+							Name: r.Name,
+							Cap:  r.Cap,
+							Pop:  rm.Rooms[r.Name].ClientCount,
+						})
 				}
 			}
 			response, _ = json.Marshal(roomStates)

@@ -17,12 +17,13 @@ type RoomManager struct {
 	apiToken    string
 	Mode        string
 	wordsList   []string
-	PublicRooms []room
+	StaticRooms []room
 }
 
 type room struct {
-	Name string
-	Cap  int
+	Name   string
+	Cap    int
+	Public bool
 }
 
 //NewRoomManager creates a new room manager.
@@ -34,12 +35,12 @@ func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []stri
 		Mode:      Mode,
 		wordsList: wordsList,
 	}
-	rm.loadPublicRoomConfig(publicRoomConfigVar)
+	rm.loadStaticRoomConfig(publicRoomConfigVar)
 	go rm.roomMonitorLoop()
 	return rm
 }
 
-func (rm *RoomManager) loadPublicRoomConfig(varname string) {
+func (rm *RoomManager) loadStaticRoomConfig(varname string) {
 	config, configured := os.LookupEnv(varname)
 	if configured {
 		var rooms []room
@@ -53,7 +54,7 @@ func (rm *RoomManager) loadPublicRoomConfig(varname string) {
 		for _, r := range rooms {
 			rm.createRoom(r.Name, r.Cap, true)
 		}
-		rm.PublicRooms = rooms
+		rm.StaticRooms = rooms
 	} else {
 		log.Println("[SYSTEM] - Couldn't find public room config env var.")
 	}
