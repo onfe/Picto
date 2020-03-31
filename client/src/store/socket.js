@@ -45,9 +45,8 @@ const actions = {
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
-      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${
-        pl.Event
-      }`
+      `[SOCK][R] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}):`,
+      pl
     );
 
     switch (pl.Event) {
@@ -90,7 +89,8 @@ const actions = {
     const now = new Date();
     // eslint-disable-next-line no-console
     console.log(
-      `[SOCK] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}): ${packet}`
+      `[SOCK][S] (${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}):`,
+      packet
     );
   },
   reconnect: () => {}
