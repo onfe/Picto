@@ -197,6 +197,43 @@ Returns a list of all the ids of the currently open rooms.
 `/api/?token=API_TOKEN&method=get_room_state&room_id=ROOM_ID`
 Returns the state of the `ROOM_ID` specified by marshalling the room object.
 
+### get_static_rooms
+
+`/api/?token=API_TOKEN&method=get_static_rooms`
+
+Returns a list of static rooms including if they're public, their population and capacity as follows:
+
+```json
+[
+	{
+		"Name":"Parlor",
+		"Public":true,
+		"Cap":64,
+		"Pop":0
+	},
+	{
+		"Name":"Library",
+		"Public":true,
+		"Cap":64,
+		"Pop":0
+	},
+	{
+		"Name":"Garden",
+		"Public":true,
+		"Cap":64,
+		"Pop":0
+	},
+	{
+		"Name":"Hidden Static Room",
+		"Public":false,
+		"Cap":16,
+		"Pop":0
+	}
+]
+```
+
+
+
 ### announce
 
 `/api/?token=API_TOKEN&method=announce&message=MESSAGE`
