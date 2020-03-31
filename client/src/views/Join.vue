@@ -29,8 +29,8 @@
       </div>
       <div class="item">
         Made with <font-awesome-icon class="icn" icon="heart" /> by
-        <a href="https://joshuarainbow.co.uk/">TheTeaCat</a>,
-        <a href="https://onfe.uk/">Onfe</a> &amp;
+        <a href="https://joshuarainbow.co.uk/">Josh</a>,
+        <a href="https://onfe.uk/">Eddie</a> &amp;
         <a href="https://freddyheppell.com/">Freddy</a>
       </div>
     </footer>
