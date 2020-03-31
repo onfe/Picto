@@ -7,7 +7,6 @@ banana
 band
 bin
 binder
-biro
 biscuit
 blackboard
 blue
