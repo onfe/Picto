@@ -43,7 +43,7 @@ glue
 green
 gum
 hatstand
-highlighter
+highlight
 indigo
 ink
 keyboard
