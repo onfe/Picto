@@ -27,3 +27,11 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount("#app");
+
+// eslint-disable-next-line no-console
+console.log(
+  `%c Picto (client) %c v${process.env.VUE_APP_VERSION} %c`,
+  "background:#4d4d4d ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff",
+  "background:#f0f0f0 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #000",
+  "background:transparent"
+);
