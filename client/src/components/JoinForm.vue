@@ -1,5 +1,5 @@
 <template>
-  <section class="join-form">
+  <section class="join-form" id="core">
     <p v-if="$route.params.id">
       You're joining room: <br /><strong>{{ $route.params.id }}</strong>
     </p>
@@ -10,6 +10,7 @@
         <input
           v-model="name"
           name="name"
+          id="name"
           class="font-pixel"
           placeholder="Type a nickname"
           autocorrect="off"
@@ -17,8 +18,18 @@
           autofocus
           :disabled="loading"
         />
-
-        <button type="submit" name="button" :disabled="loading">
+        <label for="name" class="sr-only">Nickname</label>
+        <button
+          type="submit"
+          name="button"
+          :title="
+            $route.params.id ? `Join room (${$route.params.id})` : 'Create room'
+          "
+          :aria-label="
+            $route.params.id ? `Join room (${$route.params.id})` : 'Create room'
+          "
+          :disabled="loading"
+        >
           <svg
             v-if="!loading"
             xmlns="http://www.w3.org/2000/svg"
@@ -158,7 +169,8 @@ button {
 
   max-width: 2em;
   min-width: 1em;
-  width: 20%;
+  width: 15%;
+  margin-left: 0.5rem;
 
   background-color: transparent;
   border: none;

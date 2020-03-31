@@ -1,5 +1,6 @@
 <template>
   <div class="join">
+    <a class="sr-only" href="#core">Skip to join form</a>
     <div class="container">
       <img class="logo" src="/img/logo.svg" alt="picto" />
       <p>
