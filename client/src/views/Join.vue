@@ -12,7 +12,10 @@
     </div>
     <footer>
       <font-awesome-icon class="icn" :icon="'bug'" />
-      <a href="https://github.com/onfe/Picto/issues">Found a bug?</a>
+      <a
+        href="https://github.com/onfe/Picto/issues?q=is%3Aissue+is%3Aopen+label%3Abug"
+        >Found a bug?</a
+      >
     </footer>
   </div>
 </template>
