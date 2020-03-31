@@ -10,9 +10,11 @@ import {
   faUserPlus,
   faTimesCircle,
   faDoorOpen,
-  faBug
+  faBug,
+  faHeart
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
+import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 // Add the required icons to keep the bundle small.
@@ -26,7 +28,9 @@ library.add(
   faUserPlus,
   faTimesCircle,
   faDoorOpen,
-  faBug
+  faBug,
+  faHeart,
+  faTwitter
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
