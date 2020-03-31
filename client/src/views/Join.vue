@@ -35,8 +35,7 @@ export default {
 
 <style lang="scss" scoped>
 .join {
-  height: 100%;
-  overflow: scroll;
+  min-height:100%;
   background-color: $almost-white;
 
   background-image: url("/img/stripe.svg");
