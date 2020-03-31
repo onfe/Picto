@@ -13,6 +13,10 @@
     </div>
     <footer>
       <div class="item">
+        <font-awesome-icon class="icn pad" icon="code-branch" />
+        <a href="https://github.com/onfe/Picto/releases">{{ version }}</a>
+      </div>
+      <div class="item">
         <font-awesome-icon class="icn pad" icon="bug" />
         <a
           href="https://github.com/onfe/Picto/issues?q=is%3Aissue+is%3Aopen+label%3Abug"
@@ -49,6 +53,11 @@ export default {
         title: `Join ${this.$route.params.id} - Picto`
       };
     }
+  },
+  computed: {
+    version() {
+      return process.env.VUE_APP_VERSION;
+    }
   }
 };
 </script>
@@ -69,9 +78,9 @@ export default {
 
 .container,
 footer {
-  max-width: 650px;
+  max-width: 675px;
 
-  padding: 0 2.5rem 1rem 3.5rem;
+  padding: 0 1.5rem 1rem 3.5rem;
 
   @media (min-width: 992px) {
     padding-left: 8rem;
@@ -97,6 +106,11 @@ footer {
 
     a {
       color: $grey;
+      transition: color 200ms ease-in-out;
+    }
+
+    a:hover {
+      color: $grey-d;
     }
   }
 }
