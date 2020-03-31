@@ -10,6 +10,10 @@
       <JoinForm />
       <PublicRooms v-if="!$route.params.id" />
     </div>
+    <footer>
+      <font-awesome-icon class="icn" :icon="'bug'" />
+      <a href="https://github.com/onfe/Picto/issues">Found a bug?</a>
+    </footer>
   </div>
 </template>
 
@@ -35,15 +39,20 @@ export default {
 
 <style lang="scss" scoped>
 .join {
-  min-height:100%;
+  min-height: 100%;
   background-color: $almost-white;
 
   background-image: url("/img/stripe.svg");
   background-repeat: repeat-y;
   background-position-x: 0.8rem;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.container {
+.container,
+footer {
   max-width: 600px;
 
   padding: 0 2.5rem 1rem 3.5rem;
@@ -55,6 +64,13 @@ export default {
   font-family: monospace;
   font-size: 1.2rem;
   color: $grey-d;
+}
+
+footer {
+  font-size: 0.8rem;
+  .icn {
+    margin-right: 1ch;
+  }
 }
 
 hr {
