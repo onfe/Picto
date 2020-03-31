@@ -5,7 +5,7 @@
         <font-awesome-icon
           class="icn"
           :class="{ turn: active }"
-          :icon="'home'"
+          :icon="'door-open'"
         />
       </router-link>
     </li>

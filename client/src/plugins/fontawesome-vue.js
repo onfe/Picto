@@ -9,7 +9,7 @@ import {
   faInfoCircle,
   faUserPlus,
   faTimesCircle,
-  faHome
+  faDoorOpen
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -24,7 +24,7 @@ library.add(
   faInfoCircle,
   faUserPlus,
   faTimesCircle,
-  faHome
+  faDoorOpen
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
