@@ -1,5 +1,5 @@
 {
-  "name": "Picto"
+  "name": "Picto",
   "scripts": {
     "postinstall": "npm --prefix ./client install ./client && cd ./client && npm run build"
   },
