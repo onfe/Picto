@@ -80,7 +80,7 @@ export default {
   }
 
   h1 {
-    padding-bottom: $spacer;
+    border: 1px solid transparent;
   }
 
   input {
@@ -89,7 +89,7 @@ export default {
     text-align: center;
     border: 1px solid $grey-l;
     border-radius: $spacer;
-    height: calc(#{$sidebar-width - $spacer} - 4px);
+    height: $sidebar-width - $spacer;
   }
 }
 </style>
