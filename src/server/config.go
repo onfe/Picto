@@ -7,6 +7,8 @@ const (
 	MaxRooms = 1024
 	//RoomTimeout = maximum amount of time a room may stay open without any activity before being automatically closed
 	RoomTimeout = 600 * time.Second
+	//ClientMessageTimeout = maximum amount of time a client may be in a room without sending any messages before being disconnected
+	ClientMessageTimeout = 300 * time.Second
 	//DefaultRoomSize = Default size of default room.
 	DefaultRoomSize = 8
 	//MaxRoomNameLength = the max length of a room name.
