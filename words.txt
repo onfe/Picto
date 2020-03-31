@@ -7,7 +7,6 @@ banana
 band
 bin
 binder
-biro
 biscuit
 blackboard
 blue
@@ -44,7 +43,7 @@ glue
 green
 gum
 hatstand
-highlighter
+highlight
 indigo
 ink
 keyboard
