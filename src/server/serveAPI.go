@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -100,27 +101,36 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 		case "close_room":
-			reason := "This room is being closed by the server."
-
 			roomID, roomIDSupplied := r.Form["room_id"]
-			_reason, reasonSupplied := r.Form["reason"]
 
+			reason := "This room is being closed by the server."
+			_reason, reasonSupplied := r.Form["reason"]
 			if reasonSupplied {
 				reason = _reason[0]
 			}
 
-			if roomIDSupplied {
-				if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
-					rm.Rooms[roomID[0]].announce(reason)
-					rm.Rooms[roomID[0]].announce("Room closing in 10 seconds...")
-					time.Sleep(10 * time.Second)
-					rm.closeRoom(roomID[0])
-					response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
-				} else {
-					response, err = json.Marshal("room_id supplied doesn't exist.")
-				}
+			closeTime := 10 //seconds
+			_closeTime, closeTimeSupplied := r.Form["close_time"]
+			if closeTimeSupplied {
+				closeTime, err = strconv.Atoi(_closeTime[0])
+			}
+
+			if err != nil {
+				response, err = json.Marshal("Malformed API call. close_time must be an integer value")
 			} else {
-				response, err = json.Marshal("Malformed API call. Please supply a room_id.")
+				if roomIDSupplied {
+					if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
+						rm.Rooms[roomID[0]].announce(reason)
+						rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %d seconds...", closeTime))
+						time.Sleep(time.Duration(closeTime) * time.Second)
+						rm.closeRoom(roomID[0])
+						response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
+					} else {
+						response, err = json.Marshal("room_id supplied doesn't exist.")
+					}
+				} else {
+					response, err = json.Marshal("Malformed API call. Please supply a room_id.")
+				}
 			}
 
 		default:
