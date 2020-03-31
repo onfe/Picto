@@ -21,10 +21,7 @@
       </div>
       <div class="item">
         <font-awesome-icon class="icn pad" :icon="['fab', 'twitter']" />
-        <a
-          href="https://github.com/onfe/Picto/issues?q=is%3Aissue+is%3Aopen+label%3Abug"
-          >Twitter</a
-        >
+        <a href="https://twitter.com/PictoTweets">Twitter</a>
       </div>
       <div class="item">
         Made with <font-awesome-icon class="icn" icon="heart" /> by
