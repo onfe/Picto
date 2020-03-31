@@ -36,8 +36,8 @@ const actions = {
   clear: () => {
     window._sketch.clear();
   },
-  copy: ({ rootState }, id) => {
-    if (id == null) {
+  copy: ({ rootState }, msg) => {
+    if (!msg) {
       var msgs = rootState.messages.history
         .sort((a, b) => {
           a.id - b.id;
@@ -48,7 +48,9 @@ const actions = {
         console.error("No messages to copy!");
         return;
       }
-      const msg = msgs[0];
+      msg = msgs[0];
+      window._sketch.loadImageData(msg.raw());
+    } else {
       window._sketch.loadImageData(msg.raw());
     }
   },

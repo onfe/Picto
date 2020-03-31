@@ -15,3 +15,6 @@ $grey-l: lighten( $grey, 20% );
 $almost-white: #F0F0F0;
 
 $red-d: darken( #E97777, 20% );
+
+$shadow-access: -1px 0px $spacer / 3 #0002, 1px 0px $spacer / 3 #0002,
+  0px -1px $spacer / 3 #0002, 0px 1px $spacer / 3 #0002;

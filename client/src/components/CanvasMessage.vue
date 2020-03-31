@@ -1,6 +1,11 @@
 <template lang="html">
-  <Message :author="msg.author" :colour="msg.colour">
-    <canvas :id="getID(msg)"></canvas>
+  <Message
+    @copy="handleCopy"
+    :copyable="true"
+    :author="msg.author"
+    :colour="msg.colour"
+  >
+    <canvas :id="getID"></canvas>
   </Message>
 </template>
 
@@ -18,13 +23,18 @@ export default {
       default: () => new Message()
     }
   },
+  computed: {
+    getID() {
+      return "canvas-" + this.msg.hash;
+    }
+  },
   methods: {
-    getID(msg) {
-      return "canvas-" + msg.hash;
+    handleCopy() {
+      this.$store.dispatch("compose/copy", this.msg);
     }
   },
   mounted() {
-    const canv = document.getElementById(this.getID(this.msg));
+    const canv = document.getElementById(this.getID);
     this.notepad = new Notepad(192, 64, canv);
     this.notepad.loadImageData(this.msg.raw());
   }

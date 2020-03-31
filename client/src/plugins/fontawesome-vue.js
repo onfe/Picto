@@ -12,7 +12,8 @@ import {
   faDoorOpen,
   faBug,
   faHeart,
-  faCodeBranch
+  faCodeBranch,
+  faCopy
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -32,7 +33,8 @@ library.add(
   faBug,
   faHeart,
   faTwitter,
-  faCodeBranch
+  faCodeBranch,
+  faCopy
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
