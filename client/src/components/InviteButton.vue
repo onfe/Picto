@@ -16,12 +16,20 @@
 export default {
   methods: {
     copy() {
-      navigator.clipboard
-        .writeText(this.$store.getters["client/inviteLink"])
-        .then(() => {
-          this.copied = true;
-          setTimeout(() => (this.copied = false), 1000);
+      if (navigator.canShare) {
+        navigator.share({
+          title: "Picto",
+          text: "Join me on Picto!",
+          url: this.$store.getters["client/inviteLink"]
         });
+      } else {
+        navigator.clipboard
+          .writeText(this.$store.getters["client/inviteLink"])
+          .then(() => {
+            this.copied = true;
+            setTimeout(() => (this.copied = false), 1000);
+          });
+      }
     }
   },
   data() {
