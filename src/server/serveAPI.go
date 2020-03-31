@@ -99,7 +99,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 		case "close_room":
-			reason := "No reason supplied."
+			reason := "This room is being closed by the server."
 
 			roomID, roomIDSupplied := r.Form["room_id"]
 			_reason, reasonSupplied := r.Form["reason"]
@@ -111,6 +111,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			if roomIDSupplied {
 				if _, roomExists := rm.Rooms[roomID[0]]; roomExists {
 					rm.Rooms[roomID[0]].announce(reason)
+					rm.Rooms[roomID[0]].announce("Room closing in 10 seconds...")
+					time.Sleep(10 * time.Second)
 					rm.closeRoom(roomID[0])
 					response, err = json.Marshal("Closed room of id '" + roomID[0] + "'.")
 				} else {
