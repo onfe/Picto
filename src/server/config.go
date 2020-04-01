@@ -9,6 +9,8 @@ const (
 	RoomTimeout = 600 * time.Second
 	//ClientMessageTimeout = maximum amount of time a client may be in a room without sending any messages before being disconnected
 	ClientMessageTimeout = 300 * time.Second
+	//StaticMessageTimeout = maximum amount of time a message exists in the cache of a static room before being ignored in milliseconds
+	StaticMessageTimeout = 300 * 1000
 	//DefaultRoomSize = Default size of default room.
 	DefaultRoomSize = 8
 	//MaxRoomNameLength = the max length of a room name.

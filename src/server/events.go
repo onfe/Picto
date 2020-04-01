@@ -13,13 +13,13 @@ type EventWrapper struct {
 	Payload interface{}
 }
 
-func wrapEvent(event string, payload interface{}) []byte {
+func wrapEvent(event string, payload interface{}) *EventWrapper {
 	eventWrapper := EventWrapper{
 		Event:   event,
 		Time:    time.Now().UnixNano() / int64(time.Millisecond),
 		Payload: payload,
 	}
-	return eventWrapper.toBytes()
+	return &eventWrapper
 }
 
 func (e EventWrapper) toBytes() []byte {
@@ -39,7 +39,7 @@ type InitEvent struct {
 	Users     []string //Array of strings of users' names.
 }
 
-func newInitEvent(roomID string, roomName string, static bool, userIndex int, users []string) []byte {
+func newInitEvent(roomID string, roomName string, static bool, userIndex int, users []string) *EventWrapper {
 	initEvent := InitEvent{
 		RoomID:    roomID,
 		RoomName:  roomName,
@@ -58,7 +58,7 @@ type UserEvent struct {
 	Users     []string
 }
 
-func newUserEvent(userIndex int, userName string, users []string) []byte {
+func newUserEvent(userIndex int, userName string, users []string) *EventWrapper {
 	userEvent := UserEvent{
 		UserIndex: userIndex,
 		UserName:  userName,
@@ -84,7 +84,7 @@ type AnnouncementEvent struct {
 	Announcement string
 }
 
-func newAnnouncementEvent(announcement string) []byte {
+func newAnnouncementEvent(announcement string) *EventWrapper {
 	announcementEvent := AnnouncementEvent{
 		Announcement: announcement,
 	}
@@ -97,7 +97,7 @@ type RenameEvent struct {
 	RoomName string
 }
 
-func newRenameEvent(userName string, roomName string) []byte {
+func newRenameEvent(userName string, roomName string) *EventWrapper {
 	renameEvent := RenameEvent{
 		UserName: userName,
 		RoomName: roomName,
