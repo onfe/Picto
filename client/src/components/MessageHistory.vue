@@ -41,7 +41,7 @@ export default {
       function() {
         this.$refs["anchor"].scrollIntoView();
       }.bind(this),
-      300
+      50
     );
   }
 };
