@@ -1,6 +1,7 @@
 <template lang="html">
   <section>
     <div class="history">
+      <div id="spacer" />
       <div
         class="message"
         v-for="msg in history"
@@ -11,6 +12,7 @@
         <Announcement v-else-if="msg.type == 'Announcement'" v-bind="msg" />
         <div class="text" v-else>{{ msg.text }}</div>
       </div>
+      <div id="anchor" ref="anchor" />
     </div>
   </section>
 </template>
@@ -64,10 +66,22 @@ Problem: FireFox just doesn't scroll on a flexbox with flex-direction:column-rev
 |                               | it's just really dumb        | si=joaaiGIsTES52UQVX5bNoQ   |
 
 https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
-*/
 .history,
 .message {
   transform: scaleY(-1);
+}
+*/
+
+.history * {
+  overflow-anchor: none;
+}
+#anchor {
+  flex: 0;
+  min-height: 1px;
+  overflow-anchor: auto;
+}
+#spacer {
+  height: calc(100% - 8vmin);
 }
 
 .text {
