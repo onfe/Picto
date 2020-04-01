@@ -48,7 +48,7 @@ const actions = {
         console.error("No messages to copy!");
         return;
       }
-      msg = msgs[msgs.length - 1];
+      msg = msgs[0];
       window._sketch.loadImageData(msg.raw());
     } else {
       window._sketch.loadImageData(msg.raw());

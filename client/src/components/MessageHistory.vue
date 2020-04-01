@@ -1,7 +1,6 @@
 <template lang="html">
-  <section>
+  <section :class="{ firefox: isFirefox() }">
     <div class="history">
-      <div id="spacer" />
       <div
         class="message"
         v-for="msg in history"
@@ -12,7 +11,6 @@
         <Announcement v-else-if="msg.type == 'Announcement'" v-bind="msg" />
         <div class="text" v-else>{{ msg.text }}</div>
       </div>
-      <div id="anchor" ref="anchor" />
     </div>
   </section>
 </template>
@@ -34,15 +32,11 @@ export default {
   methods: {
     getID(msg) {
       return "msg-" + msg.hash;
+    },
+    isFirefox() {
+      // Browser detection of firefox
+      return typeof InstallTrigger !== "undefined";
     }
-  },
-  mounted() {
-    setTimeout(
-      function() {
-        this.$refs["anchor"].scrollIntoView();
-      }.bind(this),
-      50
-    );
   }
 };
 </script>
@@ -54,42 +48,22 @@ export default {
   overflow-x: hidden;
   display: flex;
   height: 100%;
-  flex-direction: column;
+  flex-direction: column-reverse;
 }
 
 .message {
   margin-top: $spacer;
 }
 
-/*
-Problem: FireFox just doesn't scroll on a flexbox with flex-direction:column-reverse.
+.firefox {
+  .history {
+    flex-direction: column !important;
+  }
 
-| Potential Solution            | Negatives                    | Positives                   |
-| ----------------------------- | ---------------------------- | --------------------------- |
-| flex-direction:column-reverse | Doesn't work on FireFox.     | Works on everything except  |
-| on .history                   |                              | FireFox perfectly.          |
-| ----------------------------- | ---------------------------- | --------------------------- |
-| transform: scaleY(-1)         | Scroll direction is reversed | https://open.spotify.com/tr |
-| on .history and .message      | (doesn't affect mobile);     | ack/5foxQ24C0x7W0B2OD46AJg? |
-|                               | it's just really dumb        | si=joaaiGIsTES52UQVX5bNoQ   |
-
-https://open.spotify.com/track/5foxQ24C0x7W0B2OD46AJg?si=joaaiGIsTES52UQVX5bNoQ
-.history,
-.message {
-  transform: scaleY(-1);
-}
-*/
-
-.history * {
-  overflow-anchor: none;
-}
-#anchor {
-  flex: 0;
-  min-height: 1px;
-  overflow-anchor: auto;
-}
-#spacer {
-  height: calc(100% - 8vmin);
+  .history,
+  .message {
+    transform: scaleY(-1);
+  }
 }
 
 .text {

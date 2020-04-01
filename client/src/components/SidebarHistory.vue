@@ -36,8 +36,7 @@ ul {
   padding: 0;
   margin: 0;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  flex-direction: column-reverse;
   overflow: hidden;
 
   a {
