@@ -10,7 +10,7 @@ class Notepad {
   }
 
   placeImageData(data) {
-    for (var i = 0; i < data["data"].length; i++) {
+    for (var i = 0; i < this.width * this.height; i++) {
       if (data["data"][i] != 0) {
         this.setPixel(
           Math.round(i % data["span"]),
