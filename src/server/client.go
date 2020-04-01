@@ -199,6 +199,7 @@ func (c *Client) recieve(e []byte) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if (c.room.Static && time.Since(c.LastMessage) > MinMessageIntervalStatic) ||
 		(!c.room.Static && time.Since(c.LastMessage) > MinMessageInterval) {
+		c.LastMessage = time.Now()
 		h := sha1.New()
 		h.Write(e)
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
