@@ -35,6 +35,14 @@ export default {
     getID(msg) {
       return "msg-" + msg.hash;
     }
+  },
+  mounted() {
+    setTimeout(
+      function() {
+        this.$refs["anchor"].scrollIntoView();
+      }.bind(this),
+      300
+    );
   }
 };
 </script>
