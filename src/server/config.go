@@ -16,7 +16,7 @@ const (
 	//MaxClientNameLength = the max length of a client name.
 	MaxClientNameLength = 16
 	//MaxMessageSize = Max size of a picto image in Bytes from the client.
-	MaxMessageSize = 12288 //One byte per pixel in a 192*64 pixel canvas.
+	MaxMessageSize = 16384 //One byte per pixel in a 192*64 pixel canvas + a bit extra for the wrapper and other data.
 	//MinMessageInterval = Minimum interval between messages sent by a client to be acknowledged.
 	MinMessageInterval = time.Second
 	//MinMessageIntervalStatic = Minimum interval between messages sent by a client to be acknowledged in a static room.
