@@ -39,11 +39,17 @@ class RunlengthEncoder {
         i += 1;
         for (i; d[i] != 0; i++) {
           count += d[i];
+          if (count > 192 * 64) {
+            return res;
+          }
         }
         res.push(...Array(count).fill(d[i + 1]));
         i += 1;
       } else {
         res.push(d[i]);
+      }
+      if (res.length >= 192 * 64) {
+        return res;
       }
     }
     return res;
