@@ -75,9 +75,15 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		case "create_static_room":
 			roomName := ""
 			maxClients := DefaultRoomSize
+			public := false
 
 			_roomName, roomNameSupplied := r.Form["room_name"]
 			_maxClients, maxClientsSupplied := r.Form["room_size"]
+
+			_public, publicSupplied := r.Form["public"]
+			if publicSupplied {
+				public = _public[0] == "true"
+			}
 
 			if !roomNameSupplied {
 				response, err = json.Marshal("a room name must be supplied")
@@ -87,15 +93,20 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				if maxClientsSupplied {
 					maxClients, err = strconv.Atoi(_maxClients[0])
 				}
+
 				if err != nil {
 					response, err = json.Marshal("size supplied couldn't be converted to an integer value: " + err.Error())
 				} else {
-					newRoom, err := rm.createRoom(roomName, maxClients, true)
+					if maxClients > MaxClientsPerRoom {
+						response, err = json.Marshal("the max clients per room is " + strconv.Itoa(MaxClientsPerRoom))
+					} else {
+						newRoom, err := rm.createRoom(roomName, maxClients, true, public)
 					if err != nil {
 						response, err = json.Marshal("New room couldn't be created: " + err.Error())
 					} else {
 						response, err = json.Marshal("new room created with id '" + newRoom.ID + "'")
 					}
+				}
 				}
 
 			}
@@ -148,13 +159,15 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Pop    int
 			}
 			roomStates := make([]roomState, len(rm.StaticRooms))
-			for i, r := range rm.StaticRooms {
+			i := 0
+			for _, r := range rm.StaticRooms {
 				roomStates[i] = roomState{
 					Name:   r.Name,
 					Public: r.Public,
-					Cap:    r.Cap,
-					Pop:    rm.Rooms[r.Name].ClientCount,
+					Cap:    r.MaxClients,
+					Pop:    r.ClientCount,
 				}
+				i++
 			}
 			response, _ = json.Marshal(roomStates)
 
@@ -198,13 +211,13 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 			var roomStates []roomState
 			for _, r := range rm.StaticRooms {
-				if r.Public {
+				if r.Public && !r.Closing {
 					roomStates = append(
 						roomStates,
 						roomState{
 							Name: r.Name,
-							Cap:  r.Cap,
-							Pop:  rm.Rooms[r.Name].ClientCount,
+							Cap:  r.MaxClients,
+							Pop:  r.ClientCount,
 						})
 				}
 			}

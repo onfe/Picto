@@ -13,6 +13,8 @@ const (
 	StaticMessageTimeout = 300 * 1000
 	//DefaultRoomSize = Default size of default room.
 	DefaultRoomSize = 8
+	//MaxClientsPerRoom = max number of clients in a single room.
+	MaxClientsPerRoom = 64
 	//MaxRoomNameLength = the max length of a room name.
 	MaxRoomNameLength = 32
 	//MaxClientNameLength = the max length of a client name.

@@ -12,6 +12,7 @@ type Room struct {
 	ID          string         `json:"ID"`
 	Name        string         `json:"Name"`
 	Static      bool           `json:"Static"`
+	Public      bool           `json:"Public"`
 	Clients     []*Client      `json:"Clients"`
 	ClientCount int            `json:"ClientCount"`
 	MaxClients  int            `json:"MaxClients"`
@@ -20,12 +21,13 @@ type Room struct {
 	Closing     bool
 }
 
-func newRoom(manager *RoomManager, roomID string, name string, static bool, maxClients int) *Room {
+func newRoom(manager *RoomManager, roomID string, name string, static bool, public bool, maxClients int) *Room {
 	r := Room{
 		manager:     manager,
 		ID:          roomID,
-		Name:        "",
+		Name:        name,
 		Static:      static,
+		Public:      public,
 		Clients:     make([]*Client, maxClients),
 		ClientCount: 0,
 		MaxClients:  maxClients,
@@ -100,8 +102,8 @@ func (r *Room) addClient(c *Client) error {
 				e := E.(*EventWrapper)
 				//currentTime is UNIX time in millisecond precision.
 				currentTime := time.Now().UnixNano() / int64(time.Millisecond)
-				if !r.Static ||
-					(r.Static &&
+				if !r.Public ||
+					(r.Public &&
 						(e.Time > currentTime-StaticMessageTimeout)) {
 					c.sendBuffer <- e.toBytes()
 				}
