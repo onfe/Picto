@@ -103,10 +103,7 @@ func (r *Room) addClient(c *Client) error {
 				if !r.Static ||
 					(r.Static &&
 						(e.Time > currentTime-StaticMessageTimeout)) {
-					log.Println(currentTime, e.Time, StaticMessageTimeout)
 					c.sendBuffer <- e.toBytes()
-				} else {
-					log.Println("Ignored a message in the cache!")
 				}
 			}
 		}
