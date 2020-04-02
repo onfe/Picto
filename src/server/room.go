@@ -92,12 +92,22 @@ func (r *Room) addClient(c *Client) error {
 		clientNames[newClientID] = c.Name
 
 		//Updating the new client as to the room state with an init event.
-		c.sendBuffer <- newInitEvent(r.ID, r.Name, r.Static, newClientID, clientNames)
+		c.sendBuffer <- newInitEvent(r.ID, r.Name, r.Static, newClientID, clientNames).toBytes()
 
 		//Updating the new client with all the messages from the message cache.
-		for _, M := range r.EventCache.getAll() {
-			if M != nil {
-				c.sendBuffer <- M.([]byte)
+		for _, E := range r.EventCache.getAll() {
+			if E != nil {
+				e := E.(*EventWrapper)
+				//currentTime is UNIX time in millisecond precision.
+				currentTime := time.Now().UnixNano() / int64(time.Millisecond)
+				if !r.Static ||
+					(r.Static &&
+						(e.Time > currentTime-StaticMessageTimeout)) {
+					log.Println(currentTime, e.Time, StaticMessageTimeout)
+					c.sendBuffer <- e.toBytes()
+				} else {
+					log.Println("Ignored a message in the cache!")
+				}
 			}
 		}
 
@@ -132,14 +142,14 @@ func (r *Room) removeClient(clientID int) error {
 	return errors.New("room does not have such a client")
 }
 
-func (r *Room) distributeEvent(event []byte, cached bool, sender int) {
+func (r *Room) distributeEvent(event *EventWrapper, cached bool, sender int) {
 	r.LastUpdate = time.Now()
 	if cached {
 		r.EventCache.push(event)
 	}
 	for _, client := range r.Clients {
 		if client != nil && client.ID != sender {
-			client.sendBuffer <- event
+			client.sendBuffer <- event.toBytes()
 		}
 	}
 }
