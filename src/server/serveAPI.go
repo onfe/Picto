@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -101,12 +102,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 						response, err = json.Marshal("the max clients per room is " + strconv.Itoa(MaxClientsPerRoom))
 					} else {
 						newRoom, err := rm.createRoom(roomName, maxClients, true, public)
-					if err != nil {
-						response, err = json.Marshal("New room couldn't be created: " + err.Error())
-					} else {
-						response, err = json.Marshal("new room created with id '" + newRoom.ID + "'")
+						if err != nil {
+							response, err = json.Marshal("New room couldn't be created: " + err.Error())
+						} else {
+							response, err = json.Marshal("new room created with id '" + newRoom.ID + "'")
+						}
 					}
-				}
 				}
 
 			}
@@ -221,6 +222,19 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 						})
 				}
 			}
+
+			sort.Slice(roomStates[:], func(i, j int) bool {
+				if roomStates[i].Pop != roomStates[j].Pop {
+					//Populations sorted highest first
+					return roomStates[i].Pop > roomStates[j].Pop
+				} else if roomStates[i].Cap != roomStates[j].Cap {
+					//Caps sorted highest first
+					return roomStates[i].Cap > roomStates[j].Cap
+				} else {
+					//Names sorted A-Z
+					return roomStates[i].Name[0] < roomStates[j].Name[0]
+				}
+			})
 			response, _ = json.Marshal(roomStates)
 
 		default:
