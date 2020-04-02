@@ -16,11 +16,18 @@ if (process.env.NODE_ENV === "production") {
     cached() {
       console.log("Content has been cached for offline use.");
     },
-    updatefound() {
+    updatefound(r) {
       console.log("New content is downloading.");
+      document.dispatchEvent(
+        new CustomEvent('sw-update-downloading', { detail: r })
+      );
     },
-    updated() {
-      console.log("New content is available; please refresh.");
+    updated(r) {
+      console.log("New content is available.");
+      window._r = r;
+      document.dispatchEvent(
+        new CustomEvent('sw-update-ready', { detail: r })
+      );
     },
     offline() {
       console.log(
