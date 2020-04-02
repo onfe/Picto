@@ -2,7 +2,7 @@
 
 Send doodles to your friends and chat with Picto, the scribble-powered online messenger.
 
-![Heroku status](https://pyheroku-badge.herokuapp.com/?app=onfe-picto) ![Twitter Follow](https://img.shields.io/twitter/follow/PictoTweets?label=Twitter&style=social)
+![Heroku status](https://pyheroku-badge.herokuapp.com/?app=onfe-picto) ![Twitter Follow](https://img.shields.io/twitter/follow/PictoTweets.svg?label=Twitter)
 
 ## :memo: About Picto
 
