@@ -46,7 +46,7 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 
 		if customResponseWriter.status == 404 {
 			log.Println("[REDIRECT] - To index.html, from:", r.RequestURI)
-			data, _ := ioutil.ReadFile("client/dist/index.html")
+			data, _ := ioutil.ReadFile("dist/index.html")
 			w.Header().Set("Content-Type", "text/html")
 			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(data))
 		}
@@ -99,7 +99,7 @@ func main() {
 	}
 
 	//Setting up routing
-	fs := getFileHandler(http.FileServer(http.Dir("client/dist")))
+	fs := getFileHandler(http.FileServer(http.Dir("dist")))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", roomManager.ServeWs)
 	http.HandleFunc("/api/", roomManager.ServeAPI)
