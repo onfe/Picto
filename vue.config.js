@@ -37,7 +37,7 @@ module.exports = {
       favicon16: "img/icons/favicon-16x16.png",
       maskIcon: "img/icons/favicon.svg"
     },
-    workboxPluginMode: 'InjectManifest',
+    workboxPluginMode: "InjectManifest",
     workboxOptions: {
       swSrc: "./src/sw.js",
       swDest: "service-worker.js"

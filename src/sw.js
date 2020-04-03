@@ -1,20 +1,19 @@
 /* eslint-disable no-console */
 
 // Listen for a SW message 'perform-update'
-self.addEventListener('message', (e) => {
+self.addEventListener("message", e => {
   if (!e.data) {
     return;
   }
 
-  if (e.data === 'perform-update') {
-    console.log('Switching to new content, please stand by...')
-    self.skipWaiting()
-      .then( () => {
-        console.log("Done. Refreshing...")
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
-      });
+  if (e.data === "perform-update") {
+    console.log("Switching to new content, please stand by...");
+    self.skipWaiting().then(() => {
+      console.log("Done. Refreshing...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    });
   }
 });
 

@@ -9,6 +9,13 @@
         <span v-if="copyable" class="copy" title="Copy this message">
           <font-awesome-icon @click="$emit('copy')" class="icn" icon="copy" />
         </span>
+        <span v-if="copyable" class="hide" title="Hide this message">
+          <font-awesome-icon
+            @click="$emit('hide')"
+            class="icn"
+            icon="eye-slash"
+          />
+        </span>
       </div>
       <div class="content">
         <slot></slot>
@@ -90,13 +97,14 @@ $perc-spacer: 1%;
   user-select: none;
   text-shadow: $shadow-access;
 
-  .copy {
+  .copy,
+  .hide {
     max-width: 0;
     opacity: 0;
     overflow: hidden;
     display: inline-block;
     height: 3 * $spacer;
-    transition: all 200ms ease-in-out;
+    transition: all 400ms ease-in-out;
     cursor: pointer;
 
     .icn {
@@ -108,7 +116,8 @@ $perc-spacer: 1%;
     }
   }
 
-  &:hover > .copy {
+  &:hover > .copy,
+  &:hover > .hide {
     max-width: 4vw;
     opacity: 1;
   }

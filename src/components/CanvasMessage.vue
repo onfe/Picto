@@ -1,6 +1,7 @@
 <template lang="html">
   <Message
     @copy="handleCopy"
+    @hide="handleHide"
     :copyable="true"
     :author="msg.author"
     :colour="msg.colour"
@@ -31,6 +32,9 @@ export default {
   methods: {
     handleCopy() {
       this.$store.dispatch("compose/copy", this.msg);
+    },
+    handleHide() {
+      this.$store.dispatch("messages/delete", this.msg);
     }
   },
   mounted() {
