@@ -12,7 +12,8 @@ const state = {
   users: [],
   showInfo: false,
   errorMessage: "",
-  static: false
+  static: false,
+  swStatus: "normal"
 };
 
 const getters = {
@@ -94,6 +95,9 @@ const actions = {
   },
   clearError: ({ commit }) => {
     commit("updateError", "");
+  },
+  swUpdate: ({ commit }, type) => {
+    commit("swUpdate", type);
   }
 };
 
@@ -131,6 +135,9 @@ const mutations = {
   },
   renameRoom: (state, name) => {
     state.roomName = name;
+  },
+  swUpdate: (state, status) => {
+    state.swStatus = status;
   }
 };
 

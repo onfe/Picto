@@ -14,7 +14,9 @@ import {
   faHeart,
   faCodeBranch,
   faCopy,
-  faEyeSlash
+  faEyeSlash,
+  faSyncAlt,
+  faDownload
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -36,7 +38,9 @@ library.add(
   faTwitter,
   faCodeBranch,
   faCopy,
-  faEyeSlash
+  faEyeSlash,
+  faSyncAlt,
+  faDownload
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
