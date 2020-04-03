@@ -53,7 +53,7 @@ func (r *Room) getClientNames() []string {
 }
 
 func (r *Room) addClient(c *Client) error {
-	if r.ClientCount < r.MaxClients && r.ClientCount >= 0 {
+	if r.ClientCount < r.MaxClients {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
 		r.ClientCount++
 

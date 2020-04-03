@@ -66,7 +66,8 @@ func (rm *RoomManager) roomMonitorLoop() {
 		select {
 		case <-ticker.C:
 			for roomID, room := range rm.Rooms {
-				if (room.ClientCount == -1 ||
+				if ((room.ClientCount == -1 &&
+					time.Since(room.LastUpdate) > RoomGracePeriod) ||
 					time.Since(room.LastUpdate) > RoomTimeout) &&
 					!room.Static {
 					rm.closeRoom(roomID)
