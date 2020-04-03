@@ -10,7 +10,7 @@ const (
 	//RoomGracePeriod = how long a room may be empty before being closed
 	RoomGracePeriod = 30 * time.Second
 	//DefaultCloseTime = the default amount of time allowed between announcing a room is being closed to closing the room
-	DefaultCloseTime = 10 //seconds
+	DefaultCloseTime = 10 * time.Second
 	//ClientMessageTimeout = maximum amount of time a client may be in a room without sending any messages before being disconnected
 	ClientMessageTimeout = 300 * time.Second
 	//StaticMessageTimeout = maximum amount of time a message exists in the cache of a static room before being ignored in milliseconds
