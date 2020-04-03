@@ -178,6 +178,8 @@ Returns a list of public rooms including their population and capacity, as follo
 ]
 ```
 
+The response is ordered and should be displayed in the order it is received.
+
 
 
 ## API - Private
