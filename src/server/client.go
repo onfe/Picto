@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -68,14 +69,21 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 		return c.ws.Close()
 	})
 
+	//Check the client was actually given a valid name.
+	if len(Name) > MaxClientNameLength {
+		err = errors.New("username too long")
+	} else if Name == "" {
+		err = errors.New("username not provided")
+	}
+
 	return &c, err
 }
 
 func (c *Client) getDetails() string {
 	if c.room != nil {
-		return "(Room ID \"" + c.room.ID + "\" ('" + c.room.Name + "'): Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
+		return "(Room ID " + c.room.ID + " : Client ID " + strconv.Itoa(c.ID) + ")"
 	}
-	return "(Roomless: Client ID" + strconv.Itoa(c.ID) + " ('" + c.Name + "'))"
+	return "(Roomless : Client ID " + strconv.Itoa(c.ID) + ")"
 }
 
 //Cancel should only be called before GO.

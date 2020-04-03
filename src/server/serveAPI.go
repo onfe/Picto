@@ -143,7 +143,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			newRoom, err := rm.createRoom(roomName[0], maxClients, true, public)
+			newRoom, ERR := rm.createRoom(roomName[0], maxClients, true, public)
+			err = ERR
 			if err != nil {
 				return
 			}
@@ -154,7 +155,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		case "close_room":
 			//default values
 			reason := "This room is being closed by the server."
-			closeTime := 10 //seconds
+			closeTime := DefaultCloseTime
 
 			roomID, roomIDSupplied := r.Form["id"]
 			if !roomIDSupplied {
@@ -169,14 +170,16 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 			_closeTime, closeTimeSupplied := r.Form["time"]
 			if closeTimeSupplied {
-				closeTime, err = strconv.Atoi(_closeTime[0])
+				closeTimeInt, ERR := strconv.Atoi(_closeTime[0])
+				err = ERR
 				if err != nil {
 					return
 				}
-				if closeTime < 0 {
+				if closeTimeInt < 0 {
 					err = errors.New("`time` is too small (min time is 0)")
 					return
 				}
+				closeTime = time.Duration(closeTimeInt) * time.Second
 			}
 
 			if _, roomExists := rm.Rooms[roomID[0]]; !roomExists {
@@ -184,18 +187,10 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			if rm.Rooms[roomID[0]].Closing {
-				err = errors.New("a room with that `id` is already closing")
-				return
-			}
-
 			rm.Rooms[roomID[0]].Closing = true
+			rm.Rooms[roomID[0]].CloseTime = time.Now().Add(closeTime)
 			rm.Rooms[roomID[0]].announce(reason)
-			rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %d seconds...", closeTime))
-			go func(rm *RoomManager) {
-				time.Sleep(time.Duration(closeTime) * time.Second)
-				rm.closeRoom(roomID[0])
-			}(rm)
+			rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %.0f seconds...", closeTime.Seconds()))
 			response, err = json.Marshal("closed room of `id` '" + roomID[0] + "'.")
 			return
 
