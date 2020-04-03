@@ -13,36 +13,49 @@ import (
 
 //ServeAPI handles API calls.
 func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
-	method, methodSupplied := r.Form["method"]
-
+	method := "unset"
 	var response []byte
 	var err error
 
-	w.Header().Set("Content-Type", "application/json")
+	//Setup the response.
 	defer func() {
 		if err != nil {
-			log.Println("[API FAIL] - Method: " + method[0] + ", Error:" + err.Error())
+			//If there is an error, the error string becomes the response.
+			log.Println("[API FAIL] - Method: " + method + ", Error: " + err.Error())
 			response, _ = json.Marshal(err.Error())
 		} else {
-			log.Println("[API SUCCESS] - Method: " + method[0])
+			log.Println("[API SUCCESS] - Method: " + method)
 		}
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(response)
 	}()
 
+	//Parse the request.
+	err = r.ParseForm()
+	if err != nil {
+		return
+	}
+
+	//First check if a method's actually been supplied.
+	METHOD, methodSupplied := r.Form["method"]
 	if !methodSupplied {
 		err = errors.New("no method supplied")
 		return
 	}
+	method = METHOD[0]
 
+	//If a token is supplied, check the token supplied is valid
 	token, tokenSupplied := r.Form["token"]
 	if tokenSupplied && token[0] != rm.apiToken {
+		//If it's not, we return here and now.
 		err = errors.New("invalid token: " + token[0])
 		return
 	}
 
+	//If we didn't just return and a token was supplied, it must be valid.
 	if tokenSupplied {
-		switch method[0] {
+		//Authenticated methods:
+		switch method {
 
 		case "get_state":
 			if rm.Mode != "dev" {
@@ -219,8 +232,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			err = errors.New("unrecognised method")
 			return
 		}
-	} else {
-		switch method[0] {
+	} else { //If a token wasn't supplied, then we want public methods:
+		//Public methods:
+		switch method {
 
 		case "room_exists":
 			roomID, roomIDSupplied := r.Form["id"]
