@@ -94,8 +94,7 @@ export default {
       // if we're not trying to join a room we don't need to check it exists.
       return;
     }
-    const url =
-      window.location.origin + `/api/?method=room_exists&room_id=${id}`;
+    const url = window.location.origin + `/api/?method=room_exists&id=${id}`;
     const options = {
       method: "GET"
     };

@@ -68,15 +68,15 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "get_room_state":
-			roomID, roomIDSupplied := r.Form["room_id"]
+			roomID, roomIDSupplied := r.Form["id"]
 			if !roomIDSupplied {
-				err = errors.New("no room id supplied")
+				err = errors.New("no `id` supplied")
 				return
 			}
 
 			room, roomExists := rm.Rooms[roomID[0]]
 			if !roomExists {
-				err = errors.New("room does not exist")
+				err = errors.New("a room with that `id` does not exist")
 				return
 			}
 
@@ -85,16 +85,15 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 		case "announce":
 			message, messageSupplied := r.Form["message"]
-			roomID, roomIDSupplied := r.Form["room_id"]
-
 			if !messageSupplied {
-				err = errors.New("no message supplied")
+				err = errors.New("no `message` supplied")
 				return
 			}
 
+			roomID, roomIDSupplied := r.Form["id"]
 			if roomIDSupplied {
 				if _, roomExists := rm.Rooms[roomID[0]]; !roomExists {
-					err = errors.New("room doesn't exist")
+					err = errors.New("a room with that `id` does not exist")
 					return
 				}
 				rm.Rooms[roomID[0]].announce(message[0])
@@ -113,9 +112,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			maxClients := DefaultRoomSize
 			public := false
 
-			roomName, roomNameSupplied := r.Form["room_name"]
+			roomName, roomNameSupplied := r.Form["name"]
 			if !roomNameSupplied {
-				err = errors.New("no room name supplied")
+				err = errors.New("no `name` supplied")
 				return
 			}
 
@@ -124,25 +123,25 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				public = _public[0] == "true"
 			}
 
-			_maxClients, maxClientsSupplied := r.Form["room_size"]
+			_maxClients, maxClientsSupplied := r.Form["size"]
 			if maxClientsSupplied {
 				maxClients, err = strconv.Atoi(_maxClients[0])
 				if err != nil {
-					err = errors.New("size must be an integer value")
+					err = errors.New("`size` must be an integer value")
 					return
 				}
 				if maxClients < 1 {
-					err = errors.New("size is too small (min size is 1)")
+					err = errors.New("`size` is too small (min size is 1)")
 					return
 				}
 				if maxClients > MaxClientsPerRoom {
-					err = errors.New("size is too big (max size is " + strconv.Itoa(MaxClientsPerRoom) + ")")
+					err = errors.New("`size` is too big (max size is " + strconv.Itoa(MaxClientsPerRoom) + ")")
 					return
 				}
 			}
 
 			if _, roomExists := rm.Rooms[roomName[0]]; roomExists {
-				err = errors.New("a room already exists with that name")
+				err = errors.New("a room already exists with that `name`")
 				return
 			}
 
@@ -151,16 +150,16 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			response, err = json.Marshal("new room created with id '" + newRoom.ID + "'")
+			response, err = json.Marshal("new room created with `id` '" + newRoom.ID + "'")
 			return
 
 		case "close_room":
 			//default values
 			reason := "This room is being closed by the server."
 
-			roomID, roomIDSupplied := r.Form["room_id"]
+			roomID, roomIDSupplied := r.Form["id"]
 			if !roomIDSupplied {
-				err = errors.New("no id supplied")
+				err = errors.New("no `id` supplied")
 				return
 			}
 
@@ -170,7 +169,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			closeTime := 10 //seconds
-			_closeTime, closeTimeSupplied := r.Form["close_time"]
+			_closeTime, closeTimeSupplied := r.Form["time"]
 			if closeTimeSupplied {
 				closeTime, err = strconv.Atoi(_closeTime[0])
 				if err != nil {
@@ -179,12 +178,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			if _, roomExists := rm.Rooms[roomID[0]]; !roomExists {
-				err = errors.New("room doesn't exist")
+				err = errors.New("a room with that `id` does not exist")
 				return
 			}
 
 			if rm.Rooms[roomID[0]].Closing {
-				err = errors.New("room is already closing")
+				err = errors.New("a room with that `id` is already closing")
 				return
 			}
 
@@ -195,7 +194,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				time.Sleep(time.Duration(closeTime) * time.Second)
 				rm.closeRoom(roomID[0])
 			}(rm)
-			response, err = json.Marshal("closed room of id '" + roomID[0] + "'.")
+			response, err = json.Marshal("closed room of `id` '" + roomID[0] + "'.")
 			return
 
 		case "get_static_rooms":
@@ -227,10 +226,10 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		switch method[0] {
 
 		case "room_exists":
-			roomID, roomIDSupplied := r.Form["room_id"]
+			roomID, roomIDSupplied := r.Form["id"]
 
 			if !roomIDSupplied {
-				err = errors.New("no id supplied")
+				err = errors.New("no `id` supplied")
 				return
 			}
 

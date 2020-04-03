@@ -146,7 +146,7 @@ Server -> client
 
 ### room_exists
 
-`/api/?method=room_exists&room_id=ROOM_ID`
+`/api/?method=room_exists&id=ROOM_ID`
 
 If `ROOM_ID` exists, returns `true`. Otherwise `false`.
 
@@ -194,7 +194,7 @@ Returns a list of all the ids of the currently open rooms.
 
 ### get_room_state
 
-`/api/?token=API_TOKEN&method=get_room_state&room_id=ROOM_ID`
+`/api/?token=API_TOKEN&method=get_room_state&id=ROOM_ID`
 Returns the state of the `ROOM_ID` specified by marshalling the room object.
 
 ### get_static_rooms
@@ -239,17 +239,17 @@ Returns a list of static rooms including if they're public, their population and
 `/api/?token=API_TOKEN&method=announce&message=MESSAGE`
 Announces `MESSAGE` to ALL ROOMS - careful!
 
-`/api/?token=API_TOKEN&method=announce&message=MESSAGE&room_id=ROOM_ID`
+`/api/?token=API_TOKEN&method=announce&message=MESSAGE&id=ROOM_ID`
 Announces `MESSAGE` to the `ROOM_ID` specified.
 
 ### close_room
 
-`/api/?token=API_TOKEN&method=close_room&room_id=ROOM_ID&reason=REASON&close_time=TIME`
+`/api/?token=API_TOKEN&method=close_room&id=ROOM_ID&reason=REASON&time=TIME`
 Closes `ROOM_ID` and announces message `REASON` before closing the room after `TIME` seconds.
 
 ### create_static_room
 
-`/api/?token=API_TOKEN&method=create_static_room&room_name=ROOM_NAME&room_size=ROOM_SIZE`
+`/api/?token=API_TOKEN&method=create_static_room&name=ROOM_NAME&size=ROOM_SIZE`
 Creates a static room (continues to exist when there are no clients connected) with name `ROOM_NAME` and a max clients of `ROOM_SIZE`.
 
 
