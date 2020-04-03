@@ -72,16 +72,7 @@ main {
   min-height: 0;
   display: flex;
   flex-direction: column;
-
-  // @include md {
-  //   flex-direction: row;
-  // }
-  //
-  // > * {
-  //   @include md {
-  //     width: 50%;
-  //   }
-  // }
+  background: var(--background);
 }
 
 .view {
@@ -95,7 +86,7 @@ main {
 .nav {
   width: $sidebar-width;
   height: 100%;
-  border-right: 1px solid $almost-white;
+  border-right: $border-subtle;
 }
 
 .feed {
@@ -114,7 +105,7 @@ main {
 
 .hist {
   width: $ratio-width;
-  border-bottom: 1px solid $almost-white;
+  border-bottom: $border-subtle;
   height: calc(100% - #{$sidebar-width});
   margin-top: $sidebar-width;
 }
@@ -131,13 +122,13 @@ main {
 .keyboard {
   flex: 1 auto auto;
   min-height: 0;
-  border-top: 1px solid $almost-white;
+  border-top: $border-subtle;
 }
 
 .toolbox {
   grid-area: T;
   width: $sidebar-width;
-  border-right: 1px solid $almost-white;
+  border-right: $border-subtle;
 }
 
 .compose {

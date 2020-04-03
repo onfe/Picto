@@ -1,6 +1,16 @@
 <template>
   <section class="nav">
-    <ExitButton class="fix" />
+    <ul class="btn fix">
+      <li>
+        <router-link
+          title="Leave room"
+          class="home"
+          :to="{ name: 'join', params: { id: $route.params.id } }"
+        >
+          <font-awesome-icon class="icn" :icon="'door-open'" />
+        </router-link>
+      </li>
+    </ul>
     <hr />
     <ToggleButton
       @click.native="toggleInfo"
@@ -17,13 +27,11 @@
 
 <script>
 import ToggleButton from "@/components/ToggleButton.vue";
-import ExitButton from "@/components/ExitButton.vue";
 import InviteButton from "@/components/InviteButton.vue";
 import SidebarHistory from "@/components/SidebarHistory.vue";
 export default {
   components: {
     ToggleButton,
-    ExitButton,
     InviteButton,
     SidebarHistory
   },
@@ -52,9 +60,13 @@ section {
 
 hr {
   border: 0;
-  border-bottom: 1px solid $almost-white;
+  border-bottom: $border-subtle;
   width: 100%;
   margin: 0 0 $spacer 0;
+}
+
+.btn a {
+  color: var(--primary)
 }
 
 .fix {

@@ -28,7 +28,7 @@ export default {
 <style lang="scss" scoped>
 aside {
   z-index: 100;
-  border-bottom: 1px solid $almost-white;
+  border-bottom: $border-subtle;
   overflow: hidden;
   max-height: $sidebar-width;
 
@@ -42,7 +42,7 @@ aside {
 .wrap {
   position: relative;
   min-height: $sidebar-width;
-  background: #fff;
+  background: var(--background);
   padding: $spacer;
 }
 

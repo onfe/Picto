@@ -1,3 +1,5 @@
+$border-subtle: 1px solid var(--subtle);
+
 $sidebar-width: 8vmin;
 $ratio-width: calc(100vmin - #{$sidebar-width});
 $ratio-height: calc(#{$ratio-width} / 3);

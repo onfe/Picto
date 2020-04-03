@@ -8,7 +8,7 @@
   touch-action: manipulation;
   font-family: "pixel 5x7";
   font-size: 1.5em;
-  background: #fff;
+  background: var(--background);
   padding: $spacer / 2;
 
   span {
@@ -20,8 +20,8 @@
     flex: 1 0 0;
     padding: 0.25em;
     border-radius: $spacer;
-    border: $spacer / 2 solid #fff;
-    background: $almost-white;
+    border: $spacer / 2 solid var(--background);
+    background: var(--subtle);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -54,7 +54,6 @@
 
 // bit jank but ensures animation is consistent and immediate.
 .toolbox .keyboard {
-  background: $almost-white;
   animation: hi-fade-active 400ms;
   &:active {
     animation: none;

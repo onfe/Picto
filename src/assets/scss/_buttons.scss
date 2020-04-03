@@ -1,0 +1,39 @@
+.btn {
+  border-radius: $spacer;
+  overflow: hidden;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  background: var(--button);
+  margin-bottom: $spacer;
+  cursor: pointer;
+
+  &:last-of-type {
+    margin: 0;
+  }
+
+  li {
+    width: 100%;
+    padding-bottom: 100%;
+    position: relative;
+    border-bottom: 1px solid var(--background);
+
+    &:last-of-type {
+      border: 0;
+    }
+
+    .icn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: $spacer;
+    }
+
+    &.selected {
+      background: var(--button-selected)
+    }
+  }
+}

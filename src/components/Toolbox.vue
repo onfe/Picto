@@ -75,7 +75,7 @@ export default {
 section {
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: inherit;
   padding: $spacer;
 }
 

@@ -33,9 +33,7 @@ section {
 
 .cont {
   border-radius: $spacer;
-  padding: $spacer;
-  border: $spacer / 2 solid $grey-l;
-  background: $almost-white;
+  background: var(--button);
   height: 100%;
   display: flex;
   flex-direction: row;
@@ -44,10 +42,14 @@ section {
 
   a {
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
     text-align: center;
     font-family: "pixel 5x7";
     font-size: $spacer * 4;
-    border-right: $spacer / 2 solid $grey-l;
+    border-right: $spacer / 2 solid var(--background);
     user-select: none;
 
     &:last-of-type {

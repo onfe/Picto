@@ -58,14 +58,13 @@ ul {
   border: $spacer / 2 solid $grey-l;
   padding: 0 $spacer;
 
-  background: $almost-white;
+  background: var(--subtle);
 
   z-index: 1000;
 }
 
 // bit jank but ensures animation is consistent and immediate.
 .icn {
-  background: $almost-white;
   animation: hi-fade-active 400ms;
   &:active {
     animation: none;

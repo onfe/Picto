@@ -66,7 +66,6 @@ $perc-spacer: 1%;
   left: 0;
   width: 100%;
   height: 100%;
-  background: #fff;
   border-radius: $spacer;
   border: $spacer / 2 solid desaturate(darken(#e97777, 20%), 20%);
   overflow: hidden;
@@ -77,6 +76,11 @@ $perc-spacer: 1%;
   z-index: -1;
   width: 100%;
   height: 100%;
+  background: var(--message-background);
+
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .author {

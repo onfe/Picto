@@ -85,7 +85,7 @@ canvas {
   height: 100%;
   image-rendering: pixelated;
   touch-action: none;
-  background-image: linear-gradient($grey-l #{$spacer / 4}, transparent 0);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1) #{$spacer / 4}, transparent 0);
   background-size: 100% 19%;
   cursor: crosshair;
 }

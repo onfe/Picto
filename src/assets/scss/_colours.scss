@@ -1,0 +1,23 @@
+$background-light: #fff;
+$background-dark: #020203;
+
+$background-join-light: #f0f0f0;
+
+$subtle-light: darken($background-light, 6%);
+$subtle-dark: lighten($background-dark, 15%);
+
+$button-light: $subtle-light;
+$button-dark: $subtle-dark;
+
+$button-selected-light: darken($button-light, 20%);
+$button-selected-dark: lighten($button-dark, 15%);
+
+$message-background-light: $background-light;
+$message-background-dark: darken($background-light, 20%);
+
+
+$secondary-light: #4d4d4d;
+$secondary-dark: #4d4d4d;
+
+$primary-light: #000;
+$primary-dark: #eee;
