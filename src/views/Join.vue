@@ -12,10 +12,13 @@
       <PublicRooms v-if="!$route.params.id" />
     </div>
     <footer>
-      <div class="item">
-        <font-awesome-icon class="icn pad" icon="code-branch" />
-        <a href="https://github.com/onfe/Picto/releases">{{ version }}</a>
-      </div>
+      <UpdateManager
+        link="https://github.com/onfe/Picto/releases"
+        :version="version"
+        :status="$store.state.client.swStatus"
+        class="item"
+        @update="appUpdate"
+      />
       <div class="item">
         <font-awesome-icon class="icn pad" icon="bug" />
         <a
@@ -40,12 +43,14 @@
 <script>
 import JoinForm from "@/components/JoinForm.vue";
 import PublicRooms from "@/components/PublicRooms.vue";
+import UpdateManager from "@/components/UpdateManager.vue";
 
 export default {
   name: "join",
   components: {
     JoinForm,
-    PublicRooms
+    PublicRooms,
+    UpdateManager
   },
   metaInfo() {
     if (this.$route.params.id) {
@@ -57,6 +62,11 @@ export default {
   computed: {
     version() {
       return process.env.VUE_APP_VERSION;
+    }
+  },
+  methods: {
+    appUpdate() {
+      document.dispatchEvent(new CustomEvent("sw-perform-update"));
     }
   }
 };
@@ -97,6 +107,8 @@ footer {
   line-height: 1.2;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+
   .item {
     margin-right: 1rem;
     margin-top: 0.75rem;

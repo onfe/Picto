@@ -8,6 +8,11 @@
 export default {
   metaInfo: {
     title: "Picto - Draw & chat with friends"
+  },
+  created() {
+    document.addEventListener("sw-status", e => {
+      this.$store.dispatch("client/swUpdate", e.detail);
+    });
   }
 };
 </script>

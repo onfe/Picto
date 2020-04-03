@@ -18,15 +18,16 @@ if (process.env.NODE_ENV === "production") {
     },
     updatefound(r) {
       console.log("New content is downloading.");
+      window._worker = r;
       document.dispatchEvent(
-        new CustomEvent('sw-update-downloading', { detail: r })
+        new CustomEvent("sw-status", { detail: "update-preparing" })
       );
     },
     updated(r) {
       console.log("New content is available.");
-      window._r = r;
+      window._worker = r;
       document.dispatchEvent(
-        new CustomEvent('sw-update-ready', { detail: r })
+        new CustomEvent("sw-status", { detail: "update-ready" })
       );
     },
     offline() {
@@ -39,3 +40,14 @@ if (process.env.NODE_ENV === "production") {
     }
   });
 }
+
+window.document.addEventListener("sw-perform-update", () => {
+  if (window._worker) {
+    window._worker.waiting.postMessage({ type: "SKIP_WAITING" });
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      console.log("rf");
+      window.location.reload();
+    });
+  }
+});
