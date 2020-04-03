@@ -20,20 +20,8 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//Check the client was actually given a valid name.
-	if len(client.Name) > MaxClientNameLength {
-		err = errors.New("username too long")
-	} else if client.Name == "" {
-		err = errors.New("username not provided")
-	}
-	if err != nil {
-		log.Println("[JOIN FAIL] - Invalid username:", err)
-		client.Cancel(4400, err.Error())
-	}
-
-	if err == nil {
 		if !hasRoom { //Client is trying to create a new room.
-			newRoom, err := rm.createRoom("Picto Room", DefaultRoomSize, false, false)
+		newRoom, err := rm.createRoom("", DefaultRoomSize, false, false)
 			if err != nil {
 				/*Current possible errors here:
 				- The server has reached maximum rooms capacity.
