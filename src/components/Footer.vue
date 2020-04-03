@@ -49,7 +49,7 @@ section {
     text-align: center;
     font-family: "pixel 5x7";
     font-size: $spacer * 4;
-    border-right: $spacer / 2 solid var(--background);
+    border-right: $spacer solid var(--background);
     user-select: none;
 
     &:last-of-type {
