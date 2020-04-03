@@ -36,13 +36,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, tokenSupplied := r.Form["token"]
-
 	if tokenSupplied && token[0] != rm.apiToken {
-		log.Println("[API FAIL] - An attempt to query the API was made with an invalid token:", token[0])
-		response, err = json.Marshal("invalid token")
+		err = errors.New("invalid token: " + token[0])
 		return
+	}
 
-	} else if tokenSupplied && token[0] == rm.apiToken {
+	if tokenSupplied {
 		switch method[0] {
 
 		case "get_state":
@@ -127,7 +126,6 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			if maxClientsSupplied {
 				maxClients, err = strconv.Atoi(_maxClients[0])
 				if err != nil {
-					err = errors.New("`size` must be an integer value")
 					return
 				}
 				if maxClients < 1 {
@@ -156,6 +154,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		case "close_room":
 			//default values
 			reason := "This room is being closed by the server."
+			closeTime := 10 //seconds
 
 			roomID, roomIDSupplied := r.Form["id"]
 			if !roomIDSupplied {
@@ -168,11 +167,14 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				reason = _reason[0]
 			}
 
-			closeTime := 10 //seconds
 			_closeTime, closeTimeSupplied := r.Form["time"]
 			if closeTimeSupplied {
 				closeTime, err = strconv.Atoi(_closeTime[0])
 				if err != nil {
+					return
+				}
+				if closeTime < 0 {
+					err = errors.New("`time` is too small (min time is 0)")
 					return
 				}
 			}
