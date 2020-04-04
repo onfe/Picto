@@ -23,7 +23,7 @@ export default {
   font-size: $size-pixel;
   color: #fff;
   background: #000;
-  border: $spacer / 2 solid $grey-d;
+  border: $spacer / 2 solid var(--secondary);
   border-radius: $spacer;
 }
 </style>

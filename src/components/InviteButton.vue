@@ -55,7 +55,7 @@ ul {
   font-size: $size-pixel;
 
   border-radius: $spacer;
-  border: $spacer / 2 solid $grey-l;
+  border: $spacer / 2 solid var(--secondary);
   padding: 0 $spacer;
 
   background: var(--subtle);
