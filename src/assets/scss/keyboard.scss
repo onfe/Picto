@@ -61,5 +61,5 @@
   }
 }
 
-@include highlightFade("hi-fade-hover", "background", $grey-l, $almost-white);
-@include highlightFade("hi-fade-active", "background", $grey-l, $almost-white);
+@include highlightFade("hi-fade-hover", "background", var(--secondary), var(--button));
+@include highlightFade("hi-fade-active", "background", var(--secondary), var(--button));
