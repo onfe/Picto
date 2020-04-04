@@ -49,4 +49,9 @@ ul {
     flex-shrink: 0;
   }
 }
+:root.dark {
+  a {
+    filter:contrast(0.7) brightness(1.5) saturate(7.5);
+  }
+}
 </style>
