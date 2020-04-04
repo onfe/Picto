@@ -21,6 +21,16 @@
   --message-background: #{$message-background-dark};
 }
 
+:root.pink {
+  --background: #{$background-pink};
+  --subtle: #{$subtle-pink};
+  --button: #{$button-pink};
+  --button-selected: #{$button-selected-pink};
+  --secondary: #{$secondary-pink};
+  --primary: #{$primary-pink};
+  --message-background: #{$message-background-pink};
+}
+
 html {
   color: var(--primary);
 }

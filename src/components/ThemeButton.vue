@@ -1,30 +1,42 @@
 <template lang="html">
-  <ToggleButton
-    class="darkMode"
-    icon="moon"
-    iconActive="sun"
-    :active="theme == 'dark'"
-    @click.native="setTheme(theme == 'dark' ? 'light' : 'dark')"
-  />
+  <ul class="btn">
+    <li @click="setTheme(nextTheme)">
+      <font-awesome-icon class="icn" :icon="themeIcon" />
+    </li>
+  </ul>
 </template>
 
 <script>
-import ToggleButton from "@/components/ToggleButton.vue";
 export default {
-  components: {
-    ToggleButton
-  },
   data() {
     return {
-      theme: "light"
+      theme: "light",
+      themes: ["light", "dark", "pink"]
     };
+  },
+  computed: {
+    nextTheme() {
+      return this.themes[
+        (this.themes.indexOf(this.theme) + 1) % this.themes.length
+      ];
+    },
+    themeIcon() {
+      switch (this.theme) {
+        case "light":
+          return "sun";
+        case "dark":
+          return "moon";
+        case "pink":
+          return "ice-cream";
+      }
+      return "sun";
+    }
   },
   methods: {
     setTheme(theme) {
       this.theme = theme;
       document.getElementsByTagName("html")[0].setAttribute("class", theme);
       this.$cookies.set("theme", this.theme);
-      console.log(this.$cookies.get("theme"));
     }
   },
   mounted() {
