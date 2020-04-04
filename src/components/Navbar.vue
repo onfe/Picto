@@ -66,7 +66,7 @@ hr {
 }
 
 .btn a {
-  color: var(--primary)
+  color: var(--primary);
 }
 
 .fix {

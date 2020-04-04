@@ -22,6 +22,8 @@ Vue.use(VueAnalytics, {
   }
 });
 
+Vue.use(require("vue-cookies"));
+
 new Vue({
   store,
   router,

@@ -3,7 +3,8 @@
     <div class="wrap">
       <RoomTitle :edit="expand" />
       <div class="body">
-        <UserList />
+        <UserList class="userList" />
+        <ThemeButton class="themeButton" />
       </div>
     </div>
   </aside>
@@ -12,10 +13,12 @@
 <script>
 import UserList from "@/components/UserList.vue";
 import RoomTitle from "@/components/RoomTitle.vue";
+import ThemeButton from "@/components/ThemeButton.vue";
 export default {
   components: {
     UserList,
-    RoomTitle
+    RoomTitle,
+    ThemeButton
   },
   computed: {
     expand() {
@@ -48,5 +51,19 @@ aside {
 
 .body {
   font-family: monospace;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.userList {
+  flex-grow: 1;
+}
+
+.themeButton {
+  flex-shrink: 0;
+  height: $sidebar-width - (2 * $spacer);
+  width: $sidebar-width - (2 * $spacer);
+  margin: 0 $spacer;
 }
 </style>
