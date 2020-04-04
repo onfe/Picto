@@ -44,9 +44,10 @@ export default {
     if (this.$cookies.isKey("theme")) {
       this.setTheme(this.$cookies.get("theme"));
     } else {
-      //Otherwise we default to prefers-color-scheme
+      //Otherwise we default to prefers-color-scheme and don't set a cookie.
       if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        this.setTheme("dark");
+        this.theme = "dark";
+        document.getElementsByTagName("html")[0].setAttribute("class", "dark");
       } //Don't need to check prefers-color-scheme:light as light theme is default.
     }
   }
