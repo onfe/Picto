@@ -1,8 +1,19 @@
-# API & WebSocket Protocol
+# Websocket Protocol
+
+This document details the expected data structure of information sent down the websocket. 
 
 
 
-## WebSocket Protocol
+## Contents
+
+- [Wrapper](#wrapper)
+- [Payloads](#Payloads)
+- [Error Codes](#ErrorCodes)
+- [Message Encoding](#Message Encoding)
+
+
+
+## Wrapper
 
 Every message across the WebSocket must be contained in the following wrapper's `payload` field:
 
@@ -15,7 +26,7 @@ Client -> server
 }
 ```
 
-Server ​​-> client
+Server -> client
 
 ```json
 {
@@ -30,6 +41,8 @@ The server will be in charge of dating events as it receives them.
 `time` is in UNIX time to millisecond precision.
 
 
+
+## Payloads
 
 ### `init` - Joining a room
 
@@ -130,7 +143,7 @@ Server -> client
 
 
 
-## WebSocket Errors
+## Error Codes
 
 | Code | Description                                                  |
 | ---- | ------------------------------------------------------------ |
@@ -142,121 +155,7 @@ Server -> client
 
 
 
-## API - Public
-
-### room_exists
-
-`/api/?method=room_exists&id=ROOM_ID`
-
-If `ROOM_ID` exists, returns `true`. Otherwise `false`.
-
-
-
-### get_public_rooms
-
-`api/?method=get_public_rooms`
-
-Returns a list of public rooms including their population and capacity, as follows:
-
-```json
-[
-	{
-		"Name":"Parlor",
-		"Cap":64,
-		"Pop":12
-	},
-	{
-		"Name":"Library",
-		"Cap":64,
-		"Pop":43
-	},
-	{
-		"Name":"Garden",
-		"Cap":64,
-		"Pop":27
-	}
-]
-```
-
-The response is ordered and should be displayed in the order it is received.
-
-
-
-## API - Private
-
-### get_state
-
-`/api/?token=API_TOKEN&method=get_state`
-Returns the state of the entire server by marshalling the roomManager. Not permitted in prod.
-
-### get_room_ids
-
-`/api/?token=API_TOKEN&method=get_room_ids`
-Returns a list of all the ids of the currently open rooms.
-
-### get_room_state
-
-`/api/?token=API_TOKEN&method=get_room_state&id=ROOM_ID`
-Returns the state of the `ROOM_ID` specified by marshalling the room object.
-
-### get_static_rooms
-
-`/api/?token=API_TOKEN&method=get_static_rooms`
-
-Returns a list of static rooms including if they're public, their population and capacity as follows:
-
-```json
-[
-	{
-		"Name":"Parlor",
-		"Public":true,
-		"Cap":64,
-		"Pop":0
-	},
-	{
-		"Name":"Library",
-		"Public":true,
-		"Cap":64,
-		"Pop":0
-	},
-	{
-		"Name":"Garden",
-		"Public":true,
-		"Cap":64,
-		"Pop":0
-	},
-	{
-		"Name":"Hidden Static Room",
-		"Public":false,
-		"Cap":16,
-		"Pop":0
-	}
-]
-```
-
-
-
-### announce
-
-`/api/?token=API_TOKEN&method=announce&message=MESSAGE`
-Announces `MESSAGE` to ALL ROOMS - careful!
-
-`/api/?token=API_TOKEN&method=announce&message=MESSAGE&id=ROOM_ID`
-Announces `MESSAGE` to the `ROOM_ID` specified.
-
-### close_room
-
-`/api/?token=API_TOKEN&method=close_room&id=ROOM_ID&reason=REASON&time=TIME`
-Closes `ROOM_ID` and announces message `REASON` before closing the room after `TIME` seconds.
-
-### create_static_room
-
-`/api/?token=API_TOKEN&method=create_static_room&name=ROOM_NAME&size=ROOM_SIZE`
-Creates a static room (continues to exist when there are no clients connected) with name `ROOM_NAME` and a max clients of `ROOM_SIZE`.
-
-
-
-# Message Encoding
+## Message Encoding
 
 A byte is used per pixel.
 
@@ -268,4 +167,6 @@ A byte is used per pixel.
 | 4-62  | Rainbow colours                           |
 | 63    | RLE encoding start character              |
 
-RLE encoding is `255 [counts] 0 [value]` where the total count is the sum of `counts`, plus 4 (if four or less characters are repeated they're not RLE'd as it'd be less efficient, and 0 is an illegal character in `[counts]`, so we know there's at least 5). The sum of `[counts]` is used as opposed to a product as to avoid having to complicate message checking for illegally large images
+RLE encoding is `255 [counts] 0 [value]` where the total count is the sum of `counts`, plus 4 (if four or less characters are repeated they're not RLE'd as it'd be less efficient, and 0 is an illegal character in `[counts]`, so we know there's at least 5). The sum of `[counts]` is used as opposed to a product as to avoid having to complicate message checking for illegally large images.
+
+The RLE decoder will cut off as soon as the current count sums to more than the canvas size, or the image length becomes longer than the canvas size.
