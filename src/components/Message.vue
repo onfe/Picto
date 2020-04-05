@@ -9,11 +9,15 @@
         <span v-if="copyable" class="copy" title="Copy this message">
           <font-awesome-icon @click="$emit('copy')" class="icn" icon="copy" />
         </span>
-        <span v-if="copyable" class="hide" title="Hide this message">
+        <span
+          v-if="copyable"
+          class="hide"
+          :title="(this.hidden ? 'Show' : 'Hide') + ' this message'"
+        >
           <font-awesome-icon
             @click="$emit('hide')"
             class="icn"
-            icon="eye-slash"
+            :icon="this.hidden ? 'eye' : 'eye-slash'"
           />
         </span>
       </div>
