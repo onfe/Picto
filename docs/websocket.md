@@ -8,8 +8,8 @@ This document details the expected data structure of information sent down the w
 
 - [Wrapper](#wrapper)
 - [Payloads](#Payloads)
-- [Error Codes](#Error Codes)
-- [Message Encoding](#Message Encoding)
+- [Error Codes](#Error-Codes)
+- [Message Encoding](#Message-Encoding)
 
 
 
