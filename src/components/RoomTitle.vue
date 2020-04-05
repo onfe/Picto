@@ -90,6 +90,7 @@ export default {
     border: 1px solid $grey-l;
     border-radius: $spacer;
     height: $sidebar-width - $spacer;
+    background: var(--message-background);
   }
 }
 </style>
