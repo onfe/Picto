@@ -7,6 +7,8 @@ class Sketchpad {
     this.height = height;
     this.notepad = new Notepad(width, height, canvas);
 
+    /**pensize is the radius around the pen that's drawn.
+     * A radius of 0 is just a single pixel. */
     this.pensize = 0;
 
     this.rainbowMode = false;
@@ -44,10 +46,10 @@ class Sketchpad {
     };
 
     /*Text styling */
-    this.textMargin = 4;
-    this.lineSpacing = 12;
+    this.textMargin = 4; //The margin around the edge of the canvas that may not be filled with text.
+    this.lineSpacing = 12; //The height of a line in pixels.
 
-    this.nameWidth = nameWidth || 0;
+    this.nameWidth = nameWidth || 0; //The width of the nametag on the canvas in pixels.
 
     this.cursorPos = [
       Math.round(this.width * this.nameWidth) + this.textMargin,
