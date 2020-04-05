@@ -8,7 +8,7 @@ Send doodles to your friends and chat with Picto, the scribble-powered online me
 
 Picto is a drawing-based chat client, built with Vue.js and Golang. It makes use of WebSockets for real-time updates, and modern browser technologies for responsive, fluid design.
 
-Go was chosen for the backend for it's performance and low memory usage, in comparison with Node.js.
+Go was chosen for the back-end for it's performance and low memory usage, in comparison with Node.js.
 
 ### Usage
 
@@ -22,7 +22,9 @@ To leave the room, click the open door icon.
 
 All documentation can either be found in this document ([README.md](README.md)) or in the [docs folder](docs).
 
-- [API.md](docs/API.md) contains information about the WebSocket protocol, and the HTTP API.
+- [websocket.md](docs/websocket.md) contains information about the websocket protocol.
+- [api-public.md](docs/api-public.md) contains information about the public HTTP API.
+- [api-private.md](docs/api-private.md) contains information about the private HTTP API.
 
 ## :beetle: ​Issues
 
