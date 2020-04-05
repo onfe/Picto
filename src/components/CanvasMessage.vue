@@ -5,8 +5,10 @@
     :copyable="true"
     :author="msg.author"
     :colour="msg.colour"
+    :hidden="msg.hidden"
   >
-    <canvas :id="getID"></canvas>
+    <canvas v-show="!msg.hidden" :id="getID"></canvas>
+    <div v-if="msg.hidden" class="canvasCover">Hidden</div>
   </Message>
 </template>
 
@@ -34,7 +36,7 @@ export default {
       this.$store.dispatch("compose/copy", this.msg);
     },
     handleHide() {
-      this.$store.dispatch("messages/delete", this.msg);
+      this.$store.dispatch("messages/toggleHidden", this.msg);
     }
   },
   mounted() {
@@ -46,12 +48,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-canvas {
+$perc-spacer: 1%;
+
+canvas, .canvasCover {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   image-rendering: pixelated;
+}
+.canvasCover {
+  font-family: "pixel 5x7";
+  padding: $perc-spacer;
+  font-size: $size-pixel;
+  line-height: 0.625;
+  text-align: center;
+  color:#000;
 }
 </style>

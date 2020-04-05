@@ -39,8 +39,8 @@ const actions = {
   reset: ({ commit }) => {
     commit("reset");
   },
-  delete: ({ commit }, msg) => {
-    commit("delete", msg);
+  toggleHidden: ({ commit }, msg) => {
+    commit("toggleHidden", msg);
   }
 };
 
@@ -50,10 +50,10 @@ const mutations = {
     state.history.sort((a, b) => b.time - a.time);
     state.history.length = Math.min(state.history.length, 32);
   },
-  delete: (state, message) => {
+  toggleHidden: (state, message) => {
     for (var i = 0; i < state.history.length; i++) {
       if (state.history[i].hash == message.hash) {
-        state.history.splice(i, 1);
+        state.history[i].hidden = !state.history[i].hidden;
         return;
       }
     }

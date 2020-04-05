@@ -1,5 +1,5 @@
 <template lang="html">
-  <div class="ratio">
+  <div :class="'ratio ' + (this.hidden ? 'hidden' : '')">
     <div class="inner" v-bind:style="{ borderColor: this.borderCol }">
       <div
         class="author"
@@ -39,6 +39,10 @@ export default {
     copyable: {
       type: Boolean,
       default: false
+    },
+    hidden: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -57,6 +61,9 @@ $perc-spacer: 1%;
 .ratio {
   position: relative;
   padding-bottom: 33.333%;
+}
+.ratio.hidden {
+  padding-bottom: 6.5 * $spacer;
 }
 
 .inner {

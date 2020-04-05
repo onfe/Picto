@@ -17,6 +17,7 @@ class Message extends Core {
     this.span = span;
     this.author = author;
     this.colour = colour;
+    this.hidden = false;
   }
 
   get data() {
