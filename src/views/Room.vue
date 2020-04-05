@@ -48,6 +48,12 @@ export default {
   mounted() {
     if (this.$store.state.client.room == null) {
       this.$router.replace(`/join/${this.$route.params.id}`);
+      document.addEventListener(
+        "visibilitychange",
+        function() {
+          this.$store.dispatch("messages/read");
+        }.bind(this)
+      );
     }
   },
   beforeDestroy() {
@@ -55,8 +61,12 @@ export default {
   },
   metaInfo() {
     if (this.$route.params.id) {
+      var unread = this.$store.state.messages.unread;
       return {
-        title: this.$store.getters["client/roomTitle"] + " - Picto"
+        title:
+          (unread > 0 ? "(" + unread + " Unread) " : "") +
+          this.$store.getters["client/roomTitle"] +
+          " - Picto"
       };
     }
   }

@@ -3,7 +3,8 @@ import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
 import { Message, Announcement, Text } from "../assets/js/message.js";
 
 const state = {
-  history: []
+  history: [],
+  unread: 0
 };
 
 const getters = {};
@@ -41,11 +42,17 @@ const actions = {
   },
   toggleHidden: ({ commit }, msg) => {
     commit("toggleHidden", msg);
+  },
+  read: ({ commit }) => {
+    commit("read");
   }
 };
 
 const mutations = {
   add: (state, message) => {
+    if (document.visibilityState == "hidden") {
+      state.unread++;
+    }
     state.history.unshift(message);
     state.history.sort((a, b) => b.time - a.time);
     state.history.length = Math.min(state.history.length, 32);
@@ -60,6 +67,9 @@ const mutations = {
   },
   reset: state => {
     state.history = [];
+  },
+  read: state => {
+    state.unread = 0;
   }
 };
 
