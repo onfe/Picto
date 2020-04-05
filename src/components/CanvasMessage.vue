@@ -50,7 +50,8 @@ export default {
 <style lang="scss" scoped>
 $perc-spacer: 1%;
 
-canvas, .canvasCover {
+canvas,
+.canvasCover {
   position: absolute;
   top: 0;
   left: 0;
@@ -64,6 +65,6 @@ canvas, .canvasCover {
   font-size: $size-pixel;
   line-height: 0.625;
   text-align: center;
-  color:#000;
+  color: #000;
 }
 </style>
