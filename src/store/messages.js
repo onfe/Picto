@@ -50,7 +50,7 @@ const actions = {
 
 const mutations = {
   add: (state, message) => {
-    if (document.visibilityState == "hidden") {
+    if (document.hidden) {
       state.unread++;
     }
     state.history.unshift(message);

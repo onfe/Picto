@@ -48,12 +48,9 @@ export default {
   mounted() {
     if (this.$store.state.client.room == null) {
       this.$router.replace(`/join/${this.$route.params.id}`);
-      document.addEventListener(
-        "visibilitychange",
-        function() {
-          this.$store.dispatch("messages/read");
-        }.bind(this)
-      );
+      document.onvisibilitychange = function() {
+        this.$store.dispatch("messages/read");
+      }.bind(this);
     }
   },
   beforeDestroy() {
