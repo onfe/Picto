@@ -86,7 +86,7 @@ func main() {
 	port, portSet := os.LookupEnv("PORT")
 	if !portSet {
 		log.Println("[ENV VAR] - PORT not set, defaulting to 8080")
-		port = ":8080"
+		port = "8080"
 	}
 
 	//Creating room manager instance
@@ -116,5 +116,5 @@ func main() {
 	http.HandleFunc("/ws", roomManager.ServeWs)
 	http.HandleFunc("/api/", roomManager.ServeAPI)
 	log.Println("Serving on port " + port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
