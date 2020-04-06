@@ -123,7 +123,7 @@ footer {
     }
 
     a:hover {
-      color: var(--primary-join);;
+      color: var(--primary-join);
     }
   }
 }
