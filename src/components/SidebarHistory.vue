@@ -55,7 +55,7 @@ ul {
 }
 :root.dark {
   a.Announcement-pip {
-    border: 1px solid var(--secondary);
+    border: $spacer / 4 solid var(--secondary);
   }
 }
 </style>

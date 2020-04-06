@@ -81,6 +81,7 @@ export default {
 .update {
   font-family: inherit;
   background: $green-d;
+  cursor: pointer;
   padding: 0.25em;
   margin: -0.25em;
   border: 0;

@@ -195,10 +195,14 @@ p {
   line-height: 1.2;
 }
 
+.join-form {
+  color: var(--primary-join);
+}
+
 .home {
   line-height: 1.2;
   display: block;
-  color: $grey;
+  color: var(--secondary-join);
   font-size: 0.85rem;
   margin-block-start: 1em;
   margin-block-end: 1em;

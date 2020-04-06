@@ -13,6 +13,11 @@ export default {
     document.addEventListener("sw-status", e => {
       this.$store.dispatch("client/swUpdate", e.detail);
     });
+  },
+  mounted() {
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      document.getElementsByTagName("html")[0].setAttribute("class", "dark");
+    }
   }
 };
 </script>

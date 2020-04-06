@@ -75,7 +75,8 @@ export default {
 <style lang="scss" scoped>
 .join {
   min-height: 100%;
-  background-color: $almost-white;
+  background-color: var(--background-join);
+  color: var(--primary-join);
 
   background-image: url("/img/stripe.svg");
   background-repeat: repeat-y;
@@ -98,11 +99,11 @@ footer {
 
   font-family: monospace;
   font-size: 1.2rem;
-  color: $grey-d;
+  color: var(--primary-join);
 }
 
 footer {
-  color: $grey;
+  color: var(--secondary-join);
   font-size: 0.75rem;
   line-height: 1.2;
   display: flex;
@@ -117,19 +118,19 @@ footer {
     }
 
     a {
-      color: $grey;
+      color: var(--secondary-join);
       transition: color 200ms ease-in-out;
     }
 
     a:hover {
-      color: $grey-d;
+      color: var(--primary-join);;
     }
   }
 }
 
 hr {
   border: 0;
-  border-bottom: 1px dashed $grey-l;
+  border-bottom: 1px dashed var(--secondary-join);
 }
 
 p {
@@ -138,7 +139,7 @@ p {
 }
 
 a {
-  color: $grey-d;
+  color: var(--primary-join);
   text-decoration: underline;
   text-decoration-style: dotted;
 }
