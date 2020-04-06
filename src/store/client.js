@@ -97,6 +97,9 @@ const actions = {
     commit("updateError", "");
   },
   swUpdate: ({ commit }, type) => {
+    if (type == "offline") {
+      commit("updateError", "Picto is offline.");
+    }
     commit("swUpdate", type);
   }
 };
