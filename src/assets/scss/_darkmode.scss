@@ -1,0 +1,42 @@
+@import 'colours';
+
+:root {
+  --background: #{$background-light};
+  --subtle: #{$subtle-light};
+  --button: #{$button-light};
+  --button-selected: #{$button-selected-light};
+  --secondary: #{$secondary-light};
+  --primary: #{$primary-light};
+  --message-background: #{$message-background-light};
+  --background-join: #{$background-join-light};
+  --primary-join: #{$grey-d};
+  --secondary-join: #{$grey};
+}
+
+//More themes could be added in the future :)
+:root.dark {
+  --background: #{$background-dark};
+  --subtle: #{$subtle-dark};
+  --button: #{$button-dark};
+  --button-selected: #{$button-selected-dark};
+  --secondary: #{$secondary-dark};
+  --primary: #{$primary-dark};
+  --message-background: #{$message-background-dark};
+  --background-join: #{$background-join-dark};
+  --primary-join: #{$grey-l};
+  --secondary-join: #{$grey};
+}
+
+:root.pink {
+  --background: #{$background-pink};
+  --subtle: #{$subtle-pink};
+  --button: #{$button-pink};
+  --button-selected: #{$button-selected-pink};
+  --secondary: #{$secondary-pink};
+  --primary: #{$primary-pink};
+  --message-background: #{$message-background-pink};
+}
+
+html {
+  color: var(--primary);
+}

@@ -46,7 +46,7 @@ func getFileHandler(h http.Handler) http.HandlerFunc {
 
 		if customResponseWriter.status == 404 {
 			log.Println("[REDIRECT] - To index.html, from:", r.RequestURI)
-			data, _ := ioutil.ReadFile("client/dist/index.html")
+			data, _ := ioutil.ReadFile("dist/index.html")
 			w.Header().Set("Content-Type", "text/html")
 			http.ServeContent(w, r, "index.html", time.Now(), bytes.NewReader(data))
 		}
@@ -78,11 +78,23 @@ func main() {
 	//Loading words list
 	wordsList := loadWordsList("words.txt")
 
+	//Getting env var values
+	apiToken, tokenSet := os.LookupEnv("API_TOKEN")
+	if !tokenSet {
+		log.Println("[ENV VAR] - API_TOKEN not set, defaulting to 'dev'")
+	}
+	port, portSet := os.LookupEnv("PORT")
+	if !portSet {
+		log.Println("[ENV VAR] - PORT not set, defaulting to 8080")
+		port = ":8080"
+	}
+
 	//Creating room manager instance
-	apiToken, prod := os.LookupEnv("API_TOKEN") //in prod if API_TOKEN env variable is set.
-	if prod {
+	if tokenSet && portSet { //Only in prod if both API_TOKEN and PORT env variables are set.
+		log.Println("[ROOM MANAGER] - Creating room manager in PROD mode")
 		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList, "PUBLIC_ROOMS")
 	} else {
+		log.Println("[ROOM MANAGER] - Creating room manager in DEV mode")
 		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList, "PUBLIC_ROOMS")
 	}
 
@@ -91,7 +103,7 @@ func main() {
 	if seeded {
 		seed, err := strconv.ParseInt(seedString, 10, 64)
 		if err != nil {
-			log.Println("RAND_SEED set incorrectly (should be int64)")
+			log.Println("[ENV VAR] - RAND_SEED set incorrectly (should be int64)")
 		}
 		if err == nil {
 			rand.Seed(seed)
@@ -99,15 +111,10 @@ func main() {
 	}
 
 	//Setting up routing
-	fs := getFileHandler(http.FileServer(http.Dir("client/dist")))
+	fs := getFileHandler(http.FileServer(http.Dir("dist")))
 	http.Handle("/", fs)
 	http.HandleFunc("/ws", roomManager.ServeWs)
 	http.HandleFunc("/api/", roomManager.ServeAPI)
-
-	address := ":8080"
-	if prod {
-		address = ":" + os.Getenv("PORT")
-	}
-
-	log.Fatal(http.ListenAndServe(address, nil))
+	log.Println("Serving on port " + port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }

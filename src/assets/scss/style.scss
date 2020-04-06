@@ -1,0 +1,45 @@
+@import 'darkmode';
+@import 'buttons';
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+
+  font-size: 16px;
+  min-height: 0;
+
+  line-height: 1;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+@font-face {
+    font-family: 'pixel 5x7';
+    src: url('../font/generic-pixel-font-5x7-neue.woff2') format('woff2'),
+         url('../font/generic-pixel-font-5x7-neue.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.font-pixel {
+  font-family: "pixel 5x7";
+  line-height: 0.625;
+}
+
+.sr-only {
+  border: 0;
+  clip: rect(0,0,0,0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  width: 1px;
+}

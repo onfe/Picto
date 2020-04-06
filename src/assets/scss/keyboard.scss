@@ -1,0 +1,65 @@
+@import 'vars';
+
+.picto-keyboard {
+  width: 100%;
+  user-select: none;
+  box-sizing: border-box;
+  overflow: hidden;
+  touch-action: manipulation;
+  font-family: "pixel 5x7";
+  font-size: 1.5em;
+  background: var(--background);
+  padding: $spacer / 2;
+
+  span {
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .hg-button {
+    flex: 1 0 0;
+    padding: 0.25em;
+    border-radius: $spacer;
+    border: $spacer / 2 solid var(--background);
+    background: var(--subtle);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+    // Use :hover instead of :active as active isn't fast nor reliable enough.
+    &:hover {
+      animation: hi-fade-hover 400ms;
+    }
+
+    // Apply *not the same* animation again, to avoid no anim on double press,
+    // Due to the sticky :hover behaviour on mobile.
+    &:active {
+      animation: hi-fade-active 400ms;
+    }
+  }
+
+  .hg-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .small {
+    flex-grow: 0;
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+}
+
+// bit jank but ensures animation is consistent and immediate.
+.toolbox .keyboard {
+  animation: hi-fade-active 400ms;
+  &:active {
+    animation: none;
+    animation: hi-fade-hover 400ms;
+  }
+}
+
+@include highlightFade("hi-fade-hover", "background", var(--secondary), var(--button));
+@include highlightFade("hi-fade-active", "background", var(--secondary), var(--button));

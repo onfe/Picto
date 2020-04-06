@@ -12,20 +12,23 @@ type Room struct {
 	ID          string         `json:"ID"`
 	Name        string         `json:"Name"`
 	Static      bool           `json:"Static"`
+	Public      bool           `json:"Public"`
 	Clients     []*Client      `json:"Clients"`
 	ClientCount int            `json:"ClientCount"`
 	MaxClients  int            `json:"MaxClients"`
 	EventCache  *CircularQueue `json:"EventCache"`
 	LastUpdate  time.Time      `json:"LastUpdate"`
-	Closing     bool
+	Closing     bool           `json:"Closing"`
+	CloseTime   time.Time      `json:"CloseTime"`
 }
 
-func newRoom(manager *RoomManager, roomID string, name string, static bool, maxClients int) *Room {
+func newRoom(manager *RoomManager, roomID string, name string, static bool, public bool, maxClients int) *Room {
 	r := Room{
 		manager:     manager,
 		ID:          roomID,
-		Name:        "",
+		Name:        name,
 		Static:      static,
+		Public:      public,
 		Clients:     make([]*Client, maxClients),
 		ClientCount: 0,
 		MaxClients:  maxClients,
@@ -51,7 +54,7 @@ func (r *Room) getClientNames() []string {
 }
 
 func (r *Room) addClient(c *Client) error {
-	if r.ClientCount < r.MaxClients && r.ClientCount >= 0 {
+	if r.ClientCount < r.MaxClients {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
 		r.ClientCount++
 
@@ -100,13 +103,10 @@ func (r *Room) addClient(c *Client) error {
 				e := E.(*EventWrapper)
 				//currentTime is UNIX time in millisecond precision.
 				currentTime := time.Now().UnixNano() / int64(time.Millisecond)
-				if !r.Static ||
-					(r.Static &&
+				if !r.Public ||
+					(r.Public &&
 						(e.Time > currentTime-StaticMessageTimeout)) {
-					log.Println(currentTime, e.Time, StaticMessageTimeout)
 					c.sendBuffer <- e.toBytes()
-				} else {
-					log.Println("Ignored a message in the cache!")
 				}
 			}
 		}

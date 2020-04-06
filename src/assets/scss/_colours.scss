@@ -1,0 +1,31 @@
+$background-light: #fff;
+$background-dark: #020203;
+$background-pink: rgb(255, 240, 251);
+
+$background-join-light: #f0f0f0;
+$background-join-dark: #222;
+
+$subtle-light: darken($background-light, 6%);
+$subtle-dark: lighten($background-dark, 15%);
+$subtle-pink: darken($background-pink, 10%);
+
+$button-light: $subtle-light;
+$button-dark: $subtle-dark;
+$button-pink: $subtle-pink;
+
+$button-selected-light: darken($button-light, 20%);
+$button-selected-dark: lighten($button-dark, 15%);
+$button-selected-pink: darken($button-pink, 40%);
+
+$message-background-light: $background-light;
+$message-background-dark: darken($background-light, 20%);
+$message-background-pink: $background-light;
+
+
+$secondary-light: #4d4d4d;
+$secondary-dark: #4d4d4d;
+$secondary-pink: $button-selected-pink;
+
+$primary-light: #000;
+$primary-dark: #eee;
+$primary-pink: #000;
