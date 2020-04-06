@@ -34,10 +34,10 @@ class Sketchpad {
       "pointerdown",
       this.drawPix.bind(this)
     );
-    this.notepad.canvas.addEventListener(
-      "pointerleave",
-      this.resetMousePos.bind(this)
-    );
+    this.notepad.canvas.addEventListener("pointerleave", () => {
+      this.mousedown = false;
+      this.resetMousePos.bind(this);
+    });
 
     /**imageData is all the drawn pixels and baked text */
     this.imageData = {
