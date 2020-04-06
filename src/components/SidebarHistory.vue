@@ -6,6 +6,7 @@
       :style="getStyle(msg)"
       :id="getID(msg)"
       :href="getHref(msg)"
+      :class="getType(msg)"
     ></a>
   </ul>
 </template>
@@ -26,6 +27,9 @@ export default {
     },
     getStyle(msg) {
       return "background: " + msg.colour;
+    },
+    getType(msg) {
+      return msg.type + "-pip";
     }
   }
 };
@@ -50,8 +54,8 @@ ul {
   }
 }
 :root.dark {
-  a {
-    filter: contrast(0.7) brightness(1.5) saturate(7.5);
+  a.Announcement-pip {
+    border: 1px solid var(--secondary);
   }
 }
 </style>
