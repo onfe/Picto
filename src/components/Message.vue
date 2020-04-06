@@ -6,8 +6,16 @@
         v-bind:style="{ background: this.colour, borderColor: this.borderCol }"
       >
         <span>{{ author }}</span>
-        <span v-if="copyable" class="copy" title="Copy this message">
-          <font-awesome-icon @click="$emit('copy')" class="icn" icon="copy" />
+        <span
+          v-if="copyable"
+          class="copy"
+          :title="'Copy this message' + (this.hidden ? ' (disabled)' : '')"
+        >
+          <font-awesome-icon
+            @click="!hidden ? $emit('copy') : null"
+            class="icn"
+            icon="copy"
+          />
         </span>
         <span
           v-if="copyable"
