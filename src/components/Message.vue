@@ -7,7 +7,7 @@
       >
         <span>{{ author }}</span>
         <span
-          v-if="copyable"
+          v-if="copyable && !hidden"
           class="copy"
           :title="'Copy this message' + (this.hidden ? ' (disabled)' : '')"
         >
