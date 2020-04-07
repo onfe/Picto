@@ -21,8 +21,8 @@ type StaticRoom struct {
 	CloseTime  time.Time `json:"CloseTime"`
 }
 
-func newStaticRoom(manager *RoomManager, name string, public bool, maxClients int) *Room {
-	r := Room{
+func newStaticRoom(manager *RoomManager, name string, maxClients int) *StaticRoom {
+	r := StaticRoom{
 		manager: manager,
 
 		Name: name,
