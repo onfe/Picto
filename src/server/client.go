@@ -205,7 +205,7 @@ func (c *Client) recieveLoop() {
 
 func (c *Client) recieve(e *EventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
-	if (c.room.Static && time.Since(c.LastMessage) > MinMessageIntervalStatic) ||
+	if (c.room.Public && time.Since(c.LastMessage) > MinMessageIntervalPublic) ||
 		(!c.room.Static && time.Since(c.LastMessage) > MinMessageInterval) {
 		c.LastMessage = time.Now()
 		h := sha1.New()

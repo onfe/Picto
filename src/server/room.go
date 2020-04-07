@@ -1,40 +1,34 @@
 package server
 
 import (
-	"errors"
-	"log"
 	"time"
 )
 
 //Room is a struct that holds all the info about a singular picto room.
 type Room struct {
-	manager     *RoomManager
-	ID          string         `json:"ID"`
-	Name        string         `json:"Name"`
-	Static      bool           `json:"Static"`
-	Public      bool           `json:"Public"`
-	Clients     []*Client      `json:"Clients"`
-	ClientCount int            `json:"ClientCount"`
-	MaxClients  int            `json:"MaxClients"`
-	EventCache  *CircularQueue `json:"EventCache"`
-	LastUpdate  time.Time      `json:"LastUpdate"`
-	Closing     bool           `json:"Closing"`
-	CloseTime   time.Time      `json:"CloseTime"`
+	manager       *RoomManager
+	ID            string         `json:"ID"`
+	Name          string         `json:"Name"`
+	Static        bool           `json:"Static"`
+	Public        bool           `json:"Public"`
+	ClientManager *ClientManager `json:"ClientManager"`
+	EventCache    *CircularQueue `json:"EventCache"`
+	LastUpdate    time.Time      `json:"LastUpdate"`
+	Closing       bool           `json:"Closing"`
+	CloseTime     time.Time      `json:"CloseTime"`
 }
 
 func newRoom(manager *RoomManager, roomID string, name string, static bool, public bool, maxClients int) *Room {
 	r := Room{
-		manager:     manager,
-		ID:          roomID,
-		Name:        name,
-		Static:      static,
-		Public:      public,
-		Clients:     make([]*Client, maxClients),
-		ClientCount: 0,
-		MaxClients:  maxClients,
-		EventCache:  newCircularQueue(ChatHistoryLen),
-		LastUpdate:  time.Now(),
-		Closing:     false,
+		manager:       manager,
+		ID:            roomID,
+		Name:          name,
+		Static:        static,
+		Public:        public,
+		ClientManager: newClientManager(maxClients),
+		EventCache:    newCircularQueue(ChatHistoryLen),
+		LastUpdate:    time.Now(),
+		Closing:       false,
 	}
 	return &r
 }
@@ -44,113 +38,84 @@ func (r *Room) getDetails() string {
 }
 
 func (r *Room) getClientNames() []string {
-	names := make([]string, r.MaxClients)
-	for i, user := range r.Clients {
-		if user != nil {
-			names[i] = user.Name
-		}
-	}
-	return names
+	return r.ClientManager.getClientNames()
 }
 
 func (r *Room) addClient(c *Client) error {
-	if r.ClientCount < r.MaxClients {
-		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
-		r.ClientCount++
-
-		//Checking that the client's desired name is not already taken.
-		for _, client := range r.Clients {
-			if client != nil && client.Name == c.Name {
-				//If it is, then ClientCount can be decremented as they've failed to join the room.
-				r.ClientCount--
-				return errors.New("username already taken in this room")
-			}
-		}
-
-		//Generating an ID for the new client.
-		newClientID := 0
-		for r.Clients[newClientID] != nil {
-			//Modulo is added just in case some fucky asynchronisation causes us to run over the end of the list.
-			newClientID = (newClientID + 1) % r.MaxClients
-		}
-
-		//Now that the client has successfully been added to the server, the LastUpdate can be updated to now.
-		r.LastUpdate = time.Now()
-
-		/*
-			2 * the apropriate min message interval is subtracted from the client's lastmessage time to ensure they
-			can immediately send a message upon join.
-		*/
-		if r.Static {
-			c.LastMessage = c.LastMessage.Add(-2 * MinMessageIntervalStatic)
-		} else {
-			c.LastMessage = c.LastMessage.Add(-2 * MinMessageInterval)
-		}
-
-		/*
-			The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
-			To do this, an array of strings of all the clients' usernames (including the new client's) has to be constructed.
-		*/
-		clientNames := r.getClientNames()
-		clientNames[newClientID] = c.Name
-
-		//Updating the new client as to the room state with an init event.
-		c.sendBuffer <- newInitEvent(r.ID, r.Name, r.Static, newClientID, clientNames).toBytes()
-
-		//Updating the new client with all the messages from the message cache.
-		for _, E := range r.EventCache.getAll() {
-			if E != nil {
-				e := E.(*EventWrapper)
-				//currentTime is UNIX time in millisecond precision.
-				currentTime := time.Now().UnixNano() / int64(time.Millisecond)
-				if !r.Public ||
-					(r.Public &&
-						(e.Time > currentTime-StaticMessageTimeout)) {
-					c.sendBuffer <- e.toBytes()
-				}
-			}
-		}
-
-		//The new client is added to the room's clients array.
-		r.Clients[newClientID] = c
-		r.Clients[newClientID].ID = newClientID
-
-		//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
-		r.distributeEvent(newUserEvent(newClientID, c.Name, clientNames), true, -1)
-
-		return nil
+	err := r.ClientManager.addClient(c)
+	if err != nil {
+		return err
 	}
-	return errors.New("this room is full")
+
+	//Now that the client has successfully been added to the server, the LastUpdate can be updated to now.
+	r.LastUpdate = time.Now()
+
+	/*
+		2 * the apropriate min message interval is subtracted from the client's lastmessage time to ensure they
+		can immediately send a message upon join.
+	*/
+	if r.Public {
+		c.LastMessage = c.LastMessage.Add(-2 * MinMessageIntervalPublic)
+	} else {
+		c.LastMessage = c.LastMessage.Add(-2 * MinMessageInterval)
+	}
+
+	/*
+		The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
+		To do this, an array of strings of all the clients' usernames (including the new client's) has to be constructed.
+	*/
+	clientNames := r.getClientNames()
+	clientNames[c.ID] = c.Name
+
+	//Updating the new client as to the room state with an init event.
+	c.sendBuffer <- newInitEvent(r.ID, r.Name, r.Static, c.ID, clientNames).toBytes()
+
+	//Updating the new client with all the messages from the message cache.
+	for _, E := range r.EventCache.getAll() {
+		if E != nil {
+			e := E.(*EventWrapper)
+			//currentTime is UNIX time in millisecond precision.
+			currentTime := time.Now().UnixNano() / int64(time.Millisecond)
+			if !r.Public ||
+				(r.Public &&
+					(e.Time > currentTime-StaticMessageTimeout)) {
+				c.sendBuffer <- e.toBytes()
+			}
+		}
+	}
+
+	//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
+	r.distributeEvent(newUserEvent(c.ID, c.Name, clientNames), true, -1)
+
+	return nil
 }
 
 func (r *Room) removeClient(clientID int) error {
-	if r.Clients[clientID] != nil {
-		client := r.Clients[clientID]
-		r.Clients[clientID] = nil
+	client := r.ClientManager.Clients[clientID]
 
-		r.LastUpdate = time.Now()
-		log.Println("[ROOM] - Removed client:", client.getDetails())
-
-		r.ClientCount--
-		if r.ClientCount == 0 && !r.Static {
-			r.ClientCount--
-		}
-
-		r.distributeEvent(newUserEvent(clientID, client.Name, r.getClientNames()), true, -1)
-		return nil
+	err := r.ClientManager.removeClient(clientID)
+	if err != nil {
+		return err
 	}
-	return errors.New("room does not have such a client")
+
+	r.LastUpdate = time.Now()
+
+	r.distributeEvent(newUserEvent(clientID, client.Name, r.getClientNames()), true, -1)
+
+	return nil
+}
+
+func (r *Room) pruneClients() {
+	r.ClientManager.pruneClients(ClientMessageTimeout)
 }
 
 func (r *Room) distributeEvent(event *EventWrapper, cached bool, sender int) {
+	r.ClientManager.distributeEvent(event, sender)
+
 	r.LastUpdate = time.Now()
+
 	if cached {
 		r.EventCache.push(event)
-	}
-	for _, client := range r.Clients {
-		if client != nil && client.ID != sender {
-			client.sendBuffer <- event.toBytes()
-		}
 	}
 }
 
@@ -158,10 +123,17 @@ func (r *Room) announce(message string) {
 	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
-func (r *Room) close() {
-	for _, client := range r.Clients {
-		if client != nil {
-			client.close()
-		}
+func (r *Room) closeable() bool {
+	switch true {
+	case r.Static:
+		return false
+	case r.Closing:
+		return time.Now().After(r.CloseTime)
+	default:
+		return r.ClientManager.ClientCount == 0 && time.Since(r.LastUpdate) > RoomGracePeriod
 	}
+}
+
+func (r *Room) close() {
+	r.ClientManager.closeClients()
 }
