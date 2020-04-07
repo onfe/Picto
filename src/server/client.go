@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/mitchellh/mapstructure"
 )
 
 var upgrader = websocket.Upgrader{
@@ -161,55 +160,23 @@ func (c *Client) recieveLoop() {
 			c.closed = true
 			break
 		}
-		event := EventWrapper{}
-		err = json.Unmarshal(data, &event)
+		event := &EventWrapper{}
+		err = json.Unmarshal(data, event)
 		if err != nil {
 			log.Println("[CLIENT] - Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
-			switch event.Event {
-			case "message":
-				//The payload field of EventWrapper is defined as interface{},
-				// Unmarshal throws the payload into a map[string]interface{}.
-				// We need to decode it into a MessageEvent struct.
-				message := MessageEvent{}
-				mapstructure.Decode(event.Payload, &message)
-				//If the message is empty, we ignore it...
-				if message.isEmpty() {
-					continue
-				}
-				//...otherwise we fill in the ColourIndex and Sender fields,
-				// rewrap it and recieve it.
-				message.ColourIndex = c.ID
-				message.Sender = c.Name
-				c.recieve(wrapEvent("message", message))
-			case "rename":
-				//Not all rooms are renameable.
-				if c.room.renameable() {
-					continue
-				}
-				rename := RenameEvent{}
-				mapstructure.Decode(event.Payload, &rename)
-				//If the new name is too long, we ignore it...
-				if len(rename.RoomName) > MaxRoomNameLength {
-					continue
-				}
-				//...otherwise we change the room's name,
-				// fill in the UserName field, rewrap it and distribute it...
-				c.room.rename(rename.RoomName)
-				rename.UserName = c.Name
-				c.room.distributeEvent(wrapEvent("rename", rename), true, -1)
-			}
+			c.room.recieveEvent(event, c)
 		}
 	}
 }
 
 func (c *Client) recieve(e *EventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
-	if time.Since(c.LastMessage) > c.room.getMinMessageInterval() {
+	if time.Since(c.LastMessage) > MinMessageInterval {
 		c.LastMessage = time.Now()
 		h := sha1.New()
 		h.Write(e.toBytes())
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e, true, c.ID)
+		c.room.recieveEvent(e, c)
 	}
 }

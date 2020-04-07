@@ -5,17 +5,15 @@ import "time"
 //RoomInterface must be implemented by all kinds of rooms.
 type RoomInterface interface {
 	getID() string
-	getClientNames() []string
-	getMinMessageInterval() time.Duration
 
 	addClient(c *Client) error
 	removeClient(clientID int) error
 	pruneClients()
 
-	renameable() bool
-	rename(newName string)
+	//recieveEvent handles events recieved from clients.
+	recieveEvent(event *EventWrapper, sender *Client)
 
-	distributeEvent(event *EventWrapper, cached bool, sender int)
+	//announce announces a string message to all clients of the room.
 	announce(message string)
 
 	closeable() bool

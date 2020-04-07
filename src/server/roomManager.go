@@ -12,23 +12,25 @@ import (
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms       map[string]RoomInterface `json:"Rooms"`
-	MaxRooms    int                      `json:"MaxRooms"`
-	apiToken    string
-	Mode        string
-	wordsList   []string
-	StaticRooms map[string]*Room
+	Rooms           map[string]RoomInterface `json:"Rooms"`
+	MaxRooms        int                      `json:"MaxRooms"`
+	apiToken        string
+	Mode            string
+	wordsList       []string
+	StaticRooms     map[string]*Room
+	SubmissionRooms map[string]*SubmissionRoom
 }
 
 //NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string, publicRoomConfigVar string) RoomManager {
 	rm := RoomManager{
-		Rooms:       make(map[string]RoomInterface, MaxRooms),
-		MaxRooms:    MaxRooms,
-		apiToken:    apiToken,
-		Mode:        Mode,
-		wordsList:   wordsList,
-		StaticRooms: make(map[string]*Room, MaxRooms),
+		Rooms:           make(map[string]RoomInterface, MaxRooms),
+		MaxRooms:        MaxRooms,
+		apiToken:        apiToken,
+		Mode:            Mode,
+		wordsList:       wordsList,
+		StaticRooms:     make(map[string]*Room, MaxRooms),
+		SubmissionRooms: make(map[string]*SubmissionRoom, MaxRooms),
 	}
 	rm.loadStaticRoomConfig(publicRoomConfigVar)
 	go rm.roomMonitorLoop()
