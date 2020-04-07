@@ -114,8 +114,8 @@ func (rm *RoomManager) createRoom(newRoomName string, maxClients int, static boo
 				}
 			}
 
-			room := newStaticRoom(rm, newRoomName, maxClients)
-			rm.StaticRooms[room.getID()] = room
+			room = newStaticRoom(rm, newRoomName, maxClients)
+			rm.StaticRooms[room.getID()] = room.(*StaticRoom)
 		}
 
 		rm.Rooms[room.getID()] = room
