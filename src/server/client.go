@@ -22,7 +22,7 @@ var upgrader = websocket.Upgrader{
 
 //Client is a struct that contains all of the info about a client.
 type Client struct {
-	room        *Room
+	room        RoomInterface
 	ID          int    `json:"ID"`
 	Name        string `json:"Name"`
 	ws          *websocket.Conn
@@ -81,7 +81,7 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 
 func (c *Client) getDetails() string {
 	if c.room != nil {
-		return "(Room ID " + c.room.ID + " : Client ID " + strconv.Itoa(c.ID) + ")"
+		return "(Room ID " + c.room.getID() + " : Client ID " + strconv.Itoa(c.ID) + ")"
 	}
 	return "(Roomless : Client ID " + strconv.Itoa(c.ID) + ")"
 }
@@ -183,8 +183,8 @@ func (c *Client) recieveLoop() {
 				message.Sender = c.Name
 				c.recieve(wrapEvent("message", message))
 			case "rename":
-				//We can't rename static rooms.
-				if c.room.Static {
+				//Not all rooms are renameable.
+				if c.room.renameable() {
 					continue
 				}
 				rename := RenameEvent{}
@@ -195,7 +195,7 @@ func (c *Client) recieveLoop() {
 				}
 				//...otherwise we change the room's name,
 				// fill in the UserName field, rewrap it and distribute it...
-				c.room.Name = rename.RoomName
+				c.room.rename(rename.RoomName)
 				rename.UserName = c.Name
 				c.room.distributeEvent(wrapEvent("rename", rename), true, -1)
 			}
@@ -205,8 +205,7 @@ func (c *Client) recieveLoop() {
 
 func (c *Client) recieve(e *EventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
-	if (c.room.Public && time.Since(c.LastMessage) > MinMessageIntervalPublic) ||
-		(!c.room.Static && time.Since(c.LastMessage) > MinMessageInterval) {
+	if time.Since(c.LastMessage) > c.room.getMinMessageInterval() {
 		c.LastMessage = time.Now()
 		h := sha1.New()
 		h.Write(e.toBytes())

@@ -200,8 +200,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			rm.Rooms[roomID[0]].Closing = true
-			rm.Rooms[roomID[0]].CloseTime = time.Now().Add(closeTime)
+			rm.Rooms[roomID[0]].setCloseTime(time.Now().Add(closeTime))
 			rm.Rooms[roomID[0]].announce(reason)
 			rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %.0f seconds...", closeTime.Seconds()))
 			response, err = json.Marshal("closed room of `id` '" + roomID[0] + "'.")
@@ -218,10 +217,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			i := 0
 			for _, r := range rm.StaticRooms {
 				roomStates[i] = roomState{
-					Name:   r.Name,
-					Public: r.Public,
-					Cap:    r.ClientManager.MaxClients,
-					Pop:    r.ClientManager.ClientCount,
+					Name: r.Name,
+					Cap:  r.ClientManager.MaxClients,
+					Pop:  r.ClientManager.ClientCount,
 				}
 				i++
 			}
@@ -256,7 +254,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 			var roomStates []roomState
 			for _, r := range rm.StaticRooms {
-				if r.Public && !r.Closing {
+				if !r.Closing {
 					roomStates = append(
 						roomStates,
 						roomState{
