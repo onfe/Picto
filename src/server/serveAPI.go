@@ -220,8 +220,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				roomStates[i] = roomState{
 					Name:   r.Name,
 					Public: r.Public,
-					Cap:    r.MaxClients,
-					Pop:    r.ClientCount,
+					Cap:    r.ClientManager.MaxClients,
+					Pop:    r.ClientManager.ClientCount,
 				}
 				i++
 			}
@@ -261,8 +261,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 						roomStates,
 						roomState{
 							Name: r.Name,
-							Cap:  r.MaxClients,
-							Pop:  r.ClientCount,
+							Cap:  r.ClientManager.MaxClients,
+							Pop:  r.ClientManager.ClientCount,
 						})
 				}
 			}
