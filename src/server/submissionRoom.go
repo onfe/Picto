@@ -86,15 +86,14 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 			message: &message,
 		}
 
-		/* We always update the submission by either creating/updating it by
-		reference through the Submittees map...
-		*/
-		r.Submittees[sub.sender] = sub
-
-		//But we also have to add it to the submissioncache if they haven't already submitted.
+		//We add it to the submissioncache if they haven't already submitted.
 		if _, alreadySubmitted := r.Submittees[sub.sender]; !alreadySubmitted {
 			r.SubmissionCache.push(sub)
 		}
+		/* and we always update the submission by either creating/updating it by
+		reference through the Submittees map...
+		*/
+		r.Submittees[sub.sender] = sub
 
 	case "rename":
 		//The payload field of EventWrapper is defined as interface{},
