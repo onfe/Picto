@@ -19,6 +19,8 @@ const (
 	DefaultRoomSize = 8
 	//MaxClientsPerRoom = max number of clients in a single room.
 	MaxClientsPerRoom = 64
+	//MaxSubmissions = the maximum number of submissions to a SubmissionRoom before they overwrite themselves.
+	MaxSubmissions = 1024
 	//MaxRoomNameLength = the max length of a room name.
 	MaxRoomNameLength = 32
 	//MaxClientNameLength = the max length of a client name.
