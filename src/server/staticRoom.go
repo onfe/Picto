@@ -6,11 +6,10 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-//Room is a struct that holds all the info about a singular picto room.
-type Room struct {
+//StaticRoom is a struct that holds all the info about a singular static picto room.
+type StaticRoom struct {
 	manager *RoomManager
 
-	ID   string `json:"ID"`
 	Name string `json:"Name"`
 
 	ClientManager *ClientManager `json:"ClientManager"`
@@ -22,11 +21,10 @@ type Room struct {
 	CloseTime  time.Time `json:"CloseTime"`
 }
 
-func newRoom(manager *RoomManager, roomID string, name string, maxClients int) *Room {
+func newStaticRoom(manager *RoomManager, name string, public bool, maxClients int) *Room {
 	r := Room{
 		manager: manager,
 
-		ID:   roomID,
 		Name: name,
 
 		ClientManager: newClientManager(maxClients),
@@ -40,7 +38,7 @@ func newRoom(manager *RoomManager, roomID string, name string, maxClients int) *
 
 //------------------------------ Utils ------------------------------
 //distributeEvent is a handy wrapper to make event caching easier.
-func (r *Room) distributeEvent(event *EventWrapper, cached bool, sender int) {
+func (r *StaticRoom) distributeEvent(event *EventWrapper, cached bool, sender int) {
 	r.ClientManager.distributeEvent(event, sender)
 
 	r.LastUpdate = time.Now()
@@ -53,7 +51,7 @@ func (r *Room) distributeEvent(event *EventWrapper, cached bool, sender int) {
 //------------------------------ Implementing RoomInterface ------------------------------
 
 //The significant differences between rooms should lie in how they handle client events (in recieveEvents).
-func (r *Room) recieveEvent(event *EventWrapper, sender *Client) {
+func (r *StaticRoom) recieveEvent(event *EventWrapper, sender *Client) {
 	switch event.Event {
 	case "message":
 		//The payload field of EventWrapper is defined as interface{},
@@ -93,11 +91,11 @@ func (r *Room) recieveEvent(event *EventWrapper, sender *Client) {
 	}
 }
 
-func (r *Room) getID() string {
-	return r.ID
+func (r *StaticRoom) getID() string {
+	return r.Name
 }
 
-func (r *Room) addClient(c *Client) error {
+func (r *StaticRoom) addClient(c *Client) error {
 	err := r.ClientManager.addClient(c)
 	if err != nil {
 		return err
@@ -120,7 +118,7 @@ func (r *Room) addClient(c *Client) error {
 	clientNames[c.ID] = c.Name
 
 	//Updating the new client as to the room state with an init event.
-	c.sendBuffer <- newInitEvent(r.ID, r.Name, false, c.ID, clientNames).toBytes()
+	c.sendBuffer <- newInitEvent(r.Name, r.Name, true, c.ID, clientNames).toBytes()
 
 	//Updating the new client with all the messages from the message cache.
 	for _, E := range r.EventCache.getAll() {
@@ -136,7 +134,7 @@ func (r *Room) addClient(c *Client) error {
 	return nil
 }
 
-func (r *Room) removeClient(clientID int) error {
+func (r *StaticRoom) removeClient(clientID int) error {
 	client := r.ClientManager.Clients[clientID]
 
 	err := r.ClientManager.removeClient(clientID)
@@ -151,28 +149,28 @@ func (r *Room) removeClient(clientID int) error {
 	return nil
 }
 
-func (r *Room) pruneClients() {
+func (r *StaticRoom) pruneClients() {
 	r.ClientManager.pruneClients(ClientMessageTimeout)
 }
 
-func (r *Room) announce(message string) {
+func (r *StaticRoom) announce(message string) {
 	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
-func (r *Room) closeable() bool {
+func (r *StaticRoom) closeable() bool {
 	switch true {
 	case r.Closing:
 		return time.Now().After(r.CloseTime)
 	default:
-		return r.ClientManager.ClientCount == 0 && time.Since(r.LastUpdate) > RoomGracePeriod
+		return false
 	}
 }
 
-func (r *Room) setCloseTime(closeTime time.Time) {
+func (r *StaticRoom) setCloseTime(closeTime time.Time) {
 	r.CloseTime = closeTime
 	r.Closing = true
 }
 
-func (r *Room) close() {
+func (r *StaticRoom) close() {
 	r.ClientManager.closeClients()
 }

@@ -55,7 +55,7 @@ func (rm *RoomManager) loadStaticRoomConfig(varname string) {
 		}
 
 		for _, r := range roomConfigs {
-			rm.createRoom(r.Name, r.Cap, true, r.Public)
+			rm.createRoom(r.Name, r.Cap, true)
 		}
 	} else {
 		log.Println("[SYSTEM] - Couldn't find public room config env var.")
@@ -93,7 +93,7 @@ func (rm *RoomManager) generateNewRoomID() string {
 	return newRoomID
 }
 
-func (rm *RoomManager) createRoom(roomName string, maxClients int, static, public bool) (*Room, error) {
+func (rm *RoomManager) createRoom(roomName string, maxClients int, static bool) (*Room, error) {
 	if len(rm.Rooms) < rm.MaxRooms {
 		newRoomID := roomName
 		if !static {
@@ -108,7 +108,7 @@ func (rm *RoomManager) createRoom(roomName string, maxClients int, static, publi
 				}
 			}
 		}
-		newRoom := newRoom(rm, newRoomID, roomName, static, public, maxClients)
+		newRoom := newRoom(rm, newRoomID, roomName, maxClients)
 		rm.Rooms[newRoom.ID] = newRoom
 		rm.StaticRooms[newRoomID] = newRoom
 

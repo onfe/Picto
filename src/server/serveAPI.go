@@ -122,17 +122,11 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		case "create_static_room":
 			//Default values
 			maxClients := DefaultRoomSize
-			public := false
 
 			roomName, roomNameSupplied := r.Form["name"]
 			if !roomNameSupplied {
 				err = errors.New("no `name` supplied")
 				return
-			}
-
-			_public, publicSupplied := r.Form["public"]
-			if publicSupplied {
-				public = _public[0] == "true"
 			}
 
 			_maxClients, maxClientsSupplied := r.Form["size"]
@@ -156,7 +150,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			newRoom, ERR := rm.createRoom(roomName[0], maxClients, true, public)
+			newRoom, ERR := rm.createRoom(roomName[0], maxClients, true)
 			err = ERR
 			if err != nil {
 				return
