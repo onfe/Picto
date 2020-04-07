@@ -18,10 +18,10 @@ type SubmissionRoom struct {
 
 	ID string `json:"ID"`
 
-	Static bool `json:"Static"`
+	ClientManager *ClientManager `json:"ClientManager"`
 
-	ClientManager   *ClientManager `json:"ClientManager"`
-	EventCache      *CircularQueue `json:"EventCache"`
+	EventCache *CircularQueue `json:"EventCache"`
+
 	SubmissionCache *CircularQueue `json:"Submissions"`
 	Submittees      map[string]*submission
 
@@ -34,7 +34,6 @@ func newSubmissionRoom(manager *RoomManager, name string, static bool, public bo
 	r := SubmissionRoom{
 		manager:         manager,
 		ID:              name,
-		Static:          static,
 		ClientManager:   newClientManager(maxClients),
 		EventCache:      newCircularQueue(ChatHistoryLen),
 		SubmissionCache: newCircularQueue(MaxSubmissions),
@@ -126,24 +125,14 @@ func (r *SubmissionRoom) addClient(c *Client) error {
 		return err
 	}
 
-	//Now that the client has successfully been added to the server, the LastUpdate can be updated to now.
-	r.LastUpdate = time.Now()
-
 	/*
 		2 * the apropriate min message interval is subtracted from the client's lastmessage time to ensure they
 		can immediately send a message upon join.
 	*/
 	c.LastMessage = c.LastMessage.Add(-2 * MinMessageInterval)
 
-	/*
-		The client is sent an initialisation event, then all other clients are informed of the user's having joined the room.
-		To do this, an array of strings of all the clients' usernames (including the new client's) has to be constructed.
-	*/
-	clientNames := r.ClientManager.getClientNames()
-	clientNames[c.ID] = c.Name
-
 	//Updating the new client as to the room state with an init event.
-	c.sendBuffer <- newInitEvent(r.ID, r.ID, r.Static, c.ID, clientNames).toBytes()
+	c.sendBuffer <- newInitEvent(r.ID, r.ID, true, c.ID, nil).toBytes()
 
 	//Updating the new client with all the messages from the message cache.
 	for _, E := range r.EventCache.getAll() {
@@ -153,25 +142,11 @@ func (r *SubmissionRoom) addClient(c *Client) error {
 		}
 	}
 
-	//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
-	r.distributeEvent(newUserEvent(c.ID, c.Name, clientNames), true, -1)
-
 	return nil
 }
 
 func (r *SubmissionRoom) removeClient(clientID int) error {
-	client := r.ClientManager.Clients[clientID]
-
-	err := r.ClientManager.removeClient(clientID)
-	if err != nil {
-		return err
-	}
-
-	r.LastUpdate = time.Now()
-
-	r.distributeEvent(newUserEvent(clientID, client.Name, r.ClientManager.getClientNames()), true, -1)
-
-	return nil
+	return r.ClientManager.removeClient(clientID)
 }
 
 func (r *SubmissionRoom) pruneClients() {
@@ -184,12 +159,10 @@ func (r *SubmissionRoom) announce(message string) {
 
 func (r *SubmissionRoom) closeable() bool {
 	switch true {
-	case r.Static:
-		return false
 	case r.Closing:
 		return time.Now().After(r.CloseTime)
 	default:
-		return r.ClientManager.ClientCount == 0 && time.Since(r.LastUpdate) > RoomGracePeriod
+		return false
 	}
 }
 
