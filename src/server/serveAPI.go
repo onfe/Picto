@@ -247,12 +247,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Pop  int
 			}
 			var roomStates []roomState
-			for _, r := range rm.StaticRooms {
+			for _, r := range rm.SubmissionRooms {
 				if !r.Closing {
 					roomStates = append(
 						roomStates,
 						roomState{
-							Name: r.Name,
+							Name: r.getID(),
 							Cap:  r.ClientManager.MaxClients,
 							Pop:  r.ClientManager.ClientCount,
 						})
