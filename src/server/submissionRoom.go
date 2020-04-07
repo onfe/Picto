@@ -37,6 +37,7 @@ func newSubmissionRoom(manager *RoomManager, name string, maxClients int) *Submi
 		ClientManager:   newClientManager(maxClients),
 		EventCache:      newCircularQueue(ChatHistoryLen),
 		SubmissionCache: newCircularQueue(MaxSubmissions),
+		Submittees:      make(map[string]*submission),
 		LastUpdate:      time.Now(),
 		Closing:         false,
 	}
