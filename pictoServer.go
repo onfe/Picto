@@ -92,10 +92,20 @@ func main() {
 	//Creating room manager instance
 	if tokenSet && portSet { //Only in prod if both API_TOKEN and PORT env variables are set.
 		log.Println("[ROOM MANAGER] - Creating room manager in PROD mode")
-		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList, "PUBLIC_ROOMS")
+		roomManager = server.NewRoomManager(server.MaxRooms, apiToken, "prod", wordsList)
 	} else {
 		log.Println("[ROOM MANAGER] - Creating room manager in DEV mode")
-		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList, "PUBLIC_ROOMS")
+		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
+	}
+
+	err = roomManager.LoadRoomConfig("STATIC_ROOMS", "static")
+	if err != nil {
+		log.Println("Error loading STATIC_ROOMS:", err.Error())
+	}
+
+	err = roomManager.LoadRoomConfig("SUBMISSION_ROOMS", "submission")
+	if err != nil {
+		log.Println("Error loading STATIC_ROOMS:", err.Error())
 	}
 
 	//Seeing random number generator

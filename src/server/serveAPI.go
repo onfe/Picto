@@ -145,12 +145,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			if _, roomExists := rm.Rooms[roomName[0]]; roomExists {
-				err = errors.New("a room already exists with that `name`")
-				return
-			}
-
-			newRoom, ERR := rm.createRoom(roomName[0], maxClients, true)
+			newRoom, ERR := rm.createRoom(roomName[0], maxClients, "static")
 			err = ERR
 			if err != nil {
 				return
