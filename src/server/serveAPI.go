@@ -156,7 +156,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			response, err = json.Marshal("new room created with `id` '" + newRoom.ID + "'")
+			response, err = json.Marshal("new room created with `id` '" + newRoom.getID() + "'")
 			return
 
 		case "close_room":

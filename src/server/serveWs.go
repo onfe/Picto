@@ -53,7 +53,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("[JOIN SUCCESS] - Created room ID " + newRoom.ID + "")
+		log.Println("[JOIN SUCCESS] - Created room ID " + newRoom.getID() + "")
 		client.GO()
 
 	} else { //Client is attempting to join a room.
