@@ -12,7 +12,7 @@ const state = {
   users: [],
   showInfo: false,
   errorMessage: "",
-  static: false,
+  public: false,
   swStatus: "normal"
 };
 
@@ -115,7 +115,7 @@ const mutations = {
     state.showInfo = false;
     state.errorMessage = "";
     state.errorCode = -1;
-    state.static = d.Payload.Static;
+    state.public = d.Payload.Public;
   },
   updateUser: (state, payload) => {
     state.users = payload.Users;

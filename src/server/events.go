@@ -34,16 +34,16 @@ func (e eventWrapper) toBytes() []byte {
 type initEvent struct {
 	RoomID    string
 	RoomName  string
-	Static    bool
+	Public    bool
 	UserIndex int      //Index of the user that just joined in the users array.
 	Users     []string //Array of strings of users' names.
 }
 
-func newInitEvent(roomID string, roomName string, static bool, userIndex int, users []string) *eventWrapper {
+func newInitEvent(roomID string, roomName string, public bool, userIndex int, users []string) *eventWrapper {
 	initEvent := initEvent{
 		RoomID:    roomID,
 		RoomName:  roomName,
-		Static:    static,
+		Public:    public,
 		UserIndex: userIndex,
 		Users:     users,
 	}

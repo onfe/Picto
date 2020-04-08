@@ -30,7 +30,7 @@ export default {
   computed: {
     editable() {
       // static rooms are not renamable!
-      return this.edit && !this.$store.state.client.static;
+      return this.edit && !this.$store.state.client.public;
     }
   },
   methods: {
