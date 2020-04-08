@@ -30,10 +30,12 @@ func newSubmissionCache(capacity int) *submissionCache {
 		Len:         0,
 	}
 	sc.Submissions["HEAD"] = &submission{
+		next: "END",
 		prev: "TAIL",
 	}
 	sc.Submissions["TAIL"] = &submission{
 		next: "HEAD",
+		prev: "START",
 	}
 	return &sc
 }
@@ -52,19 +54,25 @@ func (sc *submissionCache) add(s *submission) bool {
 		sc.remove(sc.Submissions["TAIL"].next)
 	}
 
-	//Populate submission's ID&prev&next fields
+	//Populate submission's ID&next fields
 	s.ID = genSubmissionID(s.Addr)
-	s.next = "HEAD"
-	s.prev = sc.Submissions["HEAD"].prev
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
 
 	if !alreadySubmitted {
+		//If we're not overwriting a submission, it's squished between HEAD and HEAD.prev
+		s.next = "HEAD"
+		s.prev = sc.Submissions["HEAD"].prev
+
 		//Squishing the new submission between the HEAD elem and the most recent submission
-		sc.Submissions[s.prev].next = s.ID //Update previously most recent submission's 'next' field
-		sc.Submissions["HEAD"].prev = s.ID //Update head's prev field
+		sc.Submissions[sc.Submissions["HEAD"].prev].next = s.ID //Update previously most recent submission's 'next' field
+		sc.Submissions["HEAD"].prev = s.ID                      //Update head's prev field
 
 		sc.Len++
+	} else {
+		//If we're overwriting a submission, we just need to update s.prev and s.next
+		s.next = sc.Submissions[s.ID].next
+		s.prev = sc.Submissions[s.ID].prev
 	}
 
 	//Add/update submission to/in Submissions map
