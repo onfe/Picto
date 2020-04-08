@@ -3,6 +3,7 @@ import Router from "vue-router";
 import Meta from "vue-meta";
 import store from "../store";
 import Join from "../views/Join.vue";
+import Moderate from "../views/Moderate.vue";
 
 Vue.use(Router);
 Vue.use(Meta, {
@@ -33,6 +34,11 @@ const routes = [
   {
     path: "/room",
     redirect: "/"
+  },
+  {
+    path: "/moderate",
+    name: "moderate",
+    component: Moderate
   }
 ];
 
