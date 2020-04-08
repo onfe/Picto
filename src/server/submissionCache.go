@@ -100,6 +100,7 @@ func (sc *submissionCache) getAll() []*submission {
 	for key != "HEAD" {
 		submissions[i] = sc.Submissions[key]
 		key = sc.Submissions[key].next //Move onto the next submission
+		i++
 	}
 
 	return submissions
