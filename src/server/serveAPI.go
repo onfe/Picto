@@ -236,9 +236,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "get_submissions":
-			roomID, roomIDSupplied := r.Form["id"]
+			roomID, roomIDSupplied := r.Form["room_id"]
 			if !roomIDSupplied {
-				err = errors.New("no `id` supplied")
+				err = errors.New("no `room_id` supplied")
 				return
 			}
 
