@@ -235,6 +235,30 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(roomStates)
 			return
 
+		case "get_submissions":
+			roomID, roomIDSupplied := r.Form["id"]
+			if !roomIDSupplied {
+				err = errors.New("no `id` supplied")
+				return
+			}
+
+			room, roomExists := rm.SubmissionRooms[roomID[0]]
+			if !roomExists {
+				err = errors.New("a room with that `id` does not exist")
+				return
+			}
+
+			submissions := make([]submission, room.SubmissionCache.Len)
+			i := 0
+			for _, s := range room.SubmissionCache.getAll() {
+				if s != nil {
+					submissions[i] = *s.(*submission)
+					i++
+				}
+			}
+			response, err = json.Marshal(submissions)
+			return
+
 		default:
 			err = errors.New("unrecognised method")
 			return

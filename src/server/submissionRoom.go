@@ -8,8 +8,8 @@ import (
 )
 
 type submission struct {
-	sender  string
-	message *MessageEvent
+	Sender  string
+	Message *MessageEvent
 }
 
 //SubmissionRoom is a struct that holds all the info about a singular picto SubmissionRoom.
@@ -84,12 +84,12 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 		_, month, day := time.Now().Date()
 
 		sub := &submission{
-			sender:  addr + "-" + strconv.Itoa(day) + "-" + month.String(),
-			message: &message,
+			Sender:  addr + "-" + strconv.Itoa(day) + "-" + month.String(),
+			Message: &message,
 		}
 
 		//We add it to the submissioncache if they haven't already submitted.
-		if _, alreadySubmitted := r.Submittees[sub.sender]; !alreadySubmitted {
+		if _, alreadySubmitted := r.Submittees[sub.Sender]; !alreadySubmitted {
 			sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission!").toBytes()
 			r.SubmissionCache.push(sub)
 		} else {
@@ -98,7 +98,7 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 		/* and we always update the submission by either creating/updating it by
 		reference through the Submittees map...
 		*/
-		r.Submittees[sub.sender] = sub
+		r.Submittees[sub.Sender] = sub
 
 	case "rename":
 		//The payload field of EventWrapper is defined as interface{},
