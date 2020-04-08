@@ -4,19 +4,23 @@ package server
 type CircularQueue struct {
 	queue     []interface{}
 	HeadIndex int `json:"HeadIndex"`
-	len       int
+	TailIndex int `json:"TailIndex"`
+	Capacity  int `json:"Capacity"`
+	Len       int `json:"Len"`
 }
 
-func newCircularQueue(len int) *CircularQueue {
+func newCircularQueue(capacity int) *CircularQueue {
 	return &CircularQueue{
-		queue:     make([]interface{}, len),
-		HeadIndex: -1,
-		len:       len,
+		queue:     make([]interface{}, capacity),
+		HeadIndex: 1,
+		TailIndex: 1,
+		Capacity:  capacity,
 	}
 }
 
 func (c *CircularQueue) push(x interface{}) {
-	c.HeadIndex = (c.HeadIndex + 1) % c.len
+	c.HeadIndex = (c.HeadIndex + 1) % c.Capacity
+	c.Len++
 	c.queue[c.HeadIndex] = x
 }
 

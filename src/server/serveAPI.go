@@ -215,6 +215,27 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(roomStates)
 			return
 
+		case "get_submission_rooms":
+			type roomState struct {
+				Name        string
+				Cap         int
+				Pop         int
+				Submissions int
+			}
+			roomStates := make([]roomState, len(rm.StaticRooms))
+			i := 0
+			for _, r := range rm.SubmissionRooms {
+				roomStates[i] = roomState{
+					Name:        r.ID,
+					Cap:         r.ClientManager.MaxClients,
+					Pop:         r.ClientManager.ClientCount,
+					Submissions: r.SubmissionCache.Len,
+				}
+				i++
+			}
+			response, err = json.Marshal(roomStates)
+			return
+
 		default:
 			err = errors.New("unrecognised method")
 			return
