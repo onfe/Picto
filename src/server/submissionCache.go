@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"log"
 	"strconv"
 	"time"
 )
