@@ -73,7 +73,8 @@ func (r *submissionRoom) publishSubmission(sender string) error {
 		return nil
 	}
 
-	client.sendBuffer <- newAnnouncementEvent("Your submission just got published! You can make a new one.").toBytes()
+	client.sendBuffer <- newAnnouncementEvent("Your submission just got published!").toBytes()
+	client.sendBuffer <- newAnnouncementEvent("You can now make a new submission.").toBytes()
 
 	return nil
 }
@@ -114,10 +115,11 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 		alreadySubmitted := r.SubmissionCache.add(sub)
 
 		//We give a different announcement depending upon if they have already made a submission or not.
+		sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission!").toBytes()
 		if !alreadySubmitted {
-			sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission! You can overwrite today's submission by sending a new one.").toBytes()
+			sender.sendBuffer <- newAnnouncementEvent("You can overwrite your submission by sending a new one.").toBytes()
 		} else {
-			sender.sendBuffer <- newAnnouncementEvent("Thank you for your new submission! Your previous one has been overwritten.").toBytes()
+			sender.sendBuffer <- newAnnouncementEvent("Your previous submission has been overwritten.").toBytes()
 		}
 
 	case "rename":
@@ -181,7 +183,7 @@ func (r *submissionRoom) addClient(c *client) error {
 	_, submissionExists := r.SubmissionCache.Submissions[genSubmissionID(clientAddr)]
 
 	if submissionExists {
-		c.sendBuffer <- newAnnouncementEvent("You've already made a submission, but you can overwrite it with a new one by sending another.").toBytes()
+		c.sendBuffer <- newAnnouncementEvent("You've already made a submission today, but you can overwrite it by sending another.").toBytes()
 	}
 
 	return nil
