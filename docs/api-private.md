@@ -32,36 +32,78 @@ Returns the state of the `ROOM_ID` specified by marshalling the room object.
 
 `/api/?token=API_TOKEN&method=get_static_rooms`
 
-Returns a list of static rooms including if they're public, their population and capacity as follows:
+Returns a list of static rooms with their population and capacity as follows:
 
 ```json
 [
 	{
-		"Name":"Parlor",
-		"Public":true,
-		"Cap":64,
-		"Pop":0
-	},
-	{
-		"Name":"Library",
-		"Public":true,
-		"Cap":64,
-		"Pop":0
-	},
-	{
-		"Name":"Garden",
-		"Public":true,
-		"Cap":64,
-		"Pop":0
-	},
-	{
-		"Name":"Hidden Static Room",
-		"Public":false,
+		"Name":"StaticRoom",
 		"Cap":16,
 		"Pop":0
 	}
 ]
 ```
+
+
+
+## get_submission_rooms
+
+`/api/?token=API_TOKEN&method=get_submission_rooms`
+
+Returns a list of submission rooms with their population, capacity and the number of (unpublished) submissions in that room, as follows:
+
+```json
+[
+	{
+		"Name":"SubmissionRoom",
+		"Cap":64,
+		"Pop":5,
+        "Submissions":34
+	}
+]
+```
+
+
+
+## get_submissions
+
+`api/?token=API_TOKEN&method=get_submissions&room_id=ROOM_ID`
+
+Returns all the submissions in the submission cache of the `ROOM_ID` specified, as follows:
+
+```json
+[
+    {
+        "ID":"127.0.0.1-8-April",
+     	"Addr":"127.0.0.1:36262",
+        "Message":
+ 	       {
+               "ColourIndex":0,
+               "Sender":"Josh",
+               "Data":"//////////gAABBBB/KAAB///rAABAAAB/JAAB///rAABAAABABBBBAABAAABABBBB///oAABBBBAABAAABABAAABABAAAB///nAABAAABAB/BAABAAABABAAAB///nAABAAABAB/BAABAAABABAAAB///nAABBBBAAB/CAABBBBABAAAB///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////wAA",
+               "Span":192
+           }
+    }
+]
+```
+
+The submissions are ordered such that the oldest submission is first.
+
+
+
+## publish_submission
+
+`/api/?token=API_TOKEN&method=publish_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID`
+
+Publishes the submission `SUBMISSION_ID` in `ROOM_ID`.
+
+
+
+## reject_submission
+
+`/api/?token=API_TOKEN&method=reject_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID`
+
+Rejects the submission `SUBMISSION_ID` in `ROOM_ID`.
 
 
 
@@ -98,3 +140,6 @@ Creates a static room (continues to exist when there are no clients connected) w
 If `ROOM_SIZE` is not supplied it defaults to the `DefaultRoomSize` set in `config.go`.
 
 If `PUBLIC` is "true" then it is a public room that will be displayed in the front page. It defaults to `false` and is case sensitive.
+
+
+
