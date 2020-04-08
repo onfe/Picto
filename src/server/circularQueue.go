@@ -24,6 +24,13 @@ func (c *CircularQueue) push(x interface{}) {
 	c.queue[c.HeadIndex] = x
 }
 
+func (c *CircularQueue) pop() interface{} {
+	v := c.queue[c.TailIndex]
+	c.Len--
+	c.TailIndex = (c.TailIndex + 1) % c.Capacity
+	return v
+}
+
 func (c *CircularQueue) getAll() []interface{} {
 	return c.queue
 }
