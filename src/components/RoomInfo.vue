@@ -3,7 +3,7 @@
     <div class="wrap">
       <RoomTitle :edit="expand" />
       <div class="body">
-        <UserList class="userList" />
+        <UserList v-if="!this.$store.state.client.public" class="userList" />
         <ThemeButton class="themeButton" />
       </div>
     </div>
@@ -53,6 +53,7 @@ aside {
   font-family: monospace;
   display: flex;
   flex-wrap: nowrap;
+  justify-content: flex-end;
   align-items: center;
 }
 
