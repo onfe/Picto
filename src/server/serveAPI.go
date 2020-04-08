@@ -251,6 +251,60 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(room.SubmissionCache.getAll())
 			return
 
+		case "publish_submission":
+			roomID, roomIDSupplied := r.Form["room_id"]
+			if !roomIDSupplied {
+				err = errors.New("no `room_id` supplied")
+				return
+			}
+
+			room, roomExists := rm.SubmissionRooms[roomID[0]]
+			if !roomExists {
+				err = errors.New("a room with that `room_id` does not exist")
+				return
+			}
+
+			submissionID, submissionIDSupplied := r.Form["submission_id"]
+			if !submissionIDSupplied {
+				err = errors.New("no `submission_id` supplied")
+				return
+			}
+
+			err = room.publishSubmission(submissionID[0])
+			if err != nil {
+				return
+			}
+
+			response, err = json.Marshal("submission successfully published")
+			return
+
+		case "reject_submission":
+			roomID, roomIDSupplied := r.Form["room_id"]
+			if !roomIDSupplied {
+				err = errors.New("no `room_id` supplied")
+				return
+			}
+
+			room, roomExists := rm.SubmissionRooms[roomID[0]]
+			if !roomExists {
+				err = errors.New("a room with that `room_id` does not exist")
+				return
+			}
+
+			submissionID, submissionIDSupplied := r.Form["submission_id"]
+			if !submissionIDSupplied {
+				err = errors.New("no `submission_id` supplied")
+				return
+			}
+
+			err = room.rejectSubmission(submissionID[0])
+			if err != nil {
+				return
+			}
+
+			response, err = json.Marshal("submission successfully rejected")
+			return
+
 		default:
 			err = errors.New("unrecognised method")
 			return
