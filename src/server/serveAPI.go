@@ -351,7 +351,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		default:
-			err = errors.New("unrecognised method")
+			err = errors.New("unrecognised private method: " + method)
 			return
 		}
 	} else { //If a token wasn't supplied, then we want public methods:
@@ -408,7 +408,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		default:
-			err = errors.New("unrecogised method")
+			err = errors.New("unrecognised public method: " + method)
 			return
 		}
 	}
