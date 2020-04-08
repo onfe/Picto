@@ -1,5 +1,7 @@
 package server
 
+import "errors"
+
 type submission struct {
 	Sender  string
 	Message *MessageEvent
@@ -55,8 +57,11 @@ func (sc *SubmissionCache) add(s *submission) bool {
 	return alreadySubmitted
 }
 
-func (sc *SubmissionCache) remove(sender string) {
-	toDel := sc.Submissions[sender]
+func (sc *SubmissionCache) remove(sender string) error {
+	toDel, exists := sc.Submissions[sender]
+	if !exists {
+		return errors.New("could not find submission from sender: " + sender)
+	}
 
 	//Patching the submission's neighbours together before yeeting it out
 	sc.Submissions[toDel.prev].next = toDel.next //Update previous elem's next field
@@ -65,6 +70,8 @@ func (sc *SubmissionCache) remove(sender string) {
 	delete(sc.Submissions, toDel.Sender) //Remove the submission from the Submissions map
 
 	sc.Len--
+
+	return nil
 }
 
 //getAll should return the submissions in the order of oldest first.

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -51,8 +52,25 @@ func (r *SubmissionRoom) distributeEvent(event *EventWrapper, cached bool, sende
 	}
 }
 
-func (r *SubmissionRoom) publishSubmission(submissionID string) {
+func (r *SubmissionRoom) publishSubmission(sender string) error {
+	submission, submissionExists := r.SubmissionCache.Submissions[sender]
+	if !submissionExists {
+		return errors.New("could not find submission from sender: " + sender)
+	}
 
+	//Wrap it in an event and distribute it...
+	event := wrapEvent("message", submission.Message)
+	r.distributeEvent(event, true, -1)
+
+	//...then remove it from the submissions cache
+	err := r.SubmissionCache.remove(submission.Sender) //should never return an error.
+
+	return err
+}
+
+func (r *SubmissionRoom) rejectSubmission(sender string) error {
+	//Returns an error if a submission from the sender specified couldn't be found.
+	return r.SubmissionCache.remove(sender)
 }
 
 //------------------------------ Implementing RoomInterface ------------------------------
