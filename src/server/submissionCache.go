@@ -42,9 +42,8 @@ func newSubmissionCache(capacity int) *submissionCache {
 
 func genSubmissionID(addr string) string {
 	_, month, day := time.Now().Date()
-	addrSansPort := strings.Split(addr, ":")[0]
-	id := addrSansPort + "-" + strconv.Itoa(day) + "-" + month.String()
-	log.Println(id)
+	//addrSansPort := strings.Split(addr, ":")[0]
+	id := addr + "-" + strconv.Itoa(day) + "-" + month.String()
 	return id
 }
 
