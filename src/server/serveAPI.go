@@ -145,8 +145,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			newRoom, ERR := rm.createRoom(roomName[0], maxClients, "static")
-			err = ERR
+			newRoom := newStaticRoom(rm, roomName[0], maxClients)
+			err = rm.addRoom(newRoom)
 			if err != nil {
 				return
 			}

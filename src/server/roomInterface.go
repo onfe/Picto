@@ -5,6 +5,7 @@ import "time"
 //RoomInterface must be implemented by all kinds of rooms.
 type RoomInterface interface {
 	getID() string
+	getType() string
 
 	addClient(c *Client) error
 	removeClient(clientID int) error

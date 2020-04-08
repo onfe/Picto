@@ -16,7 +16,8 @@ type submission struct {
 type SubmissionRoom struct {
 	manager *RoomManager
 
-	ID string `json:"ID"`
+	ID          string `json:"ID"`
+	Description string `json:"Description"`
 
 	ClientManager *ClientManager `json:"ClientManager"`
 
@@ -30,10 +31,11 @@ type SubmissionRoom struct {
 	CloseTime  time.Time `json:"CloseTime"`
 }
 
-func newSubmissionRoom(manager *RoomManager, name string, maxClients int) *SubmissionRoom {
+func newSubmissionRoom(manager *RoomManager, name, description string, maxClients int) *SubmissionRoom {
 	r := SubmissionRoom{
 		manager:         manager,
 		ID:              name,
+		Description:     description,
 		ClientManager:   newClientManager(maxClients),
 		EventCache:      newCircularQueue(ChatHistoryLen),
 		SubmissionCache: newCircularQueue(MaxSubmissions),
@@ -117,6 +119,10 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 
 func (r *SubmissionRoom) getID() string {
 	return r.ID
+}
+
+func (r *SubmissionRoom) getType() string {
+	return "submission"
 }
 
 func (r *SubmissionRoom) addClient(c *Client) error {

@@ -31,7 +31,8 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasRoom { //Client is trying to create a new room.
-		newRoom, err := rm.createRoom("", DefaultRoomSize, "dynamic")
+		newRoom := newRoom(rm, rm.generateNewRoomID(), "", DefaultRoomSize)
+		err = rm.addRoom(newRoom)
 		if err != nil {
 			/*Current possible errors here:
 			- The server has reached maximum rooms capacity.

@@ -95,6 +95,10 @@ func (r *StaticRoom) getID() string {
 	return r.Name
 }
 
+func (r *StaticRoom) getType() string {
+	return "static"
+}
+
 func (r *StaticRoom) addClient(c *Client) error {
 	err := r.ClientManager.addClient(c)
 	if err != nil {

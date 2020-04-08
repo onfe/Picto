@@ -97,6 +97,10 @@ func (r *Room) getID() string {
 	return r.ID
 }
 
+func (r *Room) getType() string {
+	return "dynamic"
+}
+
 func (r *Room) addClient(c *Client) error {
 	err := r.ClientManager.addClient(c)
 	if err != nil {

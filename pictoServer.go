@@ -98,14 +98,14 @@ func main() {
 		roomManager = server.NewRoomManager(server.MaxRooms, "dev", "dev", wordsList)
 	}
 
-	err = roomManager.LoadRoomConfig("STATIC_ROOMS", "static")
+	err = roomManager.LoadStaticRoomConfig("STATIC_ROOMS")
 	if err != nil {
 		log.Println("Error loading STATIC_ROOMS:", err.Error())
 	}
 
-	err = roomManager.LoadRoomConfig("SUBMISSION_ROOMS", "submission")
+	err = roomManager.LoadSubmissionRoomConfig("SUBMISSION_ROOMS")
 	if err != nil {
-		log.Println("Error loading STATIC_ROOMS:", err.Error())
+		log.Println("Error loading SUBMISSION_ROOMS:", err.Error())
 	}
 
 	//Seeing random number generator
