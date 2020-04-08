@@ -133,7 +133,7 @@ This time can be overwritten by making another call to this endpoint, but you wi
 
 ## create_static_room
 
-`/api/?token=API_TOKEN&method=create_static_room&name=ROOM_NAME&size=ROOM_SIZE&public=PUBLIC`
+`/api/?token=API_TOKEN&method=create_static_room&name=ROOM_NAME&size=ROOM_SIZE`
 
 Creates a static room (continues to exist when there are no clients connected) with name `ROOM_NAME` and a max clients of `ROOM_SIZE`. 
 
