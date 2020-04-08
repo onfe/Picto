@@ -22,7 +22,7 @@ Returns a list of public rooms including their description, population and capac
 [
 	{
 		"Name":"Pets",
-        "Desc":"This room is for drawing pictures of your pets! You can make 1 submission to this room per day."
+        "Desc":"This room is for drawing pictures of your pets! You can make 1 submission to this room per day.",
 		"Cap":64,
 		"Pop":12
 	}
