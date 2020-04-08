@@ -2,6 +2,7 @@
   <div class="moderate">
     <div class="container">
       <h1>Moderation dashboard</h1>
+      <hr />
       <AuthForm v-if="token === null" @authenticated="setToken" />
       <div v-else>Token: {{ token }}</div>
     </div>
@@ -43,8 +44,7 @@ export default {
   justify-content: space-between;
 }
 
-.container,
-footer {
+.container {
   max-width: 675px;
 
   padding: 0 1.5rem 1rem 3.5rem;
@@ -58,32 +58,6 @@ footer {
   color: var(--primary-join);
 }
 
-footer {
-  color: var(--secondary-join);
-  font-size: 0.75rem;
-  line-height: 1.2;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-
-  .item {
-    margin-right: 1rem;
-    margin-top: 0.75rem;
-    .icn.pad {
-      margin-right: 1ch;
-    }
-
-    a {
-      color: var(--secondary-join);
-      transition: color 200ms ease-in-out;
-    }
-
-    a:hover {
-      color: var(--primary-join);
-    }
-  }
-}
-
 hr {
   border: 0;
   border-bottom: 1px dashed var(--secondary-join);
@@ -92,19 +66,5 @@ hr {
 p {
   margin-bottom: 1.5rem;
   line-height: 1.2;
-}
-
-a {
-  color: var(--primary-join);
-  text-decoration: underline;
-  text-decoration-style: dotted;
-}
-
-.logo {
-  max-width: 100%;
-  width: auto;
-  margin-bottom: 3rem;
-
-  max-height: 10rem;
 }
 </style>
