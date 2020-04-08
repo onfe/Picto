@@ -90,7 +90,10 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 
 		//We add it to the submissioncache if they haven't already submitted.
 		if _, alreadySubmitted := r.Submittees[sub.sender]; !alreadySubmitted {
+			sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission!").toBytes()
 			r.SubmissionCache.push(sub)
+		} else {
+			sender.sendBuffer <- newAnnouncementEvent("Thank you for your new submission! Your previous one has been overwritten.").toBytes()
 		}
 		/* and we always update the submission by either creating/updating it by
 		reference through the Submittees map...
@@ -151,6 +154,8 @@ func (r *SubmissionRoom) addClient(c *Client) error {
 			c.sendBuffer <- e.toBytes()
 		}
 	}
+
+	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
 
 	return nil
 }
