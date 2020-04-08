@@ -7,11 +7,6 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-type submission struct {
-	Sender  string
-	Message *MessageEvent
-}
-
 //SubmissionRoom is a struct that holds all the info about a singular picto SubmissionRoom.
 type SubmissionRoom struct {
 	manager *RoomManager
@@ -23,8 +18,7 @@ type SubmissionRoom struct {
 
 	EventCache *CircularQueue `json:"EventCache"`
 
-	SubmissionCache *CircularQueue `json:"Submissions"`
-	Submittees      map[string]*submission
+	SubmissionCache *SubmissionCache `json:"Submissions"`
 
 	LastUpdate time.Time `json:"LastUpdate"`
 	Closing    bool      `json:"Closing"`
@@ -38,8 +32,7 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 		Description:     description,
 		ClientManager:   newClientManager(maxClients),
 		EventCache:      newCircularQueue(ChatHistoryLen),
-		SubmissionCache: newCircularQueue(MaxSubmissions),
-		Submittees:      make(map[string]*submission),
+		SubmissionCache: newSubmissionCache(MaxSubmissions),
 		LastUpdate:      time.Now(),
 		Closing:         false,
 	}
@@ -56,6 +49,10 @@ func (r *SubmissionRoom) distributeEvent(event *EventWrapper, cached bool, sende
 	if cached {
 		r.EventCache.push(event)
 	}
+}
+
+func (r *SubmissionRoom) publishSubmission(submissionID string) {
+
 }
 
 //------------------------------ Implementing RoomInterface ------------------------------
@@ -88,17 +85,15 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 			Message: &message,
 		}
 
-		//We add it to the submissioncache if they haven't already submitted.
-		if _, alreadySubmitted := r.Submittees[sub.Sender]; !alreadySubmitted {
+		// ...and add it to the submission cache
+		alreadySubmitted := r.SubmissionCache.add(sub)
+
+		//We give a different announcement depending upon if they have already made a submission or not.
+		if !alreadySubmitted {
 			sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission!").toBytes()
-			r.SubmissionCache.push(sub)
 		} else {
 			sender.sendBuffer <- newAnnouncementEvent("Thank you for your new submission! Your previous one has been overwritten.").toBytes()
 		}
-		/* and we always update the submission by either creating/updating it by
-		reference through the Submittees map...
-		*/
-		r.Submittees[sub.Sender] = sub
 
 	case "rename":
 		//The payload field of EventWrapper is defined as interface{},

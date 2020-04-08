@@ -248,15 +248,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			submissions := make([]submission, room.SubmissionCache.Len)
-			i := 0
-			for _, s := range room.SubmissionCache.getAll() {
-				if s != nil {
-					submissions[i] = *s.(*submission)
-					i++
-				}
-			}
-			response, err = json.Marshal(submissions)
+			response, err = json.Marshal(room.SubmissionCache.getAll())
 			return
 
 		default:
