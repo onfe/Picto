@@ -197,10 +197,9 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 
 		case "get_static_rooms":
 			type roomState struct {
-				Name   string
-				Public bool
-				Cap    int
-				Pop    int
+				Name string
+				Cap  int
+				Pop  int
 			}
 			roomStates := make([]roomState, len(rm.StaticRooms))
 			i := 0
