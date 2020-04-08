@@ -65,6 +65,10 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(rm)
 			return
 
+		case "auth":
+			response, err = json.Marshal(true)
+			return
+
 		case "get_mode":
 			response, err = json.Marshal(rm.Mode)
 			return
