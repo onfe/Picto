@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"strconv"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -63,9 +62,20 @@ func (r *SubmissionRoom) publishSubmission(sender string) error {
 	r.distributeEvent(event, true, -1)
 
 	//...then remove it from the submissions cache
-	err := r.SubmissionCache.remove(submission.Sender) //should never return an error.
+	err := r.SubmissionCache.remove(submission.ID) //should never return an error.
+	if err != nil {
+		return err
+	}
 
-	return err
+	client, err := r.ClientManager.getClientByRemoteAddr(submission.Addr)
+	if err != nil {
+		//returns an err if client can't be found
+		return nil
+	}
+
+	client.sendBuffer <- newAnnouncementEvent("Your submission just got published! You can make a new one. :)").toBytes()
+
+	return nil
 }
 
 func (r *SubmissionRoom) rejectSubmission(sender string) error {
@@ -95,11 +105,8 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 		message.Sender = sender.Name
 
 		// We then need to create a submission...
-		addr := sender.ws.RemoteAddr().String()
-		_, month, day := time.Now().Date()
-
 		sub := &submission{
-			Sender:  addr + "-" + strconv.Itoa(day) + "-" + month.String(),
+			Addr:    sender.ws.RemoteAddr().String(),
 			Message: &message,
 		}
 
@@ -110,7 +117,7 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 		if !alreadySubmitted {
 			sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission!").toBytes()
 		} else {
-			sender.sendBuffer <- newAnnouncementEvent("Thank you for your new submission! Your previous one has been overwritten.").toBytes()
+			sender.sendBuffer <- newAnnouncementEvent("Thank you for your new submission! Your previous one has been overwritten. :)").toBytes()
 		}
 
 	case "rename":
@@ -169,6 +176,13 @@ func (r *SubmissionRoom) addClient(c *Client) error {
 	}
 
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
+
+	clientAddr := c.ws.RemoteAddr().String()
+	_, submissionExists := r.SubmissionCache.Submissions[genSubmissionID(clientAddr)]
+
+	if submissionExists {
+		c.sendBuffer <- newAnnouncementEvent("You've already made a submission, but you can overwrite it with a new one by sending another. :)").toBytes()
+	}
 
 	return nil
 }

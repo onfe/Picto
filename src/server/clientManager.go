@@ -85,6 +85,15 @@ func (cm *ClientManager) pruneClients(timeout time.Duration) {
 	}
 }
 
+func (cm *ClientManager) getClientByRemoteAddr(remoteAddr string) (*Client, error) {
+	for _, client := range cm.Clients {
+		if client.ws.RemoteAddr().String() == remoteAddr {
+			return client, nil
+		}
+	}
+	return nil, errors.New("client couldn't be found with remoteaddr: " + remoteAddr)
+}
+
 func (cm *ClientManager) distributeEvent(event *EventWrapper, sender int) {
 	for _, client := range cm.Clients {
 		if client != nil && client.ID != sender {

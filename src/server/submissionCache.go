@@ -1,9 +1,16 @@
 package server
 
-import "errors"
+import (
+	"errors"
+	"log"
+	"strconv"
+	"strings"
+	"time"
+)
 
 type submission struct {
-	Sender  string
+	ID      string
+	Addr    string
 	Message *MessageEvent
 	next    string // doubly  .-''-.''-.
 	prev    string // linked  '-..'-..-' bois
@@ -31,13 +38,23 @@ func newSubmissionCache(capacity int) *SubmissionCache {
 	return &sc
 }
 
+func genSubmissionID(addr string) string {
+	_, month, day := time.Now().Date()
+	addrSansPort := strings.Split(addr, ":")[0]
+	id := addrSansPort + "-" + strconv.Itoa(day) + "-" + month.String()
+	log.Println(id)
+	return id
+}
+
 func (sc *SubmissionCache) add(s *submission) bool {
 	//If we're at capacity, the submission at the tail is rejected.
 	if sc.Len == sc.Capacity {
 		sc.remove(sc.Submissions["TAIL"].next)
 	}
 
-	_, alreadySubmitted := sc.Submissions[s.Sender]
+	s.ID = genSubmissionID(s.Addr)
+
+	_, alreadySubmitted := sc.Submissions[s.ID]
 
 	if !alreadySubmitted {
 		//Update submission's prev&next
@@ -45,14 +62,14 @@ func (sc *SubmissionCache) add(s *submission) bool {
 		s.prev = sc.Submissions["HEAD"].prev
 
 		//Squishing the new submission between the HEAD elem and the most recent submission
-		sc.Submissions[s.prev].next = s.Sender //Update previously most recent submission's 'next' field
-		sc.Submissions["HEAD"].prev = s.Sender //Update head's prev field
+		sc.Submissions[s.prev].next = s.ID //Update previously most recent submission's 'next' field
+		sc.Submissions["HEAD"].prev = s.ID //Update head's prev field
 
 		sc.Len++
 	}
 
 	//Add/update submission to/in Submissions map
-	sc.Submissions[s.Sender] = s
+	sc.Submissions[s.ID] = s
 
 	return alreadySubmitted
 }
@@ -67,7 +84,7 @@ func (sc *SubmissionCache) remove(sender string) error {
 	sc.Submissions[toDel.prev].next = toDel.next //Update previous elem's next field
 	sc.Submissions[toDel.next].prev = toDel.prev //Update next elem's prev field
 
-	delete(sc.Submissions, toDel.Sender) //Remove the submission from the Submissions map
+	delete(sc.Submissions, toDel.ID) //Remove the submission from the Submissions map
 
 	sc.Len--
 
