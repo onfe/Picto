@@ -52,15 +52,14 @@ func (sc *SubmissionCache) add(s *submission) bool {
 		sc.remove(sc.Submissions["TAIL"].next)
 	}
 
+	//Populate submission's ID&prev&next fields
 	s.ID = genSubmissionID(s.Addr)
+	s.next = "HEAD"
+	s.prev = sc.Submissions["HEAD"].prev
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
 
 	if !alreadySubmitted {
-		//Update submission's prev&next
-		s.next = "HEAD"
-		s.prev = sc.Submissions["HEAD"].prev
-
 		//Squishing the new submission between the HEAD elem and the most recent submission
 		sc.Submissions[s.prev].next = s.ID //Update previously most recent submission's 'next' field
 		sc.Submissions["HEAD"].prev = s.ID //Update head's prev field
@@ -74,10 +73,10 @@ func (sc *SubmissionCache) add(s *submission) bool {
 	return alreadySubmitted
 }
 
-func (sc *SubmissionCache) remove(sender string) error {
-	toDel, exists := sc.Submissions[sender]
+func (sc *SubmissionCache) remove(ID string) error {
+	toDel, exists := sc.Submissions[ID]
 	if !exists {
-		return errors.New("could not find submission from sender: " + sender)
+		return errors.New("could not find submission with ID: " + ID)
 	}
 
 	//Patching the submission's neighbours together before yeeting it out
