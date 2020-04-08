@@ -112,3 +112,16 @@ func (sc *submissionCache) getAll() []*submission {
 
 	return submissions
 }
+
+func (sc *submissionCache) getChainString() string {
+	chainString := "TAIL"
+
+	key := "TAIL"
+
+	for key != "HEAD" {
+		key = sc.Submissions[key].next
+		chainString += " <-> " + key
+	}
+
+	return chainString
+}
