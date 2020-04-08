@@ -155,7 +155,48 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			response, err = json.Marshal("new room created with `id` '" + newRoom.getID() + "'")
+			response, err = json.Marshal("new static room created with `id` '" + newRoom.getID() + "'")
+			return
+
+		case "create_submission_room":
+			roomName, roomNameSupplied := r.Form["name"]
+			if !roomNameSupplied {
+				err = errors.New("no `name` supplied")
+				return
+			}
+
+			roomDesc, roomDescSupplied := r.Form["desc"]
+			if !roomDescSupplied {
+				err = errors.New("no `desc` supplied")
+				return
+			}
+
+			var maxClients int
+			_maxClients, maxClientsSupplied := r.Form["size"]
+			if !maxClientsSupplied {
+				err = errors.New("no `size` supplied")
+				return
+			}
+			maxClients, err = strconv.Atoi(_maxClients[0])
+			if err != nil {
+				return
+			}
+			if maxClients < 1 {
+				err = errors.New("`size` is too small (min size is 1)")
+				return
+			}
+			if maxClients > MaxClientsPerRoom {
+				err = errors.New("`size` is too big (max size is " + strconv.Itoa(MaxClientsPerRoom) + ")")
+				return
+			}
+
+			newRoom := newSubmissionRoom(rm, roomName[0], roomDesc[0], maxClients)
+			err = rm.addRoom(newRoom)
+			if err != nil {
+				return
+			}
+
+			response, err = json.Marshal("new submission room created with `id` '" + newRoom.getID() + "'")
 			return
 
 		case "close_room":
