@@ -10,7 +10,7 @@ import (
 func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var errCode int
-	var client *Client
+	var client *client
 
 	defer func() {
 		if err != nil {

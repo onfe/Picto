@@ -12,25 +12,25 @@ import (
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms           map[string]RoomInterface `json:"Rooms"`
+	Rooms           map[string]roomInterface `json:"Rooms"`
 	MaxRooms        int                      `json:"MaxRooms"`
 	apiToken        string
 	Mode            string
 	wordsList       []string
-	StaticRooms     map[string]*StaticRoom
-	SubmissionRooms map[string]*SubmissionRoom
+	StaticRooms     map[string]*staticRoom
+	SubmissionRooms map[string]*submissionRoom
 }
 
 //NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string) RoomManager {
 	rm := RoomManager{
-		Rooms:           make(map[string]RoomInterface, MaxRooms),
+		Rooms:           make(map[string]roomInterface, MaxRooms),
 		MaxRooms:        MaxRooms,
 		apiToken:        apiToken,
 		Mode:            Mode,
 		wordsList:       wordsList,
-		StaticRooms:     make(map[string]*StaticRoom, MaxRooms),
-		SubmissionRooms: make(map[string]*SubmissionRoom, MaxRooms),
+		StaticRooms:     make(map[string]*staticRoom, MaxRooms),
+		SubmissionRooms: make(map[string]*submissionRoom, MaxRooms),
 	}
 	go rm.roomMonitorLoop()
 	return rm
@@ -130,7 +130,7 @@ func (rm *RoomManager) generateNewRoomID() string {
 	return newRoomID
 }
 
-func (rm *RoomManager) addRoom(newRoom RoomInterface) error {
+func (rm *RoomManager) addRoom(newRoom roomInterface) error {
 	if len(rm.Rooms) > rm.MaxRooms {
 		return errors.New("the server is at maximum rooms capacity")
 	}
@@ -154,9 +154,9 @@ func (rm *RoomManager) addRoom(newRoom RoomInterface) error {
 
 	switch newRoom.getType() {
 	case "static":
-		rm.StaticRooms[newRoom.getID()] = newRoom.(*StaticRoom)
+		rm.StaticRooms[newRoom.getID()] = newRoom.(*staticRoom)
 	case "submission":
-		rm.SubmissionRooms[newRoom.getID()] = newRoom.(*SubmissionRoom)
+		rm.SubmissionRooms[newRoom.getID()] = newRoom.(*submissionRoom)
 	}
 
 	log.Println("[ROOM CREATED] - Created room ID \""+newRoom.getID()+"\" | There are now", len(rm.Rooms), "active rooms.")

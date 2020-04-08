@@ -7,21 +7,21 @@ import (
 )
 
 //ClientManager is responsible for managing its room's clients.
-type ClientManager struct {
-	Clients     []*Client `json:"Clients"`
+type clientManager struct {
+	Clients     []*client `json:"Clients"`
 	ClientCount int       `json:"ClientCount"`
 	MaxClients  int       `json:"MaxClients"`
 }
 
-func newClientManager(maxClients int) *ClientManager {
-	return &ClientManager{
-		Clients:     make([]*Client, maxClients),
+func newClientManager(maxClients int) *clientManager {
+	return &clientManager{
+		Clients:     make([]*client, maxClients),
 		ClientCount: 0,
 		MaxClients:  maxClients,
 	}
 }
 
-func (cm *ClientManager) getClientNames() []string {
+func (cm *clientManager) getClientNames() []string {
 	names := make([]string, cm.MaxClients)
 	for i, user := range cm.Clients {
 		if user != nil {
@@ -31,7 +31,7 @@ func (cm *ClientManager) getClientNames() []string {
 	return names
 }
 
-func (cm *ClientManager) addClient(c *Client) error {
+func (cm *clientManager) addClient(c *client) error {
 	if cm.ClientCount < cm.MaxClients {
 		//ClientCount is immediately incremented so there's little chance of two people joining the room within a short time peroid causing the room to become overpopulated.
 		cm.ClientCount++
@@ -61,7 +61,7 @@ func (cm *ClientManager) addClient(c *Client) error {
 	return errors.New("this room is full")
 }
 
-func (cm *ClientManager) removeClient(clientID int) error {
+func (cm *clientManager) removeClient(clientID int) error {
 	if cm.Clients[clientID] != nil {
 		client := cm.Clients[clientID]
 		cm.Clients[clientID] = nil
@@ -75,7 +75,7 @@ func (cm *ClientManager) removeClient(clientID int) error {
 	return errors.New("room does not have such a client")
 }
 
-func (cm *ClientManager) pruneClients(timeout time.Duration) {
+func (cm *clientManager) pruneClients(timeout time.Duration) {
 	for _, client := range cm.Clients {
 		if client != nil {
 			if time.Since(client.LastMessage) > timeout {
@@ -85,7 +85,7 @@ func (cm *ClientManager) pruneClients(timeout time.Duration) {
 	}
 }
 
-func (cm *ClientManager) getClientByRemoteAddr(remoteAddr string) (*Client, error) {
+func (cm *clientManager) getClientByRemoteAddr(remoteAddr string) (*client, error) {
 	for _, client := range cm.Clients {
 		if client.ws.RemoteAddr().String() == remoteAddr {
 			return client, nil
@@ -94,7 +94,7 @@ func (cm *ClientManager) getClientByRemoteAddr(remoteAddr string) (*Client, erro
 	return nil, errors.New("client couldn't be found with remoteaddr: " + remoteAddr)
 }
 
-func (cm *ClientManager) distributeEvent(event *EventWrapper, sender int) {
+func (cm *clientManager) distributeEvent(event *eventWrapper, sender int) {
 	for _, client := range cm.Clients {
 		if client != nil && client.ID != sender {
 			client.sendBuffer <- event.toBytes()
@@ -102,7 +102,7 @@ func (cm *ClientManager) distributeEvent(event *EventWrapper, sender int) {
 	}
 }
 
-func (cm *ClientManager) closeClients() {
+func (cm *clientManager) closeClients() {
 	for _, client := range cm.Clients {
 		if client != nil {
 			client.close()

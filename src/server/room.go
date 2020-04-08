@@ -7,23 +7,23 @@ import (
 )
 
 //Room is a struct that holds all the info about a singular picto room.
-type Room struct {
+type room struct {
 	manager *RoomManager
 
 	ID   string `json:"ID"`
 	Name string `json:"Name"`
 
-	ClientManager *ClientManager `json:"ClientManager"`
+	ClientManager *clientManager `json:"ClientManager"`
 
-	EventCache *CircularQueue `json:"EventCache"`
+	EventCache *circularQueue `json:"EventCache"`
 
 	LastUpdate time.Time `json:"LastUpdate"`
 	Closing    bool      `json:"Closing"`
 	CloseTime  time.Time `json:"CloseTime"`
 }
 
-func newRoom(manager *RoomManager, roomID string, name string, maxClients int) *Room {
-	r := Room{
+func newRoom(manager *RoomManager, roomID string, name string, maxClients int) *room {
+	r := room{
 		manager: manager,
 
 		ID:   roomID,
@@ -40,7 +40,7 @@ func newRoom(manager *RoomManager, roomID string, name string, maxClients int) *
 
 //------------------------------ Utils ------------------------------
 //distributeEvent is a handy wrapper to make event caching easier.
-func (r *Room) distributeEvent(event *EventWrapper, cached bool, sender int) {
+func (r *room) distributeEvent(event *eventWrapper, cached bool, sender int) {
 	r.ClientManager.distributeEvent(event, sender)
 
 	r.LastUpdate = time.Now()
@@ -53,13 +53,13 @@ func (r *Room) distributeEvent(event *EventWrapper, cached bool, sender int) {
 //------------------------------ Implementing RoomInterface ------------------------------
 
 //The significant differences between rooms should lie in how they handle client events (in recieveEvents).
-func (r *Room) recieveEvent(event *EventWrapper, sender *Client) {
+func (r *room) recieveEvent(event *eventWrapper, sender *client) {
 	switch event.Event {
 	case "message":
 		//The payload field of EventWrapper is defined as interface{},
 		// Unmarshal throws the payload into a map[string]interface{}.
 		// We need to decode it.
-		message := MessageEvent{}
+		message := messageEvent{}
 		mapstructure.Decode(event.Payload, &message)
 
 		//If the message is empty, we ignore it...
@@ -77,7 +77,7 @@ func (r *Room) recieveEvent(event *EventWrapper, sender *Client) {
 		//The payload field of EventWrapper is defined as interface{},
 		// Unmarshal throws the payload into a map[string]interface{}.
 		// We need to decode it.
-		rename := RenameEvent{}
+		rename := renameEvent{}
 		mapstructure.Decode(event.Payload, &rename)
 
 		//If the new name is too long, we ignore it...
@@ -93,15 +93,15 @@ func (r *Room) recieveEvent(event *EventWrapper, sender *Client) {
 	}
 }
 
-func (r *Room) getID() string {
+func (r *room) getID() string {
 	return r.ID
 }
 
-func (r *Room) getType() string {
+func (r *room) getType() string {
 	return "dynamic"
 }
 
-func (r *Room) addClient(c *Client) error {
+func (r *room) addClient(c *client) error {
 	err := r.ClientManager.addClient(c)
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func (r *Room) addClient(c *Client) error {
 	//Updating the new client with all the messages from the message cache.
 	for _, E := range r.EventCache.getAll() {
 		if E != nil {
-			e := E.(*EventWrapper)
+			e := E.(*eventWrapper)
 			c.sendBuffer <- e.toBytes()
 		}
 	}
@@ -140,7 +140,7 @@ func (r *Room) addClient(c *Client) error {
 	return nil
 }
 
-func (r *Room) removeClient(clientID int) error {
+func (r *room) removeClient(clientID int) error {
 	client := r.ClientManager.Clients[clientID]
 
 	err := r.ClientManager.removeClient(clientID)
@@ -155,15 +155,15 @@ func (r *Room) removeClient(clientID int) error {
 	return nil
 }
 
-func (r *Room) pruneClients() {
+func (r *room) pruneClients() {
 	r.ClientManager.pruneClients(ClientMessageTimeout)
 }
 
-func (r *Room) announce(message string) {
+func (r *room) announce(message string) {
 	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
-func (r *Room) closeable() bool {
+func (r *room) closeable() bool {
 	switch true {
 	case r.Closing:
 		return time.Now().After(r.CloseTime)
@@ -172,11 +172,11 @@ func (r *Room) closeable() bool {
 	}
 }
 
-func (r *Room) setCloseTime(closeTime time.Time) {
+func (r *room) setCloseTime(closeTime time.Time) {
 	r.CloseTime = closeTime
 	r.Closing = true
 }
 
-func (r *Room) close() {
+func (r *room) close() {
 	r.ClientManager.closeClients()
 }

@@ -7,14 +7,14 @@ import (
 )
 
 //EventWrapper is the wrapper around every event
-type EventWrapper struct {
+type eventWrapper struct {
 	Event   string
 	Time    int64
 	Payload interface{}
 }
 
-func wrapEvent(event string, payload interface{}) *EventWrapper {
-	eventWrapper := EventWrapper{
+func wrapEvent(event string, payload interface{}) *eventWrapper {
+	eventWrapper := eventWrapper{
 		Event:   event,
 		Time:    time.Now().UnixNano() / int64(time.Millisecond),
 		Payload: payload,
@@ -22,7 +22,7 @@ func wrapEvent(event string, payload interface{}) *EventWrapper {
 	return &eventWrapper
 }
 
-func (e EventWrapper) toBytes() []byte {
+func (e eventWrapper) toBytes() []byte {
 	data, err := json.Marshal(e)
 	if err != nil {
 		log.Println("[EVENTS] - Couldn't marshal new EventWrapper")
@@ -31,7 +31,7 @@ func (e EventWrapper) toBytes() []byte {
 }
 
 //InitEvent is sent to clients when they join a room to inform them of the room's state.
-type InitEvent struct {
+type initEvent struct {
 	RoomID    string
 	RoomName  string
 	Static    bool
@@ -39,8 +39,8 @@ type InitEvent struct {
 	Users     []string //Array of strings of users' names.
 }
 
-func newInitEvent(roomID string, roomName string, static bool, userIndex int, users []string) *EventWrapper {
-	initEvent := InitEvent{
+func newInitEvent(roomID string, roomName string, static bool, userIndex int, users []string) *eventWrapper {
+	initEvent := initEvent{
 		RoomID:    roomID,
 		RoomName:  roomName,
 		Static:    static,
@@ -52,14 +52,14 @@ func newInitEvent(roomID string, roomName string, static bool, userIndex int, us
 
 //UserEvent is sent to clients to inform them of when another client leaves/joins their room.
 //Including UserName might seem a bit redundant but it's neccessary when sending cached join/leave events.
-type UserEvent struct {
+type userEvent struct {
 	UserIndex int    //Index of the user that just joined/left in the users array.
 	UserName  string //Name of the user that just joined/left
 	Users     []string
 }
 
-func newUserEvent(userIndex int, userName string, users []string) *EventWrapper {
-	userEvent := UserEvent{
+func newUserEvent(userIndex int, userName string, users []string) *eventWrapper {
+	userEvent := userEvent{
 		UserIndex: userIndex,
 		UserName:  userName,
 		Users:     users,
@@ -68,37 +68,37 @@ func newUserEvent(userIndex int, userName string, users []string) *EventWrapper 
 }
 
 //MessageEvent is sent to clients to inform them of a new message in their room.
-type MessageEvent struct {
+type messageEvent struct {
 	ColourIndex int    //Index of the user that just sent the message
 	Sender      string //Name of the user that sent the message (at the time it was recieved).
 	Data        string //Message image, base64 encoded, RLE'd
 	Span        int    //Width of the message
 }
 
-func (m *MessageEvent) isEmpty() bool {
+func (m *messageEvent) isEmpty() bool {
 	return false //Dummy method, pretends all messages are not empty.
 }
 
 //AnnouncementEvent is sent to clients to inform them of an announcement in the room.
-type AnnouncementEvent struct {
+type announcementEvent struct {
 	Announcement string
 }
 
-func newAnnouncementEvent(announcement string) *EventWrapper {
-	announcementEvent := AnnouncementEvent{
+func newAnnouncementEvent(announcement string) *eventWrapper {
+	announcementEvent := announcementEvent{
 		Announcement: announcement,
 	}
 	return wrapEvent("announcement", announcementEvent)
 }
 
 //RenameEvent is sent to clients to inform them of the name of their room being changed.
-type RenameEvent struct {
+type renameEvent struct {
 	UserName string
 	RoomName string
 }
 
-func newRenameEvent(userName string, roomName string) *EventWrapper {
-	renameEvent := RenameEvent{
+func newRenameEvent(userName string, roomName string) *eventWrapper {
+	renameEvent := renameEvent{
 		UserName: userName,
 		RoomName: roomName,
 	}

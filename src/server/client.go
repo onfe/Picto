@@ -20,8 +20,8 @@ var upgrader = websocket.Upgrader{
 }
 
 //Client is a struct that contains all of the info about a client.
-type Client struct {
-	room        RoomInterface
+type client struct {
+	room        roomInterface
 	ID          int    `json:"ID"`
 	Name        string `json:"Name"`
 	ws          *websocket.Conn
@@ -31,14 +31,14 @@ type Client struct {
 	closed      bool
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, Name string) (*client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	c := Client{
+	c := client{
 		Name:        Name,
 		ws:          ws,
 		sendBuffer:  make(chan []byte, 256),
@@ -78,7 +78,7 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 	return &c, err
 }
 
-func (c *Client) getDetails() string {
+func (c *client) getDetails() string {
 	if c.room != nil {
 		return "(Room ID " + c.room.getID() + " : Client ID " + strconv.Itoa(c.ID) + ")"
 	}
@@ -86,23 +86,23 @@ func (c *Client) getDetails() string {
 }
 
 //Cancel should only be called before GO.
-func (c *Client) Cancel(code int, text string) {
+func (c *client) Cancel(code int, text string) {
 	c.ws.CloseHandler()(code, text)
 }
 
 //GO starts the client's send and recieve goroutines.
-func (c *Client) GO() {
+func (c *client) GO() {
 	go c.sendLoop()
 	go c.recieveLoop()
 }
 
-func (c *Client) close() {
+func (c *client) close() {
 	c.closed = true
 }
 
 //----------------------------------------------------------------------------------------------------SENDLOOP
 
-func (c *Client) sendLoop() {
+func (c *client) sendLoop() {
 	ticker := *time.NewTicker(ClientPingPeriod)
 
 	//When the send loop loses connection to the client or sendBuffer is closed.
@@ -144,14 +144,14 @@ func (c *Client) sendLoop() {
 	}
 }
 
-func (c *Client) send(messageType int, payload []byte) error {
+func (c *client) send(messageType int, payload []byte) error {
 	c.ws.SetWriteDeadline(time.Now().Add(ClientSendTimeout))
 	return c.ws.WriteMessage(messageType, payload)
 }
 
 //----------------------------------------------------------------------------------------------------RECIEVELOOP
 
-func (c *Client) recieveLoop() {
+func (c *client) recieveLoop() {
 	//Loops, pulling messages from the websocket.
 	for {
 		_, data, err := c.ws.ReadMessage()
@@ -160,7 +160,7 @@ func (c *Client) recieveLoop() {
 			c.closed = true
 			break
 		}
-		event := &EventWrapper{}
+		event := &eventWrapper{}
 		err = json.Unmarshal(data, event)
 		if err != nil {
 			log.Println("[CLIENT] - Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
@@ -170,7 +170,7 @@ func (c *Client) recieveLoop() {
 	}
 }
 
-func (c *Client) recieve(e *EventWrapper) {
+func (c *client) recieve(e *eventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
 	if time.Since(c.LastMessage) > MinMessageInterval {
 		c.LastMessage = time.Now()

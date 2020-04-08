@@ -11,20 +11,20 @@ import (
 type submission struct {
 	ID      string
 	Addr    string
-	Message *MessageEvent
+	Message *messageEvent
 	next    string // doubly  .-''-.''-.
 	prev    string // linked  '-..'-..-' bois
 }
 
 //SubmissionCache holds submissions for a SubmissionRoom
-type SubmissionCache struct {
+type submissionCache struct {
 	Submissions map[string]*submission //Essentially a doubly linked list stored in a map for random access.
 	Capacity    int
 	Len         int
 }
 
-func newSubmissionCache(capacity int) *SubmissionCache {
-	sc := SubmissionCache{
+func newSubmissionCache(capacity int) *submissionCache {
+	sc := submissionCache{
 		Submissions: make(map[string]*submission, capacity),
 		Capacity:    capacity,
 		Len:         0,
@@ -46,7 +46,7 @@ func genSubmissionID(addr string) string {
 	return id
 }
 
-func (sc *SubmissionCache) add(s *submission) bool {
+func (sc *submissionCache) add(s *submission) bool {
 	//If we're at capacity, the submission at the tail is rejected.
 	if sc.Len == sc.Capacity {
 		sc.remove(sc.Submissions["TAIL"].next)
@@ -73,7 +73,7 @@ func (sc *SubmissionCache) add(s *submission) bool {
 	return alreadySubmitted
 }
 
-func (sc *SubmissionCache) remove(ID string) error {
+func (sc *submissionCache) remove(ID string) error {
 	toDel, exists := sc.Submissions[ID]
 	if !exists {
 		return errors.New("could not find submission with ID: " + ID)
@@ -91,7 +91,7 @@ func (sc *SubmissionCache) remove(ID string) error {
 }
 
 //getAll should return the submissions in the order of oldest first.
-func (sc *SubmissionCache) getAll() []*submission {
+func (sc *submissionCache) getAll() []*submission {
 	submissions := make([]*submission, sc.Len)
 
 	i := 0

@@ -8,25 +8,25 @@ import (
 )
 
 //SubmissionRoom is a struct that holds all the info about a singular picto SubmissionRoom.
-type SubmissionRoom struct {
+type submissionRoom struct {
 	manager *RoomManager
 
 	ID          string `json:"ID"`
 	Description string `json:"Description"`
 
-	ClientManager *ClientManager `json:"ClientManager"`
+	ClientManager *clientManager `json:"ClientManager"`
 
-	EventCache *CircularQueue `json:"EventCache"`
+	EventCache *circularQueue `json:"EventCache"`
 
-	SubmissionCache *SubmissionCache `json:"Submissions"`
+	SubmissionCache *submissionCache `json:"Submissions"`
 
 	LastUpdate time.Time `json:"LastUpdate"`
 	Closing    bool      `json:"Closing"`
 	CloseTime  time.Time `json:"CloseTime"`
 }
 
-func newSubmissionRoom(manager *RoomManager, name, description string, maxClients int) *SubmissionRoom {
-	r := SubmissionRoom{
+func newSubmissionRoom(manager *RoomManager, name, description string, maxClients int) *submissionRoom {
+	r := submissionRoom{
 		manager:         manager,
 		ID:              name,
 		Description:     description,
@@ -41,7 +41,7 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 
 //------------------------------ Utils ------------------------------
 //distributeEvent is a handy wrapper to make event caching easier.
-func (r *SubmissionRoom) distributeEvent(event *EventWrapper, cached bool, sender int) {
+func (r *submissionRoom) distributeEvent(event *eventWrapper, cached bool, sender int) {
 	r.ClientManager.distributeEvent(event, sender)
 
 	r.LastUpdate = time.Now()
@@ -51,7 +51,7 @@ func (r *SubmissionRoom) distributeEvent(event *EventWrapper, cached bool, sende
 	}
 }
 
-func (r *SubmissionRoom) publishSubmission(sender string) error {
+func (r *submissionRoom) publishSubmission(sender string) error {
 	submission, submissionExists := r.SubmissionCache.Submissions[sender]
 	if !submissionExists {
 		return errors.New("could not find submission from sender: " + sender)
@@ -78,7 +78,7 @@ func (r *SubmissionRoom) publishSubmission(sender string) error {
 	return nil
 }
 
-func (r *SubmissionRoom) rejectSubmission(sender string) error {
+func (r *submissionRoom) rejectSubmission(sender string) error {
 	//Returns an error if a submission from the sender specified couldn't be found.
 	return r.SubmissionCache.remove(sender)
 }
@@ -86,13 +86,13 @@ func (r *SubmissionRoom) rejectSubmission(sender string) error {
 //------------------------------ Implementing RoomInterface ------------------------------
 
 //The significant differences between rooms should lie in how they handle client events (in recieveEvents).
-func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
+func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 	switch event.Event {
 	case "message":
 		//The payload field of EventWrapper is defined as interface{},
 		// Unmarshal throws the payload into a map[string]interface{}.
 		// We need to decode it.
-		message := MessageEvent{}
+		message := messageEvent{}
 		mapstructure.Decode(event.Payload, &message)
 
 		//If the message is empty, we ignore it...
@@ -124,7 +124,7 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 		//The payload field of EventWrapper is defined as interface{},
 		// Unmarshal throws the payload into a map[string]interface{}.
 		// We need to decode it.
-		rename := RenameEvent{}
+		rename := renameEvent{}
 		mapstructure.Decode(event.Payload, &rename)
 
 		//If the new name is too long, we ignore it...
@@ -140,15 +140,15 @@ func (r *SubmissionRoom) recieveEvent(event *EventWrapper, sender *Client) {
 	}
 }
 
-func (r *SubmissionRoom) getID() string {
+func (r *submissionRoom) getID() string {
 	return r.ID
 }
 
-func (r *SubmissionRoom) getType() string {
+func (r *submissionRoom) getType() string {
 	return "submission"
 }
 
-func (r *SubmissionRoom) addClient(c *Client) error {
+func (r *submissionRoom) addClient(c *client) error {
 	err := r.ClientManager.addClient(c)
 	if err != nil {
 		return err
@@ -170,7 +170,7 @@ func (r *SubmissionRoom) addClient(c *Client) error {
 	//Updating the new client with all the messages from the message cache.
 	for _, E := range r.EventCache.getAll() {
 		if E != nil {
-			e := E.(*EventWrapper)
+			e := E.(*eventWrapper)
 			c.sendBuffer <- e.toBytes()
 		}
 	}
@@ -187,19 +187,19 @@ func (r *SubmissionRoom) addClient(c *Client) error {
 	return nil
 }
 
-func (r *SubmissionRoom) removeClient(clientID int) error {
+func (r *submissionRoom) removeClient(clientID int) error {
 	return r.ClientManager.removeClient(clientID)
 }
 
-func (r *SubmissionRoom) pruneClients() {
+func (r *submissionRoom) pruneClients() {
 	r.ClientManager.pruneClients(ClientMessageTimeout)
 }
 
-func (r *SubmissionRoom) announce(message string) {
+func (r *submissionRoom) announce(message string) {
 	r.distributeEvent(newAnnouncementEvent(message), true, -1)
 }
 
-func (r *SubmissionRoom) closeable() bool {
+func (r *submissionRoom) closeable() bool {
 	switch true {
 	case r.Closing:
 		return time.Now().After(r.CloseTime)
@@ -208,11 +208,11 @@ func (r *SubmissionRoom) closeable() bool {
 	}
 }
 
-func (r *SubmissionRoom) setCloseTime(closeTime time.Time) {
+func (r *submissionRoom) setCloseTime(closeTime time.Time) {
 	r.CloseTime = closeTime
 	r.Closing = true
 }
 
-func (r *SubmissionRoom) close() {
+func (r *submissionRoom) close() {
 	r.ClientManager.closeClients()
 }
