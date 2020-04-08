@@ -6,6 +6,7 @@
       <form @submit.prevent="authenticate">
         <input
           v-model="token"
+          type="password"
           name="token"
           id="token"
           class="font-pixel"
