@@ -139,7 +139,15 @@ Creates a static room (continues to exist when there are no clients connected) w
 
 If `ROOM_SIZE` is not supplied it defaults to the `DefaultRoomSize` set in `config.go`.
 
-If `PUBLIC` is "true" then it is a public room that will be displayed in the front page. It defaults to `false` and is case sensitive.
+
+
+## create_submission_room
+
+`/api/?token=API_TOKEN&method=create_submission_room&name=ROOM_NAME&desc=DESCRIPTION&size=ROOM_SIZE`
+
+Creates a submission room (appears on front page, is public and moderated) with name `ROOM_NAME` and description `DESCRIPTION` that can hold `ROOM_SIZE` clients.
+
+Unlike `create_static_room`, a `ROOM_SIZE` must be specified.
 
 
 
