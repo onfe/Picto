@@ -328,6 +328,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		case "get_public_rooms":
 			type roomState struct {
 				Name string
+				Desc string
 				Cap  int
 				Pop  int
 			}
@@ -338,6 +339,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 						roomStates,
 						roomState{
 							Name: r.getID(),
+							Desc: r.Description,
 							Cap:  r.ClientManager.MaxClients,
 							Pop:  r.ClientManager.ClientCount,
 						})
