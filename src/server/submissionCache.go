@@ -10,6 +10,7 @@ type submission struct {
 	ID      string
 	Addr    string
 	Message *messageEvent
+	State   string
 	next    string // doubly  .-''-.''-.
 	prev    string // linked  '-..'-..-' bois
 }
@@ -51,8 +52,9 @@ func (sc *submissionCache) add(s *submission) bool {
 		sc.remove(sc.Submissions["TAIL"].next)
 	}
 
-	//Populate submission's ID&next fields
+	//Populate submission's ID*state fields
 	s.ID = genSubmissionID(s.Addr)
+	s.State = "submitted"
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
 
@@ -91,6 +93,17 @@ func (sc *submissionCache) remove(ID string) error {
 	delete(sc.Submissions, toDel.ID) //Remove the submission from the Submissions map
 
 	sc.Len--
+
+	return nil
+}
+
+func (sc *submissionCache) setState(ID, newState string) error {
+	toChange, exists := sc.Submissions[ID]
+	if !exists {
+		return errors.New("could not find submission with ID: " + ID)
+	}
+
+	toChange.State = newState
 
 	return nil
 }

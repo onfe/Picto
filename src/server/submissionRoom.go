@@ -16,13 +16,10 @@ type submissionRoom struct {
 
 	ClientManager *clientManager `json:"ClientManager"`
 
-	EventCache *circularQueue `json:"EventCache"`
-
 	SubmissionCache *submissionCache `json:"Submissions"`
 
-	LastUpdate time.Time `json:"LastUpdate"`
-	Closing    bool      `json:"Closing"`
-	CloseTime  time.Time `json:"CloseTime"`
+	Closing   bool      `json:"Closing"`
+	CloseTime time.Time `json:"CloseTime"`
 }
 
 func newSubmissionRoom(manager *RoomManager, name, description string, maxClients int) *submissionRoom {
@@ -31,25 +28,13 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 		ID:              name,
 		Description:     description,
 		ClientManager:   newClientManager(maxClients),
-		EventCache:      newCircularQueue(ChatHistoryLen),
 		SubmissionCache: newSubmissionCache(MaxSubmissions),
-		LastUpdate:      time.Now(),
 		Closing:         false,
 	}
 	return &r
 }
 
 //------------------------------ Utils ------------------------------
-//distributeEvent is a handy wrapper to make event caching easier.
-func (r *submissionRoom) distributeEvent(event *eventWrapper, cached bool, sender int) {
-	r.ClientManager.distributeEvent(event, sender)
-
-	r.LastUpdate = time.Now()
-
-	if cached {
-		r.EventCache.push(event)
-	}
-}
 
 func (r *submissionRoom) publishSubmission(sender string) error {
 	submission, submissionExists := r.SubmissionCache.Submissions[sender]
@@ -59,10 +44,10 @@ func (r *submissionRoom) publishSubmission(sender string) error {
 
 	//Wrap it in an event and distribute it...
 	event := wrapEvent("message", submission.Message)
-	r.distributeEvent(event, true, -1)
+	r.ClientManager.distributeEvent(event, -1)
 
-	//...then remove it from the submissions cache
-	err := r.SubmissionCache.remove(submission.ID) //should never return an error.
+	//...and update its state in the submissions cache
+	err := r.SubmissionCache.setState(submission.ID, "published") //should never return an error.
 	if err != nil {
 		return err
 	}
@@ -138,7 +123,7 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 		// fill in the UserName field, rewrap it and distribute it...
 		r.ID = rename.RoomName
 		rename.UserName = sender.Name
-		r.distributeEvent(wrapEvent("rename", rename), true, -1)
+		r.ClientManager.distributeEvent(wrapEvent("rename", rename), -1)
 	}
 }
 
@@ -170,10 +155,12 @@ func (r *submissionRoom) addClient(c *client) error {
 	c.sendBuffer <- newInitEvent(r.ID, r.ID, true, c.ID, clientNames).toBytes()
 
 	//Updating the new client with all the messages from the message cache.
-	for _, E := range r.EventCache.getAll() {
-		if E != nil {
-			e := E.(*eventWrapper)
-			c.sendBuffer <- e.toBytes()
+	for _, s := range r.SubmissionCache.getAll() {
+		if s != nil {
+			if s.State == "published" {
+				e := wrapEvent("message", s.Message)
+				c.sendBuffer <- e.toBytes()
+			}
 		}
 	}
 
@@ -198,7 +185,7 @@ func (r *submissionRoom) pruneClients() {
 }
 
 func (r *submissionRoom) announce(message string) {
-	r.distributeEvent(newAnnouncementEvent(message), true, -1)
+	r.ClientManager.distributeEvent(newAnnouncementEvent(message), -1)
 }
 
 func (r *submissionRoom) closeable() bool {
