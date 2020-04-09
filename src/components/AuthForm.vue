@@ -178,6 +178,7 @@ p {
 
 .auth-form {
   color: var(--primary-join);
+  max-width: 675px;
 }
 
 .home {
