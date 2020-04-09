@@ -56,6 +56,7 @@ Returns a list of submission rooms with their population, capacity and the numbe
 [
 	{
 		"Name":"SubmissionRoom",
+        "Desc":"This is a submission room.",
 		"Cap":64,
 		"Pop":5,
         "Submissions":34
