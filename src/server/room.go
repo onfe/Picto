@@ -167,8 +167,10 @@ func (r *room) closeable() bool {
 	switch true {
 	case r.Closing:
 		return time.Now().After(r.CloseTime)
+	case r.ClientManager.ClientCount == 0:
+		return time.Since(r.LastUpdate) > RoomGracePeriod
 	default:
-		return r.ClientManager.ClientCount == 0 && time.Since(r.LastUpdate) > RoomGracePeriod
+		return time.Since(r.LastUpdate) > RoomTimeout
 	}
 }
 
