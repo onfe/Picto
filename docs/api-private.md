@@ -92,19 +92,13 @@ The submissions are ordered such that the oldest submission is first.
 
 
 
-## publish_submission
+## set_submission_state
 
-`/api/?token=API_TOKEN&method=publish_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID`
+`/api/?token=API_TOKEN&method=set_submission_state&room_id=ROOM_ID&submission_id=SUBMISSION_ID&state=STATE`
 
-Publishes the submission `SUBMISSION_ID` in `ROOM_ID`.
+Sets the state of submission `SUBMISSION_ID` in `ROOM_ID` to `STATE`.
 
-
-
-## reject_submission
-
-`/api/?token=API_TOKEN&method=reject_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID`
-
-Rejects the submission `SUBMISSION_ID` in `ROOM_ID`.
+Valid `STATE` values are: "submitted", "published" and "held"
 
 
 
