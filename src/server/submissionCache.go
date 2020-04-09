@@ -45,12 +45,27 @@ func newSubmissionCache(capacity int) *submissionCache {
 	return &sc
 }
 
-func genSubmissionID(addr, state string) string {
+func (sc *submissionCache) genSubmissionID(addr, state string) string {
 	_, month, day := time.Now().Date()
 	//addrSansPort := strings.Split(addr, ":")[0]
 	//by default, submission IDs are submitted.
 	id := addr + "-" + strconv.Itoa(day) + "-" + month.String() + "-" + state
-	return id
+
+	//If the state is just submitted, only one submission may exist, so we don't need to add an iterator.
+	if state == submitted {
+		return id
+	}
+
+	i := 0
+	iteratedID := id + "-" + strconv.Itoa(i)
+
+	for _, idTaken := sc.Submissions[iteratedID]; idTaken; {
+		i++
+		iteratedID = id + "-" + strconv.Itoa(i)
+		_, idTaken = sc.Submissions[iteratedID]
+	}
+
+	return iteratedID
 }
 
 func (sc *submissionCache) add(s *submission) bool {
@@ -60,7 +75,7 @@ func (sc *submissionCache) add(s *submission) bool {
 	}
 
 	//Populate submission's ID*state fields
-	s.ID = genSubmissionID(s.Addr, submitted)
+	s.ID = sc.genSubmissionID(s.Addr, submitted)
 	s.State = submitted
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
@@ -118,7 +133,7 @@ func (sc *submissionCache) setState(ID, newState string) (string, error) {
 
 			//Update the state and ID of the submission
 			toChange.State = state
-			toChange.ID = genSubmissionID(toChange.Addr, toChange.State)
+			toChange.ID = sc.genSubmissionID(toChange.Addr, toChange.State)
 
 			//Update the neighbour's references to the submission
 			sc.Submissions[toChange.prev].next = toChange.ID

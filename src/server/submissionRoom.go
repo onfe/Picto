@@ -166,7 +166,7 @@ func (r *submissionRoom) addClient(c *client) error {
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
 
 	clientAddr := c.ws.RemoteAddr().String()
-	_, submissionExists := r.SubmissionCache.Submissions[genSubmissionID(clientAddr, submitted)]
+	_, submissionExists := r.SubmissionCache.Submissions[r.SubmissionCache.genSubmissionID(clientAddr, submitted)]
 
 	if submissionExists {
 		c.sendBuffer <- newAnnouncementEvent("You've already made a submission today, but you can overwrite it by sending another.").toBytes()
