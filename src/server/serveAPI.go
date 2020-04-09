@@ -266,7 +266,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Pop         int
 				Submissions int
 			}
-			roomStates := make([]roomState, len(rm.StaticRooms))
+			roomStates := make([]roomState, len(rm.SubmissionRooms))
 			i := 0
 			for _, r := range rm.SubmissionRooms {
 				roomStates[i] = roomState{
