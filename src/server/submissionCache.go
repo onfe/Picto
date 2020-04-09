@@ -17,8 +17,8 @@ type submission struct {
 	Addr    string
 	Message *messageEvent
 	State   string
-	next    string // doubly  .-''-.''-.
-	prev    string // linked  '-..'-..-' bois
+	next    *submission // doubly  .-''-.''-.
+	prev    *submission // linked  '-..'-..-' bois
 }
 
 //SubmissionCache holds submissions for a SubmissionRoom
@@ -35,13 +35,16 @@ func newSubmissionCache(capacity int) *submissionCache {
 		Len:         0,
 	}
 	sc.Submissions["HEAD"] = &submission{
-		next: "END",
-		prev: "TAIL",
+		ID:   "HEAD",
+		next: nil,
+		prev: nil,
 	}
 	sc.Submissions["TAIL"] = &submission{
-		next: "HEAD",
-		prev: "START",
+		ID:   "TAIL",
+		next: sc.Submissions["HEAD"],
+		prev: nil,
 	}
+	sc.Submissions["HEAD"].prev = sc.Submissions["TAIL"]
 	return &sc
 }
 
@@ -71,7 +74,7 @@ func (sc *submissionCache) genSubmissionID(addr, state string) string {
 func (sc *submissionCache) add(s *submission) bool {
 	//If we're at capacity, the submission at the tail is rejected.
 	if sc.Len == sc.Capacity {
-		sc.remove(sc.Submissions["TAIL"].next)
+		sc.remove(sc.Submissions["TAIL"].next.ID)
 	}
 
 	//Populate submission's ID*state fields
@@ -82,12 +85,12 @@ func (sc *submissionCache) add(s *submission) bool {
 
 	if !alreadySubmitted {
 		//If we're not overwriting a submission, it's squished between HEAD and HEAD.prev
-		s.next = "HEAD"
+		s.next = sc.Submissions["HEAD"]
 		s.prev = sc.Submissions["HEAD"].prev
 
 		//Squishing the new submission between the HEAD elem and the most recent submission
-		sc.Submissions[sc.Submissions["HEAD"].prev].next = s.ID //Update previously most recent submission's 'next' field
-		sc.Submissions["HEAD"].prev = s.ID                      //Update head's prev field
+		sc.Submissions["HEAD"].prev.next = s //Update previously most recent submission's 'next' field
+		sc.Submissions["HEAD"].prev = s      //Update head's prev field
 
 		sc.Len++
 	} else {
@@ -110,8 +113,8 @@ func (sc *submissionCache) remove(ID string) error {
 	}
 
 	//Patching the submission's neighbours together before yeeting it out
-	sc.Submissions[toDel.prev].next = toDel.next //Update previous elem's next field
-	sc.Submissions[toDel.next].prev = toDel.prev //Update next elem's prev field
+	toDel.prev.next = toDel.next //Update previous elem's next field
+	toDel.next.prev = toDel.prev //Update next elem's prev field
 
 	delete(sc.Submissions, toDel.ID) //Remove the submission from the Submissions map
 
@@ -135,10 +138,6 @@ func (sc *submissionCache) setState(ID, newState string) (string, error) {
 			toChange.State = state
 			toChange.ID = sc.genSubmissionID(toChange.Addr, toChange.State)
 
-			//Update the neighbour's references to the submission
-			sc.Submissions[toChange.prev].next = toChange.ID
-			sc.Submissions[toChange.next].prev = toChange.ID
-
 			//Put it back into the submissions map
 			sc.Submissions[toChange.ID] = toChange
 
@@ -154,11 +153,11 @@ func (sc *submissionCache) getAll() []*submission {
 	submissions := make([]*submission, sc.Len)
 
 	i := 0
-	key := sc.Submissions["TAIL"].next //The key of the oldest submission
+	submission := sc.Submissions["TAIL"].next //The key of the oldest submission
 
-	for key != "HEAD" {
-		submissions[i] = sc.Submissions[key]
-		key = sc.Submissions[key].next //Move onto the next submission
+	for submission.ID != "HEAD" {
+		submissions[i] = submission
+		submission = submission.next //Move onto the next submission
 		i++
 	}
 
@@ -168,11 +167,11 @@ func (sc *submissionCache) getAll() []*submission {
 func (sc *submissionCache) getChainString() string {
 	chainString := "TAIL"
 
-	key := "TAIL"
+	submission := sc.Submissions["TAIL"]
 
-	for key != "HEAD" {
-		key = sc.Submissions[key].next
-		chainString += " <-> " + key
+	for submission.ID != "HEAD" {
+		submission = submission.next
+		chainString += " <-> " + submission.ID
 	}
 
 	return chainString
