@@ -20,10 +20,7 @@ import {
   faDownload,
   faMoon,
   faSun,
-  faIceCream,
-  faThumbsUp,
-  faThumbsDown,
-  faPaperPlane
+  faIceCream
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -51,10 +48,7 @@ library.add(
   faDownload,
   faMoon,
   faSun,
-  faIceCream,
-  faThumbsUp,
-  faThumbsDown,
-  faPaperPlane
+  faIceCream
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
