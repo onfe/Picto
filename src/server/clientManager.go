@@ -87,8 +87,10 @@ func (cm *clientManager) pruneClients(timeout time.Duration) {
 
 func (cm *clientManager) getClientByRemoteAddr(remoteAddr string) (*client, error) {
 	for _, client := range cm.Clients {
-		if client.ws.RemoteAddr().String() == remoteAddr {
-			return client, nil
+		if client != nil {
+			if client.ws.RemoteAddr().String() == remoteAddr {
+				return client, nil
+			}
 		}
 	}
 	return nil, errors.New("client couldn't be found with remoteaddr: " + remoteAddr)
