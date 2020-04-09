@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"log"
 	"strconv"
 	"time"
 )
@@ -15,7 +16,7 @@ const (
 type submission struct {
 	ID      string
 	Addr    string
-	Message *messageEvent
+	Message *eventWrapper
 	State   string
 	next    *submission // doubly  .-''-.''-.
 	prev    *submission // linked  '-..'-..-' bois
@@ -124,24 +125,32 @@ func (sc *submissionCache) remove(ID string) error {
 }
 
 func (sc *submissionCache) setState(ID, newState string) (string, error) {
-	toChange, exists := sc.Submissions[ID]
+	submission, exists := sc.Submissions[ID]
 	if !exists {
 		return "", errors.New("could not find submission with ID: " + ID)
 	}
 
 	for _, state := range []string{submitted, published, held} {
 		if state == newState {
+			log.Println("Updating submission ID " + submission.ID + " of state " + submission.State)
 			//Delete the old submission
-			delete(sc.Submissions, toChange.ID)
+			delete(sc.Submissions, submission.ID)
 
 			//Update the state and ID of the submission
-			toChange.State = state
-			toChange.ID = sc.genSubmissionID(toChange.Addr, toChange.State)
+			submission.State = newState
+			submission.ID = sc.genSubmissionID(submission.Addr, newState)
 
 			//Put it back into the submissions map
-			sc.Submissions[toChange.ID] = toChange
+			sc.Submissions[submission.ID] = submission
 
-			return toChange.ID, nil
+			//Update the neighbours' pointers.
+			submission.prev.next = submission
+			submission.next.prev = submission
+
+			log.Println("Updated submission ID " + submission.ID + " to " + newState + " state")
+			log.Println(sc.getChainString())
+
+			return submission.ID, nil
 		}
 	}
 

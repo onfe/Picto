@@ -328,7 +328,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			response, err = json.Marshal("submission successfully published")
+			response, err = json.Marshal(room.SubmissionCache.getChainString())
 			return
 
 		default:

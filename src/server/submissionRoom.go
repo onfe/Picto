@@ -38,7 +38,7 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 
 func (r *submissionRoom) setSubmissionState(submissionID string, newState string) error {
 	//update its state in the submissions cache
-	newID, err := r.SubmissionCache.setState(submissionID, "published") //should never return an error.
+	newID, err := r.SubmissionCache.setState(submissionID, newState) //should never return an error.
 	if err != nil {
 		return err
 	}
@@ -51,9 +51,11 @@ func (r *submissionRoom) setSubmissionState(submissionID string, newState string
 			return errors.New("could not find submission with id: " + newID)
 		}
 
-		//...wrap it in an event and distribute it...
-		event := wrapEvent("message", submission.Message)
-		r.ClientManager.distributeEvent(event, -1)
+		//...update its Time field to now...
+		submission.Message.Time = time.Now().UnixNano() / int64(time.Millisecond)
+
+		//...distribute it...
+		r.ClientManager.distributeEvent(submission.Message, -1)
 
 		//...and, if they're still connected, congratulate the client.
 		client, err := r.ClientManager.getClientByRemoteAddr(submission.Addr)
@@ -89,10 +91,10 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 		message.ColourIndex = sender.ID
 		message.Sender = sender.Name
 
-		// We then need to create a submission...
+		// We then need to wrap it and create a submission...
 		sub := &submission{
 			Addr:    sender.ws.RemoteAddr().String(),
-			Message: &message,
+			Message: wrapEvent("message", message),
 		}
 
 		// ...and add it to the submission cache
@@ -157,8 +159,7 @@ func (r *submissionRoom) addClient(c *client) error {
 	for _, s := range r.SubmissionCache.getAll() {
 		if s != nil {
 			if s.State == published {
-				e := wrapEvent("message", s.Message)
-				c.sendBuffer <- e.toBytes()
+				c.sendBuffer <- s.Message.toBytes()
 			}
 		}
 	}
