@@ -11,6 +11,16 @@ import (
 	"time"
 )
 
+func checkArgsPresent(form map[string][]string, args []string) error {
+	for _, arg := range args {
+		_, present := form[arg]
+		if !present {
+			return errors.New("no `" + arg + "` supplied")
+		}
+	}
+	return nil
+}
+
 //ServeAPI handles API calls.
 func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 	method := "unset"
@@ -84,13 +94,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "get_room_state":
-			roomID, roomIDSupplied := r.Form["id"]
-			if !roomIDSupplied {
-				err = errors.New("no `id` supplied")
+			err = checkArgsPresent(r.Form, []string{"id"})
+			if err != nil {
 				return
 			}
 
-			room, roomExists := rm.Rooms[roomID[0]]
+			room, roomExists := rm.Rooms[r.Form["id"][0]]
 			if !roomExists {
 				err = errors.New("a room with that `id` does not exist")
 				return
@@ -100,9 +109,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "announce":
-			message, messageSupplied := r.Form["message"]
-			if !messageSupplied {
-				err = errors.New("no `message` supplied")
+			err = checkArgsPresent(r.Form, []string{"message"})
+			if err != nil {
 				return
 			}
 
@@ -112,24 +120,23 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 					err = errors.New("a room with that `id` does not exist")
 					return
 				}
-				rm.Rooms[roomID[0]].announce(message[0])
-				response, err = json.Marshal("Announced '" + message[0] + "' to " + roomID[0])
+				rm.Rooms[roomID[0]].announce(r.Form["message"][0])
+				response, err = json.Marshal("Announced '" + r.Form["message"][0] + "' to " + roomID[0])
 				return
 			}
 
 			for _, room := range rm.Rooms {
-				room.announce(message[0])
+				room.announce(r.Form["message"][0])
 			}
-			response, err = json.Marshal("Announced " + message[0] + " To all rooms")
+			response, err = json.Marshal("Announced " + r.Form["message"][0] + " To all rooms")
 			return
 
 		case "create_static_room":
 			//Default values
 			maxClients := DefaultRoomSize
 
-			roomName, roomNameSupplied := r.Form["name"]
-			if !roomNameSupplied {
-				err = errors.New("no `name` supplied")
+			err = checkArgsPresent(r.Form, []string{"name"})
+			if err != nil {
 				return
 			}
 
@@ -149,7 +156,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 
-			newRoom := newStaticRoom(rm, roomName[0], maxClients)
+			newRoom := newStaticRoom(rm, r.Form["name"][0], maxClients)
 			err = rm.addRoom(newRoom)
 			if err != nil {
 				return
@@ -159,25 +166,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "create_submission_room":
-			roomName, roomNameSupplied := r.Form["name"]
-			if !roomNameSupplied {
-				err = errors.New("no `name` supplied")
+			err = checkArgsPresent(r.Form, []string{"name", "desc", "size"})
+			if err != nil {
 				return
 			}
 
-			roomDesc, roomDescSupplied := r.Form["desc"]
-			if !roomDescSupplied {
-				err = errors.New("no `desc` supplied")
-				return
-			}
-
-			var maxClients int
-			_maxClients, maxClientsSupplied := r.Form["size"]
-			if !maxClientsSupplied {
-				err = errors.New("no `size` supplied")
-				return
-			}
-			maxClients, err = strconv.Atoi(_maxClients[0])
+			maxClients, err := strconv.Atoi(r.Form["size"][0])
 			if err != nil {
 				return
 			}
@@ -190,7 +184,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			newRoom := newSubmissionRoom(rm, roomName[0], roomDesc[0], maxClients)
+			newRoom := newSubmissionRoom(rm, r.Form["name"][0], r.Form["desc"][0], maxClients)
 			err = rm.addRoom(newRoom)
 			if err != nil {
 				return
@@ -204,9 +198,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			reason := "This room is being closed by the server."
 			closeTime := DefaultCloseTime
 
-			roomID, roomIDSupplied := r.Form["id"]
-			if !roomIDSupplied {
-				err = errors.New("no `id` supplied")
+			err = checkArgsPresent(r.Form, []string{"id"})
+			if err != nil {
 				return
 			}
 
@@ -229,15 +222,15 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				closeTime = time.Duration(closeTimeInt) * time.Second
 			}
 
-			if _, roomExists := rm.Rooms[roomID[0]]; !roomExists {
+			if _, roomExists := rm.Rooms[r.Form["id"][0]]; !roomExists {
 				err = errors.New("a room with that `id` does not exist")
 				return
 			}
 
-			rm.Rooms[roomID[0]].setCloseTime(time.Now().Add(closeTime))
-			rm.Rooms[roomID[0]].announce(reason)
-			rm.Rooms[roomID[0]].announce(fmt.Sprintf("Room closing in %.0f seconds...", closeTime.Seconds()))
-			response, err = json.Marshal("closed room of `id` '" + roomID[0] + "'.")
+			rm.Rooms[r.Form["id"][0]].setCloseTime(time.Now().Add(closeTime))
+			rm.Rooms[r.Form["id"][0]].announce(reason)
+			rm.Rooms[r.Form["id"][0]].announce(fmt.Sprintf("Room closing in %.0f seconds...", closeTime.Seconds()))
+			response, err = json.Marshal("closed room of `id` '" + r.Form["id"][0] + "'.")
 			return
 
 		case "get_static_rooms":
@@ -299,36 +292,23 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "set_submission_state":
-			roomID, roomIDSupplied := r.Form["room_id"]
-			if !roomIDSupplied {
-				err = errors.New("no `room_id` supplied")
+			err = checkArgsPresent(r.Form, []string{"room_id", "submission_id", "state"})
+			if err != nil {
 				return
 			}
 
-			room, roomExists := rm.SubmissionRooms[roomID[0]]
+			room, roomExists := rm.SubmissionRooms[r.Form["room_id"][0]]
 			if !roomExists {
 				err = errors.New("a room with that `room_id` does not exist")
 				return
 			}
 
-			submissionID, submissionIDSupplied := r.Form["submission_id"]
-			if !submissionIDSupplied {
-				err = errors.New("no `submission_id` supplied")
-				return
-			}
-
-			newState, newStateSupplied := r.Form["state"]
-			if !newStateSupplied {
-				err = errors.New("no `state` supplied")
-				return
-			}
-
-			err = room.setSubmissionState(submissionID[0], newState[0])
+			err = room.setSubmissionState(r.Form["submission_id"][0], r.Form["state"][0])
 			if err != nil {
 				return
 			}
 
-			response, err = json.Marshal(room.SubmissionCache.getChainString())
+			response, err = json.Marshal("successfully updated submission state")
 			return
 
 		default:
@@ -340,14 +320,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 		switch method {
 
 		case "room_exists":
-			roomID, roomIDSupplied := r.Form["id"]
-
-			if !roomIDSupplied {
-				err = errors.New("no `id` supplied")
+			err = checkArgsPresent(r.Form, []string{"id"})
+			if err != nil {
 				return
 			}
 
-			_, hasRoom := rm.Rooms[roomID[0]]
+			_, hasRoom := rm.Rooms[r.Form["id"][0]]
 			response, err = json.Marshal(hasRoom)
 			return
 
