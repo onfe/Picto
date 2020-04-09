@@ -6,6 +6,12 @@ import (
 	"time"
 )
 
+const (
+	submitted string = "submitted"
+	published string = "published"
+	held      string = "held"
+)
+
 type submission struct {
 	ID      string
 	Addr    string
@@ -39,10 +45,11 @@ func newSubmissionCache(capacity int) *submissionCache {
 	return &sc
 }
 
-func genSubmissionID(addr string) string {
+func genSubmissionID(addr, state string) string {
 	_, month, day := time.Now().Date()
 	//addrSansPort := strings.Split(addr, ":")[0]
-	id := addr + "-" + strconv.Itoa(day) + "-" + month.String()
+	//by default, submission IDs are submitted.
+	id := addr + "-" + strconv.Itoa(day) + "-" + month.String() + "-" + state
 	return id
 }
 
@@ -53,8 +60,8 @@ func (sc *submissionCache) add(s *submission) bool {
 	}
 
 	//Populate submission's ID*state fields
-	s.ID = genSubmissionID(s.Addr)
-	s.State = "submitted"
+	s.ID = genSubmissionID(s.Addr, submitted)
+	s.State = submitted
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
 
@@ -69,6 +76,7 @@ func (sc *submissionCache) add(s *submission) bool {
 
 		sc.Len++
 	} else {
+
 		//If we're overwriting a submission, we just need to update s.prev and s.next
 		s.next = sc.Submissions[s.ID].next
 		s.prev = sc.Submissions[s.ID].prev
@@ -97,15 +105,33 @@ func (sc *submissionCache) remove(ID string) error {
 	return nil
 }
 
-func (sc *submissionCache) setState(ID, newState string) error {
+func (sc *submissionCache) setState(ID, newState string) (string, error) {
 	toChange, exists := sc.Submissions[ID]
 	if !exists {
-		return errors.New("could not find submission with ID: " + ID)
+		return "", errors.New("could not find submission with ID: " + ID)
 	}
 
-	toChange.State = newState
+	for _, state := range []string{submitted, published, held} {
+		if state == newState {
+			//Delete the old submission
+			delete(sc.Submissions, toChange.ID)
 
-	return nil
+			//Update the state and ID of the submission
+			toChange.State = state
+			toChange.ID = genSubmissionID(toChange.Addr, toChange.State)
+
+			//Update the neighbour's references to the submission
+			sc.Submissions[toChange.prev].next = toChange.ID
+			sc.Submissions[toChange.next].prev = toChange.ID
+
+			//Put it back into the submissions map
+			sc.Submissions[toChange.ID] = toChange
+
+			return toChange.ID, nil
+		}
+	}
+
+	return "", errors.New("unrecognised submission state")
 }
 
 //getAll should return the submissions in the order of oldest first.

@@ -36,37 +36,36 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 
 //------------------------------ Utils ------------------------------
 
-func (r *submissionRoom) publishSubmission(sender string) error {
-	submission, submissionExists := r.SubmissionCache.Submissions[sender]
-	if !submissionExists {
-		return errors.New("could not find submission from sender: " + sender)
-	}
-
-	//Wrap it in an event and distribute it...
-	event := wrapEvent("message", submission.Message)
-	r.ClientManager.distributeEvent(event, -1)
-
-	//...and update its state in the submissions cache
-	err := r.SubmissionCache.setState(submission.ID, "published") //should never return an error.
+func (r *submissionRoom) setSubmissionState(submissionID string, newState string) error {
+	//update its state in the submissions cache
+	newID, err := r.SubmissionCache.setState(submissionID, "published") //should never return an error.
 	if err != nil {
 		return err
 	}
 
-	client, err := r.ClientManager.getClientByRemoteAddr(submission.Addr)
-	if err != nil {
-		//returns an err if client can't be found
-		return nil
+	//If it's being published...
+	if newState == published {
+		//...get the submission from the cache...
+		submission, submissionExists := r.SubmissionCache.Submissions[newID] //~should~ never return an error
+		if !submissionExists {
+			return errors.New("could not find submission with id: " + newID)
+		}
+
+		//...wrap it in an event and distribute it...
+		event := wrapEvent("message", submission.Message)
+		r.ClientManager.distributeEvent(event, -1)
+
+		//...and, if they're still connected, congratulate the client.
+		client, err := r.ClientManager.getClientByRemoteAddr(submission.Addr)
+		if err != nil {
+			//returns an err if client can't be found
+			return nil
+		}
+		client.sendBuffer <- newAnnouncementEvent("Your submission just got published!").toBytes()
+		client.sendBuffer <- newAnnouncementEvent("You can now make a new submission.").toBytes()
 	}
 
-	client.sendBuffer <- newAnnouncementEvent("Your submission just got published!").toBytes()
-	client.sendBuffer <- newAnnouncementEvent("You can now make a new submission.").toBytes()
-
 	return nil
-}
-
-func (r *submissionRoom) rejectSubmission(sender string) error {
-	//Returns an error if a submission from the sender specified couldn't be found.
-	return r.SubmissionCache.remove(sender)
 }
 
 //------------------------------ Implementing RoomInterface ------------------------------
@@ -157,7 +156,7 @@ func (r *submissionRoom) addClient(c *client) error {
 	//Updating the new client with all the messages from the message cache.
 	for _, s := range r.SubmissionCache.getAll() {
 		if s != nil {
-			if s.State == "published" {
+			if s.State == published {
 				e := wrapEvent("message", s.Message)
 				c.sendBuffer <- e.toBytes()
 			}
@@ -167,7 +166,7 @@ func (r *submissionRoom) addClient(c *client) error {
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
 
 	clientAddr := c.ws.RemoteAddr().String()
-	_, submissionExists := r.SubmissionCache.Submissions[genSubmissionID(clientAddr)]
+	_, submissionExists := r.SubmissionCache.Submissions[genSubmissionID(clientAddr, submitted)]
 
 	if submissionExists {
 		c.sendBuffer <- newAnnouncementEvent("You've already made a submission today, but you can overwrite it by sending another.").toBytes()
