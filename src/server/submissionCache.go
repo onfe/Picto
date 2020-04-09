@@ -95,10 +95,12 @@ func (sc *submissionCache) add(s *submission) bool {
 
 		sc.Len++
 	} else {
-
-		//If we're overwriting a submission, we just need to update s.prev and s.next
+		//If we're overwriting a submission, we just need to update pointers
 		s.next = sc.Submissions[s.ID].next
 		s.prev = sc.Submissions[s.ID].prev
+
+		s.prev.next = s
+		s.next.prev = s
 	}
 
 	//Add/update submission to/in Submissions map
@@ -142,10 +144,6 @@ func (sc *submissionCache) setState(ID, newState string) (string, error) {
 
 			//Put it back into the submissions map
 			sc.Submissions[submission.ID] = submission
-
-			//Update the neighbours' pointers.
-			submission.prev.next = submission
-			submission.next.prev = submission
 
 			log.Println("Updated submission ID " + submission.ID + " to " + newState + " state")
 			log.Println(sc.getChainString())
