@@ -15,7 +15,7 @@ type room struct {
 
 	ClientManager *clientManager `json:"ClientManager"`
 
-	EventCache *circularQueue `json:"EventCache"`
+	EventCache *eventCache `json:"EventCache"`
 
 	LastUpdate time.Time `json:"LastUpdate"`
 	Closing    bool      `json:"Closing"`
