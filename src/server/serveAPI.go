@@ -311,6 +311,26 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal("successfully updated submission state")
 			return
 
+		case "reject_submission":
+			err = checkArgsPresent(r.Form, []string{"room_id", "submission_id"})
+			if err != nil {
+				return
+			}
+
+			room, roomExists := rm.SubmissionRooms[r.Form["room_id"][0]]
+			if !roomExists {
+				err = errors.New("a room with that `room_id` does not exist")
+				return
+			}
+
+			err = room.rejectSubmission(r.Form["submission_id"][0])
+			if err != nil {
+				return
+			}
+
+			response, err = json.Marshal("successfully rejected submission. client will be ignored for " + ClientIgnoreTime.String())
+			return
+
 		default:
 			err = errors.New("unrecognised private method: " + method)
 			return

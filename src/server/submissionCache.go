@@ -10,7 +10,6 @@ import (
 const (
 	submitted string = "submitted"
 	published string = "published"
-	held      string = "held"
 )
 
 type submission struct {
@@ -109,10 +108,10 @@ func (sc *submissionCache) add(s *submission) bool {
 	return alreadySubmitted
 }
 
-func (sc *submissionCache) remove(ID string) error {
+func (sc *submissionCache) remove(ID string) (*submission, error) {
 	toDel, exists := sc.Submissions[ID]
 	if !exists {
-		return errors.New("could not find submission with ID: " + ID)
+		return nil, errors.New("could not find submission with ID: " + ID)
 	}
 
 	//Patching the submission's neighbours together before yeeting it out
@@ -123,7 +122,7 @@ func (sc *submissionCache) remove(ID string) error {
 
 	sc.Len--
 
-	return nil
+	return toDel, nil
 }
 
 func (sc *submissionCache) setState(ID, newState string) (string, error) {
@@ -132,7 +131,7 @@ func (sc *submissionCache) setState(ID, newState string) (string, error) {
 		return "", errors.New("could not find submission with ID: " + ID)
 	}
 
-	for _, state := range []string{submitted, published, held} {
+	for _, state := range []string{submitted, published} {
 		if state == newState {
 			log.Println("Updating submission ID " + submission.ID + " of state " + submission.State)
 			//Delete the old submission

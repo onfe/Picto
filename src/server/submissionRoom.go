@@ -2,6 +2,7 @@ package server
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -17,6 +18,7 @@ type submissionRoom struct {
 	ClientManager *clientManager `json:"ClientManager"`
 
 	SubmissionCache *submissionCache `json:"Submissions"`
+	IgnoredClients  map[string]time.Time
 
 	Closing   bool      `json:"Closing"`
 	CloseTime time.Time `json:"CloseTime"`
@@ -29,6 +31,7 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 		Description:     description,
 		ClientManager:   newClientManager(maxClients),
 		SubmissionCache: newSubmissionCache(MaxSubmissions),
+		IgnoredClients:  make(map[string]time.Time),
 		Closing:         false,
 	}
 	return &r
@@ -70,12 +73,36 @@ func (r *submissionRoom) setSubmissionState(submissionID string, newState string
 	return nil
 }
 
+func (r *submissionRoom) rejectSubmission(submissionID string) error {
+	submission, err := r.SubmissionCache.remove(submissionID)
+	if err != nil {
+		return err
+	}
+
+	r.IgnoredClients[submission.Addr] = time.Now()
+
+	return nil
+}
+
 //------------------------------ Implementing RoomInterface ------------------------------
 
 //The significant differences between rooms should lie in how they handle client events (in recieveEvents).
 func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 	switch event.Event {
 	case "message":
+		//First check if the client has been ignored...
+		addr := strings.Split(sender.ws.RemoteAddr().String(), ":")[0]
+		ignoreTime, ignored := r.IgnoredClients[addr]
+		//If the client is ignored, check when they were ignored.
+		if ignored {
+			//If it was less than the ClientIgnoreTime, ignore the message...
+			if time.Since(ignoreTime) < ClientIgnoreTime {
+				return
+			}
+			//...otherwise, remove the IgnoredClients entry and continue.
+			delete(r.IgnoredClients, addr)
+		}
+
 		//The payload field of EventWrapper is defined as interface{},
 		// Unmarshal throws the payload into a map[string]interface{}.
 		// We need to decode it.
@@ -93,7 +120,7 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 
 		// We then need to wrap it and create a submission...
 		sub := &submission{
-			Addr:    sender.ws.RemoteAddr().String(),
+			Addr:    addr,
 			Message: wrapEvent("message", message),
 		}
 

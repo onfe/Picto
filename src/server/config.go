@@ -24,6 +24,8 @@ const (
 	RoomGracePeriod = 60 * time.Second
 	//ClientMessageTimeout = maximum amount of time a client may be in a room without sending any messages before being disconnected
 	ClientMessageTimeout = 300 * time.Second
+	//ClientIgnoreTime = amount of time a client is ignored after their submission is moderated
+	ClientIgnoreTime = 7 * 24 * time.Hour //1 week
 
 	//ClientSendTimeout is the time allotted for a message to be sent.
 	ClientSendTimeout = 10 * time.Second
