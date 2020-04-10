@@ -107,24 +107,6 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 		} else {
 			sender.sendBuffer <- newAnnouncementEvent("Your previous submission has been overwritten.").toBytes()
 		}
-
-	case "rename":
-		//The payload field of EventWrapper is defined as interface{},
-		// Unmarshal throws the payload into a map[string]interface{}.
-		// We need to decode it.
-		rename := renameEvent{}
-		mapstructure.Decode(event.Payload, &rename)
-
-		//If the new name is too long, we ignore it...
-		if len(rename.RoomName) > MaxRoomNameLength {
-			return
-		}
-
-		//...otherwise we change the room's name,
-		// fill in the UserName field, rewrap it and distribute it...
-		r.ID = rename.RoomName
-		rename.UserName = sender.Name
-		r.ClientManager.distributeEvent(wrapEvent("rename", rename), -1)
 	}
 }
 
