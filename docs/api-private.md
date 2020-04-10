@@ -102,6 +102,16 @@ Valid `STATE` values are: "submitted", "published" and "held"
 
 
 
+## reject_submission
+
+`/api/?token=API_TOKEN&method=reject_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID`
+
+Rejects the submission `SUBMISSION_ID` in `ROOM_ID`.
+
+The client who sent the submission will be ignored for `ClientIgnoreTime` (set in `config.go`) from when this endpoint is called.
+
+
+
 ## announce
 
 `/api/?token=API_TOKEN&method=announce&message=MESSAGE&id=ROOM_ID`
