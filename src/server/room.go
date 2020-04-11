@@ -30,7 +30,7 @@ func newRoom(manager *RoomManager, roomID string, name string, maxClients int) *
 		Name: name,
 
 		ClientManager: newClientManager(maxClients),
-		EventCache:    newCircularQueue(ChatHistoryLen),
+		EventCache:    newEventCache(ChatHistoryLen),
 
 		LastUpdate: time.Now(),
 		Closing:    false,

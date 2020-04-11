@@ -8,7 +8,7 @@ type eventCache struct {
 	Len       int `json:"Len"`
 }
 
-func newCircularQueue(capacity int) *eventCache {
+func newEventCache(capacity int) *eventCache {
 	return &eventCache{
 		queue:     make([]interface{}, capacity),
 		HeadIndex: 1,

@@ -28,7 +28,7 @@ func newStaticRoom(manager *RoomManager, name string, maxClients int) *staticRoo
 		Name: name,
 
 		ClientManager: newClientManager(maxClients),
-		EventCache:    newCircularQueue(ChatHistoryLen),
+		EventCache:    newEventCache(ChatHistoryLen),
 
 		LastUpdate: time.Now(),
 		Closing:    false,
