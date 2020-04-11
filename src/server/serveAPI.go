@@ -312,7 +312,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			return
 
 		case "reject_submission":
-			err = checkArgsPresent(r.Form, []string{"room_id", "submission_id"})
+			err = checkArgsPresent(r.Form, []string{"room_id", "submission_id", "offensive"})
 			if err != nil {
 				return
 			}
@@ -323,7 +323,18 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			err = room.rejectSubmission(r.Form["submission_id"][0])
+			var offensive bool
+			_offensive := r.Form["offensive"][0]
+			if _offensive == "true" {
+				offensive = true
+			} else if _offensive == "false" {
+				offensive = false
+			} else {
+				err = errors.New("`offensive` must be `true` or `false` exactly (case case sensitive)")
+				return
+			}
+
+			err = room.rejectSubmission(r.Form["submission_id"][0], offensive)
 			if err != nil {
 				return
 			}

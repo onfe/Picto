@@ -2,7 +2,6 @@ package server
 
 import (
 	"errors"
-	"strings"
 	"time"
 
 	"github.com/mitchellh/mapstructure"
@@ -73,13 +72,15 @@ func (r *submissionRoom) setSubmissionState(submissionID string, newState string
 	return nil
 }
 
-func (r *submissionRoom) rejectSubmission(submissionID string) error {
+func (r *submissionRoom) rejectSubmission(submissionID string, offensive bool) error {
 	submission, err := r.SubmissionCache.remove(submissionID)
 	if err != nil {
 		return err
 	}
 
-	r.IgnoredClients[submission.Addr] = time.Now()
+	if offensive {
+		r.IgnoredClients[submission.Addr] = time.Now()
+	}
 
 	return nil
 }
@@ -91,7 +92,7 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 	switch event.Event {
 	case "message":
 		//First check if the client has been ignored...
-		addr := strings.Split(sender.ws.RemoteAddr().String(), ":")[0]
+		addr := sender.ws.RemoteAddr().String()
 		ignoreTime, ignored := r.IgnoredClients[addr]
 		//If the client is ignored, check when they were ignored.
 		if ignored {
