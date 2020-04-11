@@ -104,11 +104,13 @@ Valid `STATE` values are: "submitted", "published" and "held"
 
 ## reject_submission
 
-`/api/?token=API_TOKEN&method=reject_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID`
+`/api/?token=API_TOKEN&method=reject_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID&offensive=OFFENSIVE`
 
 Rejects the submission `SUBMISSION_ID` in `ROOM_ID`.
 
-The client who sent the submission will be ignored for `ClientIgnoreTime` (set in `config.go`) from when this endpoint is called.
+`OFFENSIVE` must be `true` or `false` exactly (it is case sensitive).
+
+If `OFFENSIVE` is `true`, the client who sent the submission will be ignored for `ClientIgnoreTime` (set in `config.go`) from when this endpoint is called. Otherwise, the submission is simply discarded.
 
 
 
