@@ -24,7 +24,8 @@ import {
   faShare,
   faCheck,
   faPause,
-  faTimes
+  faTimes,
+  faExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -56,7 +57,8 @@ library.add(
   faShare,
   faCheck,
   faPause,
-  faTimes
+  faTimes,
+  faExclamation,
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);

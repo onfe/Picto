@@ -10,9 +10,9 @@
           icon="check"
         />
       </li>
-      <li :class="{ btn: true, selected: newState == 'held' }">
+      <li :class="{ btn: true, selected: newState == 'submitted' }">
         <font-awesome-icon
-          @click="newState = 'held'"
+          @click="newState = 'submitted'"
           class="icn"
           icon="pause"
         />
@@ -22,6 +22,13 @@
           @click="newState = 'deleted'"
           class="icn"
           icon="times"
+        />
+      </li>
+      <li :class="{ btn: true, selected: newState == 'offensive' }">
+        <font-awesome-icon
+          @click="newState = 'offensive'"
+          class="icn"
+          icon="exclamation"
         />
       </li>
       <li id="submit" class="btn">
@@ -46,8 +53,35 @@ export default {
   },
   methods: {
     submit() {
-      this.$emit("changeState", this.newState);
-      console.log(this.newState);
+      var url =
+        window.location.origin +
+        "/api/?token=" +
+        this.token +
+        "&room_id=" +
+        this.selectedRoom +
+        "&submission_id=" +
+        this.submission.ID;
+
+      if (this.newState == "submitted" || this.newState == "published") {
+        url += "&method=set_submission_state&state=" + this.newState;
+      } else if (this.newState == "deleted" || this.newState == "offensive") {
+        url +=
+          "&method=reject_submission&offensive=" +
+          (this.newState == "offensive");
+      }
+
+      const options = {
+        method: "GET"
+      };
+
+      fetch(url, options)
+        .then(resp => {
+          return resp.text();
+        })
+        .then(result => {
+          console.log(result);
+          this.$emit("changeState", this.newState);
+        });
     }
   }
 };

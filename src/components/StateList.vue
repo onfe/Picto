@@ -3,7 +3,7 @@
     <strong>States:</strong>
     <ul>
       <li
-        v-for="state in ['submitted', 'published', 'held']"
+        v-for="state in ['submitted', 'published']"
         :key="state"
         v-on:click="$emit('select', state)"
         :class="{ selected: selectedState == state }"

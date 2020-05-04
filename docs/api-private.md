@@ -98,7 +98,7 @@ The submissions are ordered such that the oldest submission is first.
 
 Sets the state of submission `SUBMISSION_ID` in `ROOM_ID` to `STATE`.
 
-Valid `STATE` values are: "submitted", "published" and "held"
+Valid `STATE` values are: "submitted" and "published".
 
 
 
