@@ -1,7 +1,15 @@
 <template>
   <div class="moderate">
     <div class="container">
-      <h1>Moderation dashboard</h1>
+      <header>
+        <h1>Moderation dashboard </h1>
+        <font-awesome-icon
+          v-if="token"
+          @click="refresh"
+          class="icn"
+          icon="redo-alt"
+        />
+      </header>
       <hr />
       <AuthForm v-if="token === null" @authenticated="setToken" />
       <div v-else id="dashboard">
@@ -22,13 +30,8 @@
         </div>
         <div id="submissions">
           <strong v-if="selectedState"
-            ><span
-              >Submissions in '{{ selectedRoom }}' of state '{{
-                selectedState
-              }}':</span
-            >
-            <font-awesome-icon @click="refresh" class="icn" icon="redo-alt"
-          /></strong>
+            >Submissions in '{{ selectedRoom }}' of state '{{ selectedState }}':
+          </strong>
           <strong v-else>Select a room and state</strong>
           <hr />
           <SubmissionList
@@ -122,8 +125,12 @@ p {
 }
 strong {
   margin-top: $spacer;
+}
+
+header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 .icn {
   margin: 0 $spacer * 2;
