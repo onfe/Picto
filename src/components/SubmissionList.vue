@@ -1,10 +1,11 @@
 <template>
   <ul>
+    <li v-if="filteredSubmissions.length == 0">
+      <p>There's nothing here!</p>
+    </li>
     <Submission
       class="submission"
-      v-for="submission in this.submissions.filter(
-        submission => submission.State == selectedState
-      )"
+      v-for="submission in filteredSubmissions"
       :key="submission.msg.hash"
       :token="token"
       :submission="submission"
@@ -40,6 +41,13 @@ export default {
   },
   mounted() {
     this.refresh();
+  },
+  computed: {
+    filteredSubmissions() {
+      return this.submissions.filter(
+        submission => submission.State == this.selectedState
+      );
+    }
   },
   methods: {
     refresh() {
@@ -80,6 +88,10 @@ ul {
   width: 100%;
   margin: 0;
   padding: 0;
+
+  p {
+    text-align: center;
+  }
 }
 
 .submission {
