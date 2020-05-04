@@ -32,7 +32,11 @@
         />
       </li>
       <li id="submit" class="btn">
-        <font-awesome-icon @click="submit" class="icn" icon="share" />
+        <font-awesome-icon
+          @click="newState != submission.State ? submit() : null"
+          class="icn"
+          icon="share"
+        />
       </li>
     </ul>
   </li>
