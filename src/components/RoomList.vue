@@ -36,6 +36,7 @@ li {
   width: 100%;
   justify-content: space-between;
   color: $grey-d;
+  white-space: nowrap;
 
   &.selected {
     color: $grey;
