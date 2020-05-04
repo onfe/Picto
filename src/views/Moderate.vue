@@ -189,6 +189,13 @@ export default {
   font-family: monospace;
   font-size: 1.2rem;
   color: var(--primary-join);
+
+  @media (orientation: portrait) {
+    #sign-out,
+    #dashboard {
+      font-size: 50%;
+    }
+  }
 }
 
 hr {
@@ -216,6 +223,10 @@ header {
     margin-top: $spacer * 2;
   }
 
+  h1 {
+    max-width:80%;
+  }
+
   #refresh {
     margin: 0 $spacer * 2;
     transition: transform 0.5s;
@@ -229,11 +240,6 @@ header {
   display: flex;
   height: 0;
   flex-grow: 1;
-}
-@media (orientation: portrait) {
-  #dashboard {
-    font-size: 50%;
-  }
 }
 #controlPanel {
   margin-right: 4 * $spacer;
