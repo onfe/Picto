@@ -14,7 +14,7 @@ Go was chosen for its performance and low memory usage, in comparison with Node.
 
 Get started with Picto by joining or creating a room. Share the room you're in and invite friends with one click on the user icon in the top left.
 
-To doodle, select the pencil tool and use a finger or your mouse to draw in the message box at the bottom of the screen. Typing is also supported, and on mobile tap the keyboard icon to show an on-screen keyboard. Can you find the hidden rainbow mode? :rainbow:
+To doodle, select the pencil tool and use a finger or your mouse to draw in the message box at the bottom of the screen. Typing is also supported, and on mobile tap the keyboard icon to show an on-screen keyboard. Can you find the hidden :rainbow: mode?
 
 To leave the room, click the open door icon.
 
