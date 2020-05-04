@@ -8,13 +8,13 @@ Send doodles to your friends and chat with Picto, the scribble-powered online me
 
 Picto is a drawing-based chat client, built with Vue.js and Golang. It makes use of WebSockets for real-time updates, and modern browser technologies for responsive, fluid design.
 
-Go was chosen for the back-end for it's performance and low memory usage, in comparison with Node.js.
+Go was chosen for its performance and low memory usage, in comparison with Node.js.
 
 ### Usage
 
 Get started with Picto by joining or creating a room. Share the room you're in and invite friends with one click on the user icon in the top left.
 
-To doodle, select the pencil tool and use a finger or your mouse to draw in the message box at the bottom of the screen. Typing is also supported, and on mobile tap the keyboard icon to show an on-screen keyboard.
+To doodle, select the pencil tool and use a finger or your mouse to draw in the message box at the bottom of the screen. Typing is also supported, and on mobile tap the keyboard icon to show an on-screen keyboard. Can you find the hidden rainbow mode? :rainbow:
 
 To leave the room, click the open door icon.
 
