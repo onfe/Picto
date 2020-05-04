@@ -23,9 +23,10 @@ type submission struct {
 
 //SubmissionCache holds submissions for a SubmissionRoom
 type submissionCache struct {
-	Submissions map[string]*submission //Essentially a doubly linked list stored in a map for random access.
-	Capacity    int
-	Len         int
+	Submissions    map[string]*submission //Essentially a doubly linked list stored in a map for random access.
+	Capacity       int
+	Len            int
+	PublishedCount int
 }
 
 func newSubmissionCache(capacity int) *submissionCache {
@@ -137,12 +138,28 @@ func (sc *submissionCache) setState(ID, newState string) (string, error) {
 			//Delete the old submission
 			delete(sc.Submissions, submission.ID)
 
+			//Update PublishedCount
+			if submission.State != published && newState == published {
+				sc.PublishedCount++
+			} else if submission.State == published && newState != published {
+				sc.PublishedCount--
+			}
+
 			//Update the state and ID of the submission
 			submission.State = newState
 			submission.ID = sc.genSubmissionID(submission.Addr, newState)
 
 			//Put it back into the submissions map
 			sc.Submissions[submission.ID] = submission
+
+			//If PublishedCount > MaxPublishedSubmissions, delete the oldest published submission
+			if sc.PublishedCount > MaxPublishedSubmissions {
+				submission := sc.Submissions["TAIL"].next
+				for submission.State != published {
+					submission = submission.next
+				}
+				sc.remove(submission.ID)
+			}
 
 			log.Println("Updated submission ID " + submission.ID + " to " + newState + " state")
 			log.Println(sc.getChainString())

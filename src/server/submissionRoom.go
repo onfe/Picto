@@ -165,7 +165,7 @@ func (r *submissionRoom) addClient(c *client) error {
 	//Updating the new client as to the room state with an init event.
 	c.sendBuffer <- newInitEvent(r.ID, r.ID, true, c.ID, clientNames).toBytes()
 
-	//Updating the new client with all the messages from the message cache.
+	//Updating the new client with all the published messages from the message cache.
 	for _, s := range r.SubmissionCache.getAll() {
 		if s != nil {
 			if s.State == published {

@@ -9,6 +9,8 @@ const (
 	MaxClientsPerRoom = 64
 	//MaxSubmissions = the maximum number of submissions to a SubmissionRoom before they overwrite themselves.
 	MaxSubmissions = 1024
+	//MaxPublishedSubmissions = the maximum number of published submissions in a SubmissionRoom before they get discarded.
+	MaxPublishedSubmissions = 64
 
 	//MaxRoomNameLength = the max length of a room name.
 	MaxRoomNameLength = 32
