@@ -23,22 +23,27 @@ export default {
     };
   },
   mounted() {
-    const url =
-      window.location.origin +
-      "/api/?method=get_submission_rooms&token=" +
-      this.token;
-    const options = {
-      method: "GET"
-    };
+    this.refresh();
+  },
+  methods: {
+    refresh() {
+      const url =
+        window.location.origin +
+        "/api/?method=get_submission_rooms&token=" +
+        this.token;
+      const options = {
+        method: "GET"
+      };
 
-    fetch(url, options)
-      .then(resp => {
-        return resp.text();
-      })
-      .then(result => {
-        this.rooms = JSON.parse(result) || [];
-        this.rooms.map(r => (r.Full = r.Pop >= r.Cap));
-      });
+      fetch(url, options)
+        .then(resp => {
+          return resp.text();
+        })
+        .then(result => {
+          this.rooms = JSON.parse(result) || [];
+          this.rooms.map(r => (r.Full = r.Pop >= r.Cap));
+        });
+    }
   }
 };
 </script>

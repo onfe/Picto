@@ -10,7 +10,12 @@
       :submission="submission"
       :selectedRoom="selectedRoom"
       :selectedState="selectedState"
-      @changeState="newState => (submission.State = newState)"
+      @changeState="
+        newState => {
+          submission.State = newState;
+          $emit('refresh');
+        }
+      "
     />
   </ul>
 </template>
@@ -33,33 +38,38 @@ export default {
     };
   },
   mounted() {
-    const url =
-      window.location.origin +
-      "/api/?method=get_submissions&token=" +
-      this.token +
-      "&room_id=" +
-      this.selectedRoom;
-    const options = {
-      method: "GET"
-    };
+    this.refresh();
+  },
+  methods: {
+    refresh() {
+      const url =
+        window.location.origin +
+        "/api/?method=get_submissions&token=" +
+        this.token +
+        "&room_id=" +
+        this.selectedRoom;
+      const options = {
+        method: "GET"
+      };
 
-    fetch(url, options)
-      .then(resp => {
-        return resp.text();
-      })
-      .then(result => {
-        this.submissions = JSON.parse(result) || [];
-        this.submissions.map(
-          submission =>
-            (submission.msg = new Message(
-              RunlengthEncoder.decode(submission.Message.Payload.Data),
-              submission.Message.Payload.Span,
-              null,
-              colour(submission.Message.Payload.ColourIndex),
-              submission.Message.Time
-            ))
-        );
-      });
+      fetch(url, options)
+        .then(resp => {
+          return resp.text();
+        })
+        .then(result => {
+          this.submissions = JSON.parse(result) || [];
+          this.submissions.map(
+            submission =>
+              (submission.msg = new Message(
+                RunlengthEncoder.decode(submission.Message.Payload.Data),
+                submission.Message.Payload.Span,
+                null,
+                colour(submission.Message.Payload.ColourIndex),
+                submission.Message.Time
+              ))
+          );
+        });
+    }
   }
 };
 </script>

@@ -8,6 +8,7 @@
         <div id="controlPanel">
           <RoomList
             id="roomList"
+            ref="roomList"
             :token="token"
             :selectedRoom="selectedRoom"
             @select="room => (selectedRoom = room)"
@@ -21,18 +22,23 @@
         </div>
         <div id="submissions">
           <strong v-if="selectedState"
-            >Submissions in '{{ selectedRoom }}' of state '{{
-              selectedState
-            }}':</strong
-          >
+            ><span
+              >Submissions in '{{ selectedRoom }}' of state '{{
+                selectedState
+              }}':</span
+            >
+            <font-awesome-icon @click="refresh" class="icn" icon="redo-alt"
+          /></strong>
           <strong v-else>Select a room and state</strong>
           <hr />
           <SubmissionList
             id="submissionList"
+            ref="submissionList"
             v-if="selectedRoom != null"
             :token="token"
             :selectedRoom="selectedRoom"
             :selectedState="selectedState"
+            @refresh="refresh"
           />
         </div>
       </div>
@@ -63,6 +69,10 @@ export default {
   methods: {
     setToken(token) {
       this.token = token;
+    },
+    refresh() {
+      this.$refs.submissionList.refresh();
+      this.$refs.roomList.refresh();
     }
   }
 };
@@ -112,6 +122,11 @@ p {
 }
 strong {
   margin-top: $spacer;
+  display: flex;
+  justify-content: space-between;
+}
+.icn {
+  margin: 0 $spacer * 2;
 }
 
 #dashboard {
