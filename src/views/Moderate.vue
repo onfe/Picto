@@ -225,7 +225,7 @@ header {
   }
 
   h1 {
-    max-width:80%;
+    max-width: 80%;
   }
 
   #refresh {
