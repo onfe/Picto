@@ -141,7 +141,7 @@ export default {
 
           //If the submission list exists we need to refresh that too.
           if (this.$refs.submissionList) {
-            this.$refs.submissionList.refresh();
+            this.$nextTick().then(this.$refs.submissionList.refresh);
           }
 
           //If a room is selected we need to update it with potentially new details
