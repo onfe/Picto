@@ -73,16 +73,20 @@ func (sc *submissionCache) genSubmissionID(addr, state string) string {
 }
 
 func (sc *submissionCache) add(s *submission) bool {
-	//If we're at capacity, the submission at the tail is rejected.
-	if sc.Len == sc.Capacity {
-		sc.remove(sc.Submissions["TAIL"].next.ID)
-	}
-
 	//Populate submission's ID*state fields
 	s.ID = sc.genSubmissionID(s.Addr, submitted)
 	s.State = submitted
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
+
+	//If it's a new submission, and we're at capacity, the oldest unpublished submission is discarded.
+	if !alreadySubmitted && sc.Len == sc.Capacity {
+		submission := sc.Submissions["TAIL"].next
+		for submission.State == published {
+			submission = submission.next
+		}
+		sc.remove(submission.ID)
+	}
 
 	if !alreadySubmitted {
 		//If we're not overwriting a submission, it's squished between HEAD and HEAD.prev
