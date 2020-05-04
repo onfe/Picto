@@ -40,12 +40,12 @@ li {
   &.selected {
     color: $grey;
     font-weight: bold;
+    text-decoration: underline;
   }
 
   > * {
     color: inherit;
     line-height: 1.5;
-    text-decoration: underline;
   }
 }
 </style>
