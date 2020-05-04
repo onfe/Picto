@@ -110,6 +110,9 @@ p {
   margin-bottom: 1.5rem;
   line-height: 1.2;
 }
+strong {
+  margin-top: $spacer;
+}
 
 #dashboard {
   display: flex;
