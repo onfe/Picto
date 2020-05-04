@@ -12,52 +12,91 @@ import (
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms       map[string]*Room `json:"Rooms"`
-	MaxRooms    int              `json:"MaxRooms"`
-	apiToken    string
-	Mode        string
-	wordsList   []string
-	StaticRooms map[string]*Room
+	Rooms           map[string]roomInterface `json:"Rooms"`
+	MaxRooms        int                      `json:"MaxRooms"`
+	apiToken        string
+	Mode            string
+	wordsList       []string
+	StaticRooms     map[string]*staticRoom
+	SubmissionRooms map[string]*submissionRoom
 }
 
 //NewRoomManager creates a new room manager.
-func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string, publicRoomConfigVar string) RoomManager {
+func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string) RoomManager {
 	rm := RoomManager{
-		Rooms:       make(map[string]*Room, MaxRooms),
-		MaxRooms:    MaxRooms,
-		apiToken:    apiToken,
-		Mode:        Mode,
-		wordsList:   wordsList,
-		StaticRooms: make(map[string]*Room, MaxRooms),
+		Rooms:           make(map[string]roomInterface, MaxRooms),
+		MaxRooms:        MaxRooms,
+		apiToken:        apiToken,
+		Mode:            Mode,
+		wordsList:       wordsList,
+		StaticRooms:     make(map[string]*staticRoom, MaxRooms),
+		SubmissionRooms: make(map[string]*submissionRoom, MaxRooms),
 	}
-	rm.loadStaticRoomConfig(publicRoomConfigVar)
 	go rm.roomMonitorLoop()
 	return rm
 }
 
-func (rm *RoomManager) loadStaticRoomConfig(varname string) {
+/*LoadStaticRoomConfig loads a room config env var of static rooms.*/
+func (rm *RoomManager) LoadStaticRoomConfig(varname string) error {
 	config, configured := os.LookupEnv(varname)
-	if configured {
-		type roomConfig struct {
-			Name   string
-			Cap    int
-			Public bool
-		}
-
-		var roomConfigs []roomConfig
-		configBytes := []byte(config)
-
-		err := json.Unmarshal(configBytes, &roomConfigs)
-		if err != nil {
-			log.Println("[SYSTEM] - Couldn't unmarshal room config:", err)
-		}
-
-		for _, r := range roomConfigs {
-			rm.createRoom(r.Name, r.Cap, true, r.Public)
-		}
-	} else {
-		log.Println("[SYSTEM] - Couldn't find public room config env var.")
+	if !configured {
+		return errors.New("couldn't find config var: " + varname)
 	}
+
+	type staticRoomConfig struct {
+		Name string
+		Cap  int
+	}
+
+	var roomConfigs []staticRoomConfig
+	configBytes := []byte(config)
+
+	err := json.Unmarshal(configBytes, &roomConfigs)
+	if err != nil {
+		return err
+	}
+
+	for _, r := range roomConfigs {
+		newRoom := newStaticRoom(rm, r.Name, r.Cap)
+		err = rm.addRoom(newRoom)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+/*LoadSubmissionRoomConfig loads a room config env var of static rooms.*/
+func (rm *RoomManager) LoadSubmissionRoomConfig(varname string) error {
+	config, configured := os.LookupEnv(varname)
+	if !configured {
+		return errors.New("couldn't find config var: " + varname)
+	}
+
+	type submissionRoomConfig struct {
+		Name        string
+		Description string
+		Cap         int
+	}
+
+	var roomConfigs []submissionRoomConfig
+	configBytes := []byte(config)
+
+	err := json.Unmarshal(configBytes, &roomConfigs)
+	if err != nil {
+		return err
+	}
+
+	for _, r := range roomConfigs {
+		newRoom := newSubmissionRoom(rm, r.Name, r.Description, r.Cap)
+		err = rm.addRoom(newRoom)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (rm *RoomManager) roomMonitorLoop() {
@@ -66,19 +105,10 @@ func (rm *RoomManager) roomMonitorLoop() {
 		select {
 		case <-ticker.C:
 			for roomID, room := range rm.Rooms {
-				if !room.Static &&
-					((room.ClientCount == -1 && time.Since(room.LastUpdate) > RoomGracePeriod) ||
-						(time.Since(room.LastUpdate) > RoomTimeout)) ||
-					(room.Closing && time.Now().After(room.CloseTime)) {
+				if room.closeable() {
 					rm.closeRoom(roomID)
 				} else {
-					for _, client := range room.Clients {
-						if client != nil {
-							if time.Since(client.LastMessage) > ClientMessageTimeout {
-								client.close()
-							}
-						}
-					}
+					room.pruneClients()
 				}
 			}
 
@@ -100,38 +130,48 @@ func (rm *RoomManager) generateNewRoomID() string {
 	return newRoomID
 }
 
-func (rm *RoomManager) createRoom(roomName string, maxClients int, static, public bool) (*Room, error) {
-	if len(rm.Rooms) < rm.MaxRooms {
-		newRoomID := roomName
-		if !static {
-			newRoomID = rm.generateNewRoomID()
-		} else {
-			if strings.Contains(newRoomID, "-") {
-				return nil, errors.New("static room names may not contain hyphens")
-			}
-			for roomID := range rm.Rooms {
-				if roomID == newRoomID {
-					return nil, errors.New("a static room already exists with that name")
-				}
-			}
-		}
-		newRoom := newRoom(rm, newRoomID, roomName, static, public, maxClients)
-		rm.Rooms[newRoom.ID] = newRoom
-		rm.StaticRooms[newRoomID] = newRoom
-
-		log.Println("[ROOM CREATED] - Created room ID \""+newRoomID+"\" | There are now", len(rm.Rooms), "active rooms.")
-		return newRoom, nil
+func (rm *RoomManager) addRoom(newRoom roomInterface) error {
+	if len(rm.Rooms) > rm.MaxRooms {
+		return errors.New("the server is at maximum rooms capacity")
 	}
-	return nil, errors.New("the server is at maximum rooms capacity")
+
+	if newRoom.getType() != "dynamic" {
+		/* We've got to check that non-dynamic room names don't contain hyphens to
+		ensure there is no overlap between dynamic and other types of room. */
+		if strings.Contains(newRoom.getID(), "-") {
+			return errors.New("only dynamic room names may contain hyphens")
+		}
+	}
+
+	/* We've also got to check the room name isn't alredy in use */
+	for roomID := range rm.Rooms {
+		if roomID == newRoom.getID() {
+			return errors.New("a room already exists with that name")
+		}
+	}
+
+	rm.Rooms[newRoom.getID()] = newRoom
+
+	switch newRoom.getType() {
+	case "static":
+		rm.StaticRooms[newRoom.getID()] = newRoom.(*staticRoom)
+	case "submission":
+		rm.SubmissionRooms[newRoom.getID()] = newRoom.(*submissionRoom)
+	}
+
+	log.Println("[ROOM CREATED] - Created room ID \""+newRoom.getID()+"\" | There are now", len(rm.Rooms), "active rooms.")
+
+	return nil
 }
 
 func (rm *RoomManager) closeRoom(roomID string) {
-	if rm.Rooms[roomID].ClientCount > 0 {
-		rm.Rooms[roomID].close()
-	}
-	if rm.Rooms[roomID].Static {
+	rm.Rooms[roomID].close()
+
+	if _, isStatic := rm.StaticRooms[roomID]; isStatic {
 		delete(rm.StaticRooms, roomID)
 	}
+
 	delete(rm.Rooms, roomID)
+
 	log.Println("[ROOM CLOSED] - Closed room ID \""+roomID+"\" | There are now", len(rm.Rooms), "active rooms.")
 }

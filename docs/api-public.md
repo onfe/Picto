@@ -16,24 +16,15 @@ If `ROOM_ID` exists, returns `true`. Otherwise `false`.
 
 `api/?method=get_public_rooms`
 
-Returns a list of public rooms including their population and capacity, as follows:
+Returns a list of public rooms including their description, population and capacity as follows:
 
 ```json
 [
 	{
-		"Name":"Parlor",
+		"Name":"Pets",
+        "Desc":"This room is for drawing pictures of your pets! You can make 1 submission to this room per day.",
 		"Cap":64,
 		"Pop":12
-	},
-	{
-		"Name":"Library",
-		"Cap":64,
-		"Pop":43
-	},
-	{
-		"Name":"Garden",
-		"Cap":64,
-		"Pop":27
 	}
 ]
 ```

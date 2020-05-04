@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/mitchellh/mapstructure"
 )
 
 var upgrader = websocket.Upgrader{
@@ -21,8 +20,8 @@ var upgrader = websocket.Upgrader{
 }
 
 //Client is a struct that contains all of the info about a client.
-type Client struct {
-	room        *Room
+type client struct {
+	room        roomInterface
 	ID          int    `json:"ID"`
 	Name        string `json:"Name"`
 	ws          *websocket.Conn
@@ -32,14 +31,14 @@ type Client struct {
 	closed      bool
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, Name string) (*client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
-	c := Client{
+	c := client{
 		Name:        Name,
 		ws:          ws,
 		sendBuffer:  make(chan []byte, 256),
@@ -79,31 +78,31 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*Client, er
 	return &c, err
 }
 
-func (c *Client) getDetails() string {
+func (c *client) getDetails() string {
 	if c.room != nil {
-		return "(Room ID " + c.room.ID + " : Client ID " + strconv.Itoa(c.ID) + ")"
+		return "(Room ID " + c.room.getID() + " : Client ID " + strconv.Itoa(c.ID) + ")"
 	}
 	return "(Roomless : Client ID " + strconv.Itoa(c.ID) + ")"
 }
 
 //Cancel should only be called before GO.
-func (c *Client) Cancel(code int, text string) {
+func (c *client) Cancel(code int, text string) {
 	c.ws.CloseHandler()(code, text)
 }
 
 //GO starts the client's send and recieve goroutines.
-func (c *Client) GO() {
+func (c *client) GO() {
 	go c.sendLoop()
 	go c.recieveLoop()
 }
 
-func (c *Client) close() {
+func (c *client) close() {
 	c.closed = true
 }
 
 //----------------------------------------------------------------------------------------------------SENDLOOP
 
-func (c *Client) sendLoop() {
+func (c *client) sendLoop() {
 	ticker := *time.NewTicker(ClientPingPeriod)
 
 	//When the send loop loses connection to the client or sendBuffer is closed.
@@ -145,14 +144,14 @@ func (c *Client) sendLoop() {
 	}
 }
 
-func (c *Client) send(messageType int, payload []byte) error {
+func (c *client) send(messageType int, payload []byte) error {
 	c.ws.SetWriteDeadline(time.Now().Add(ClientSendTimeout))
 	return c.ws.WriteMessage(messageType, payload)
 }
 
 //----------------------------------------------------------------------------------------------------RECIEVELOOP
 
-func (c *Client) recieveLoop() {
+func (c *client) recieveLoop() {
 	//Loops, pulling messages from the websocket.
 	for {
 		_, data, err := c.ws.ReadMessage()
@@ -161,56 +160,23 @@ func (c *Client) recieveLoop() {
 			c.closed = true
 			break
 		}
-		event := EventWrapper{}
-		err = json.Unmarshal(data, &event)
+		event := &eventWrapper{}
+		err = json.Unmarshal(data, event)
 		if err != nil {
 			log.Println("[CLIENT] - Readloop got an invalid message from " + c.getDetails() + ": " + string(data))
 		} else {
-			switch event.Event {
-			case "message":
-				//The payload field of EventWrapper is defined as interface{},
-				// Unmarshal throws the payload into a map[string]interface{}.
-				// We need to decode it into a MessageEvent struct.
-				message := MessageEvent{}
-				mapstructure.Decode(event.Payload, &message)
-				//If the message is empty, we ignore it...
-				if message.isEmpty() {
-					continue
-				}
-				//...otherwise we fill in the ColourIndex and Sender fields,
-				// rewrap it and recieve it.
-				message.ColourIndex = c.ID
-				message.Sender = c.Name
-				c.recieve(wrapEvent("message", message))
-			case "rename":
-				//We can't rename static rooms.
-				if c.room.Static {
-					continue
-				}
-				rename := RenameEvent{}
-				mapstructure.Decode(event.Payload, &rename)
-				//If the new name is too long, we ignore it...
-				if len(rename.RoomName) > MaxRoomNameLength {
-					continue
-				}
-				//...otherwise we change the room's name,
-				// fill in the UserName field, rewrap it and distribute it...
-				c.room.Name = rename.RoomName
-				rename.UserName = c.Name
-				c.room.distributeEvent(wrapEvent("rename", rename), true, -1)
-			}
+			c.room.recieveEvent(event, c)
 		}
 	}
 }
 
-func (c *Client) recieve(e *EventWrapper) {
+func (c *client) recieve(e *eventWrapper) {
 	//Rate limiting: the client recieves no indication that their message was ignored due to rate limiting.
-	if (c.room.Static && time.Since(c.LastMessage) > MinMessageIntervalStatic) ||
-		(!c.room.Static && time.Since(c.LastMessage) > MinMessageInterval) {
+	if time.Since(c.LastMessage) > MinMessageInterval {
 		c.LastMessage = time.Now()
 		h := sha1.New()
 		h.Write(e.toBytes())
 		log.Println("[CLIENT] - Recieved message from "+c.getDetails()+", byte string:", hex.EncodeToString(h.Sum(nil)))
-		c.room.distributeEvent(e, true, c.ID)
+		c.room.recieveEvent(e, c)
 	}
 }

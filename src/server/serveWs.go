@@ -10,7 +10,7 @@ import (
 func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var errCode int
-	var client *Client
+	var client *client
 
 	defer func() {
 		if err != nil {
@@ -31,7 +31,8 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !hasRoom { //Client is trying to create a new room.
-		newRoom, err := rm.createRoom("", DefaultRoomSize, false, false)
+		newRoom := newRoom(rm, rm.generateNewRoomID(), "", DefaultRoomSize)
+		err = rm.addRoom(newRoom)
 		if err != nil {
 			/*Current possible errors here:
 			- The server has reached maximum rooms capacity.
@@ -53,7 +54,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		log.Println("[JOIN SUCCESS] - Created room ID " + newRoom.ID + "")
+		log.Println("[JOIN SUCCESS] - Created room ID " + newRoom.getID() + "")
 		client.GO()
 
 	} else { //Client is attempting to join a room.

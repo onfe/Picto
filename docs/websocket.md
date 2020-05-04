@@ -50,7 +50,7 @@ The server will be in charge of dating events as it receives them.
 {
   "RoomID": "id",
   "RoomName": "default",
-  "Static": true,
+  "Public": true,
   "UserIndex": 1,
   "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
 }

@@ -2,6 +2,7 @@
   <div :class="'ratio ' + (this.hidden ? 'hidden' : '')">
     <div class="inner" v-bind:style="{ borderColor: this.borderCol }">
       <div
+        v-if="author"
         class="author"
         v-bind:style="{ background: this.colour, borderColor: this.borderCol }"
       >
