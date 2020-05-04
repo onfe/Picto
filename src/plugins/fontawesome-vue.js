@@ -23,9 +23,9 @@ import {
   faIceCream,
   faShare,
   faCheck,
-  faPause,
+  faHourglass,
   faTimes,
-  faExclamation,
+  faExclamationTriangle,
   faRedoAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
@@ -57,9 +57,9 @@ library.add(
   faIceCream,
   faShare,
   faCheck,
-  faPause,
+  faHourglass,
   faTimes,
-  faExclamation,
+  faExclamationTriangle,
   faRedoAlt
 );
 

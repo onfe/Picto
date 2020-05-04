@@ -14,7 +14,7 @@
         <font-awesome-icon
           @click="newState = 'submitted'"
           class="icn"
-          icon="pause"
+          icon="hourglass"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'deleted' }">
@@ -28,7 +28,7 @@
         <font-awesome-icon
           @click="newState = 'offensive'"
           class="icn"
-          icon="exclamation"
+          icon="exclamation-triangle"
         />
       </li>
       <div class="sep" />
@@ -121,6 +121,6 @@ p {
   .sep {
     border-left: 1px dashed var(--secondary-join);
     margin: 0 $spacer;
-}
+  }
 }
 </style>
