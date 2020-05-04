@@ -126,7 +126,7 @@ export default {
         function() {
           this.refreshing = false;
         }.bind(this),
-        1000
+        250
       );
 
       const url =
@@ -234,7 +234,7 @@ header {
 
   #refresh {
     margin: 0 $spacer * 2;
-    transition: transform 0.5s;
+    transition: transform 0.25s;
     &.active {
       transform: rotate(360deg);
       color: $grey-l;

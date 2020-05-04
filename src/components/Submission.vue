@@ -6,7 +6,11 @@
       <li :class="{ btn: true, selected: newState == 'published' }">
         <font-awesome-icon
           @click="disabled ? null : (newState = 'published')"
-          :class="{ icn: true, disabled: disabled }"
+          :class="{
+            icn: true,
+            disabled: disabled,
+            active: submission.State == 'published'
+          }"
           icon="check"
           title="publish"
         />
@@ -14,7 +18,11 @@
       <li :class="{ btn: true, selected: newState == 'submitted' }">
         <font-awesome-icon
           @click="disabled ? null : (newState = 'submitted')"
-          :class="{ icn: true, disabled: disabled }"
+          :class="{
+            icn: true,
+            disabled: disabled,
+            active: submission.State == 'submitted'
+          }"
           icon="hourglass"
           title="unpublish"
         />
@@ -39,7 +47,10 @@
       <li id="submit" class="btn">
         <font-awesome-icon
           @click="!disabled && newState != submission.State ? submit() : null"
-          :class="{ icn: true, disabled: disabled }"
+          :class="{
+            icn: true,
+            disabled: disabled || newState == submission.State
+          }"
           icon="share"
           title="submit"
         />
@@ -135,6 +146,7 @@ p {
     height: 100%;
     padding: $spacer/2;
 
+    &.active,
     &.disabled {
       color: $grey-l;
     }
