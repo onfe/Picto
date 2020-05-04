@@ -276,8 +276,13 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 			sort.Slice(roomStates[:], func(i, j int) bool {
 				if roomStates[i].Unpublished != roomStates[j].Unpublished {
+					//First sort by most unpublished...
 					return roomStates[i].Unpublished > roomStates[j].Unpublished
+				} else if roomStates[i].Published != roomStates[j].Published {
+					//Then by most published...
+					return roomStates[i].Published > roomStates[j].Published
 				} else {
+					//Then by name A-Z
 					return roomStates[i].Name[0] < roomStates[j].Name[0]
 				}
 			})
