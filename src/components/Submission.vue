@@ -8,6 +8,7 @@
           @click="newState = 'published'"
           class="icn"
           icon="check"
+          title="publish"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'submitted' }">
@@ -15,6 +16,7 @@
           @click="newState = 'submitted'"
           class="icn"
           icon="hourglass"
+          title="unpublish"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'deleted' }">
@@ -22,6 +24,7 @@
           @click="newState = 'deleted'"
           class="icn"
           icon="times"
+          title="reject"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'offensive' }">
@@ -29,6 +32,7 @@
           @click="newState = 'offensive'"
           class="icn"
           icon="exclamation-triangle"
+          title="ban"
         />
       </li>
       <div class="sep" />
@@ -37,6 +41,7 @@
           @click="newState != submission.State ? submit() : null"
           class="icn"
           icon="share"
+          title="submit"
         />
       </li>
     </ul>
