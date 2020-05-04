@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -50,9 +51,10 @@ func newSubmissionCache(capacity int) *submissionCache {
 }
 
 func (sc *submissionCache) genSubmissionID(addr, state string) string {
-	_, month, day := time.Now().Date()
+	tenthminute := time.Now().Minute() / 10
 	//by default, submission IDs are submitted.
-	id := addr + "-" + strconv.Itoa(day) + "-" + month.String() + "-" + state
+	addrSansPort := strings.Split(addr, ":")[0]
+	id := addrSansPort + "-" + strconv.Itoa(tenthminute) + "-" + state
 
 	//If the state is just submitted, only one submission may exist, so we don't need to add an iterator.
 	if state == submitted {
