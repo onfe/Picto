@@ -31,6 +31,7 @@
           icon="exclamation"
         />
       </li>
+      <div class="sep" />
       <li id="submit" class="btn">
         <font-awesome-icon
           @click="newState != submission.State ? submit() : null"
@@ -94,7 +95,8 @@ p {
   margin: $spacer 0;
 }
 #options {
-  display: inline-block;
+  display: flex;
+  justify-content: flex-end;
   padding: 0;
   width: 100%;
   text-align: right;
@@ -114,10 +116,11 @@ p {
   li.selected {
     background: $grey-l;
     font-weight: bold;
-    text-decoration: underline;
   }
+
+  .sep {
+    border-left: 1px dashed var(--secondary-join);
+    margin: 0 $spacer;
 }
-#submit {
-  text-decoration: underline;
 }
 </style>
