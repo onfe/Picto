@@ -5,6 +5,8 @@
         <h1>Moderation dashboard</h1>
         <font-awesome-icon
           v-if="token"
+          id="refresh"
+          :class="{ active: this.refreshing }"
           @click="refresh"
           class="icn"
           icon="redo-alt"
@@ -90,7 +92,8 @@ export default {
       token: null,
       selectedRoom: null,
       selectedState: null,
-      rooms: []
+      rooms: [],
+      refreshing: false
     };
   },
   methods: {
@@ -99,6 +102,19 @@ export default {
       this.refresh();
     },
     refresh() {
+      //We don't try to refresh if we're already refreshing
+      if (this.refreshing) {
+        return;
+      }
+
+      this.refreshing = true;
+      setTimeout(
+        function() {
+          this.refreshing = false;
+        }.bind(this),
+        1000
+      );
+
       const url =
         window.location.origin +
         "/api/?method=get_submission_rooms&token=" +
@@ -113,10 +129,13 @@ export default {
         })
         .then(result => {
           this.rooms = JSON.parse(result) || [];
-          this.rooms.map(r => (r.Full = r.Pop >= r.Cap));
+
+          //If the submission list exists we need to refresh that too.
           if (this.$refs.submissionList) {
             this.$refs.submissionList.refresh();
           }
+
+          //If a room is selected we need to update it with potentially new details
           if (this.selectedRoom) {
             for (var room of this.rooms) {
               if (room.Name === this.selectedRoom.Name) {
@@ -182,8 +201,12 @@ header {
   justify-content: space-between;
   align-items: center;
 }
-.icn {
+#refresh {
   margin: 0 $spacer * 2;
+  transition: transform 0.5s;
+  &.active {
+    transform: rotate(360deg);
+  }
 }
 
 #dashboard {
