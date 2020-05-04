@@ -49,10 +49,13 @@
         </div>
 
         <div id="submissions">
-          <strong v-if="selectedState"
-            >Submissions in '{{ selectedRoom.Name }}' of state '{{
-              selectedState
-            }}':
+          <strong v-if="selectedState">
+            {{
+              { submitted: "Unpublished", published: "Published" }[
+                selectedState
+              ]
+            }}
+            submissions in room '{{ selectedRoom.Name }}':
           </strong>
           <strong v-else>Select a room and state</strong>
 
