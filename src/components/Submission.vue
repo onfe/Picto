@@ -81,6 +81,11 @@ export default {
 
       fetch(url, options).then(
         function() {
+          /**
+           * Should probably check that the state did actually change 
+           * successfully on the server. Whatever, it's non-essential. There's
+           * a refresh button for now. A later patch...
+           */
           this.$emit("changeState", this.newState);
         }.bind(this)
       );
