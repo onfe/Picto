@@ -119,6 +119,11 @@ func (sc *submissionCache) remove(ID string) (*submission, error) {
 	toDel.prev.next = toDel.next //Update previous elem's next field
 	toDel.next.prev = toDel.prev //Update next elem's prev field
 
+	//Updating PublishedCount
+	if toDel.State == published {
+		sc.PublishedCount--
+	}
+
 	delete(sc.Submissions, toDel.ID) //Remove the submission from the Submissions map
 
 	sc.Len--
