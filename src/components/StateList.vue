@@ -9,7 +9,7 @@
         :class="{ selected: selectedState == state }"
       >
         <a
-          >{{ state }} ({{
+          >{{ { submitted: "Unpublished", published: "Published" }[state] }} ({{
             {
               submitted: selectedRoom.Unpublished,
               published: selectedRoom.Published
@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  props: ["selectedRoom", "selectedState"],
+  props: ["selectedRoom", "selectedState"]
 };
 </script>
 
