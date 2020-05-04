@@ -68,7 +68,9 @@ ul {
 }
 
 li {
-  margin: 0;
+  max-width: 50vw;
+  margin:0 auto;
+
   margin-bottom: $spacer * 2;
   padding: 0;
   display: block;

@@ -130,8 +130,6 @@ p {
   flex-direction: column;
 }
 #submissionList {
-  max-width: 50vw;
-  margin:0 auto;
   overflow-y: scroll;
   height: 0;
   flex-grow: 1;
