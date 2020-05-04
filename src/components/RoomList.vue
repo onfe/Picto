@@ -10,7 +10,7 @@
           selected: selectedRoom ? room.Name == selectedRoom.Name : false
         }"
       >
-        <a>{{ room.Name }} ({{ room.Unpublished }})</a>
+        <a>{{ room.Name }} ({{ room.Unpublished }}:{{ room.Published }})</a>
       </li>
     </ul>
   </div>
