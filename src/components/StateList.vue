@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  props: ["selectedRoom", "selectedState"]
+  props: ["selectedRoom", "selectedState"],
 };
 </script>
 

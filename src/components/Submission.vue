@@ -74,9 +74,11 @@ export default {
         method: "GET"
       };
 
-      fetch(url, options).then(function() {
-        this.$emit("changeState", this.newState);
-      });
+      fetch(url, options).then(
+        function() {
+          this.$emit("changeState", this.newState);
+        }.bind(this)
+      );
     }
   }
 };

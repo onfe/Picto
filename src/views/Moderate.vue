@@ -21,6 +21,7 @@
             id="roomList"
             ref="roomList"
             :token="token"
+            :rooms="rooms"
             :selectedRoom="selectedRoom"
             @select="
               room => {
@@ -32,6 +33,7 @@
 
           <StateList
             id="stateList"
+            ref="stateList"
             v-if="selectedRoom"
             :selectedState="selectedState"
             :selectedRoom="selectedRoom"
@@ -74,7 +76,6 @@ import AuthForm from "@/components/AuthForm.vue";
 import RoomList from "@/components/RoomList.vue";
 import StateList from "@/components/StateList.vue";
 import SubmissionList from "@/components/SubmissionList.vue";
-import Vue from "vue";
 
 export default {
   name: "moderate",
@@ -88,22 +89,43 @@ export default {
     return {
       token: null,
       selectedRoom: null,
-      selectedState: null
+      selectedState: null,
+      rooms: []
     };
   },
   methods: {
     setToken(token) {
       this.token = token;
+      this.refresh();
     },
     refresh() {
-      Vue.nextTick().then(
-        function() {
-          this.$refs.roomList.refresh();
+      const url =
+        window.location.origin +
+        "/api/?method=get_submission_rooms&token=" +
+        this.token;
+      const options = {
+        method: "GET"
+      };
+
+      fetch(url, options)
+        .then(resp => {
+          return resp.text();
+        })
+        .then(result => {
+          this.rooms = JSON.parse(result) || [];
+          this.rooms.map(r => (r.Full = r.Pop >= r.Cap));
           if (this.$refs.submissionList) {
             this.$refs.submissionList.refresh();
           }
-        }.bind(this)
-      );
+          if (this.selectedRoom) {
+            for (var room of this.rooms) {
+              if (room.Name === this.selectedRoom.Name) {
+                this.selectedRoom = room;
+                return;
+              }
+            }
+          }
+        });
     }
   }
 };

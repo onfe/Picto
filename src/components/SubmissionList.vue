@@ -13,7 +13,7 @@
       @changeState="
         newState => {
           submission.State = newState;
-          $emit('refresh');
+          $emit('refresh')
         }
       "
     />
