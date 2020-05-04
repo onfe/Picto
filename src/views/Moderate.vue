@@ -2,6 +2,9 @@
   <div class="moderate">
     <div class="container">
       <header>
+        <span id="sign-out" v-if="token" @click="discardToken">
+          <font-awesome-icon icon="sign-out-alt" title="sign out" /> Sign Out
+        </span>
         <h1>Moderation dashboard</h1>
         <font-awesome-icon
           v-if="token"
@@ -104,6 +107,9 @@ export default {
       this.token = token;
       this.refresh();
     },
+    discardToken() {
+      this.token = null;
+    },
     refresh() {
       //We don't try to refresh if we're already refreshing
       if (this.refreshing) {
@@ -203,12 +209,19 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-#refresh {
-  margin: 0 $spacer * 2;
-  transition: transform 0.5s;
-  &.active {
-    transform: rotate(360deg);
+  flex-wrap: wrap;
+
+  #sign-out {
+    width: 100%;
+    margin-top: $spacer * 2;
+  }
+
+  #refresh {
+    margin: 0 $spacer * 2;
+    transition: transform 0.5s;
+    &.active {
+      transform: rotate(360deg);
+    }
   }
 }
 

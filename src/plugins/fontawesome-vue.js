@@ -26,7 +26,8 @@ import {
   faHourglass,
   faTimes,
   faExclamationTriangle,
-  faRedoAlt
+  faRedoAlt,
+  faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -60,7 +61,8 @@ library.add(
   faHourglass,
   faTimes,
   faExclamationTriangle,
-  faRedoAlt
+  faRedoAlt,
+  faSignOutAlt
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
