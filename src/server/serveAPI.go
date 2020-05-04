@@ -339,7 +339,11 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			response, err = json.Marshal("successfully rejected submission. client will be ignored for " + ClientIgnoreTime.String())
+			if offensive {
+				response, err = json.Marshal("successfully rejected submission. client will be ignored for " + ClientIgnoreTime.String())
+			} else {
+				response, err = json.Marshal("successfully rejected submission.")
+			}
 			return
 
 		default:
