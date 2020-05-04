@@ -1,26 +1,30 @@
 <template>
   <ul>
-    <li
-      v-for="(submission, index) in this.submissions.filter(
+    <Submission
+      class="submission"
+      v-for="submission in this.submissions.filter(
         submission => submission.State == selectedState
       )"
-      :key="index"
-    >
-      <p>Author: "{{ submission.Message.Payload.Sender }}"</p>
-      <CanvasMessage :msg="submission.msg" />
-    </li>
+      :key="submission.msg.hash"
+      :token="token"
+      :submission="submission"
+      :selectedRoom="selectedRoom"
+      :selectedState="selectedState"
+      @changeState="newState => (submission.State = newState)"
+    />
   </ul>
 </template>
 
 <script>
-import CanvasMessage from "@/components/CanvasMessage.vue";
+import Submission from "@/components/Submission.vue";
+
 import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
 import { Message } from "../assets/js/message.js";
 import colour from "../assets/js/colours.js";
 
 export default {
   components: {
-    CanvasMessage
+    Submission
   },
   props: ["token", "selectedRoom", "selectedState"],
   data() {
@@ -67,9 +71,9 @@ ul {
   padding: 0;
 }
 
-li {
-  max-width: 50vw;
-  margin:0 auto;
+.submission {
+  max-width: 60vw;
+  margin: 0 auto;
 
   margin-bottom: $spacer * 2;
   padding: 0;

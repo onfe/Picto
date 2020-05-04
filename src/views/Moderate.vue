@@ -121,7 +121,7 @@ strong {
 }
 @media (orientation: portrait) {
   #dashboard {
-    font-size: 75%;
+    font-size: 50%;
   }
 }
 #controlPanel {

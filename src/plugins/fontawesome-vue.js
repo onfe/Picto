@@ -20,7 +20,11 @@ import {
   faDownload,
   faMoon,
   faSun,
-  faIceCream
+  faIceCream,
+  faShare,
+  faCheck,
+  faPause,
+  faTimes
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -48,7 +52,11 @@ library.add(
   faDownload,
   faMoon,
   faSun,
-  faIceCream
+  faIceCream,
+  faShare,
+  faCheck,
+  faPause,
+  faTimes
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
