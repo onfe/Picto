@@ -2,7 +2,7 @@
   <div class="moderate">
     <div class="container">
       <header>
-        <h1>Moderation dashboard </h1>
+        <h1>Moderation dashboard</h1>
         <font-awesome-icon
           v-if="token"
           @click="refresh"
@@ -10,8 +10,11 @@
           icon="redo-alt"
         />
       </header>
+
       <hr />
+
       <AuthForm v-if="token === null" @authenticated="setToken" />
+
       <div v-else id="dashboard">
         <div id="controlPanel">
           <RoomList
@@ -19,27 +22,44 @@
             ref="roomList"
             :token="token"
             :selectedRoom="selectedRoom"
-            @select="room => (selectedRoom = room)"
+            @select="
+              room => {
+                this.selectedRoom = room;
+                this.refresh();
+              }
+            "
           />
+
           <StateList
             id="stateList"
-            v-if="selectedRoom != null"
+            v-if="selectedRoom"
             :selectedState="selectedState"
-            @select="state => (selectedState = state)"
+            :selectedRoom="selectedRoom"
+            @select="
+              state => {
+                this.selectedState = state;
+                this.refresh();
+              }
+            "
           />
         </div>
+
         <div id="submissions">
           <strong v-if="selectedState"
-            >Submissions in '{{ selectedRoom }}' of state '{{ selectedState }}':
+            >Submissions in '{{ selectedRoom.Name }}' of state '{{
+              selectedState
+            }}':
           </strong>
           <strong v-else>Select a room and state</strong>
+
           <hr />
+
           <SubmissionList
             id="submissionList"
             ref="submissionList"
-            v-if="selectedRoom != null"
+            v-if="selectedRoom && selectedState"
             :token="token"
-            :selectedRoom="selectedRoom"
+            :selectedRoomName="selectedRoom.Name"
             :selectedState="selectedState"
             @refresh="refresh"
           />
@@ -54,6 +74,8 @@ import AuthForm from "@/components/AuthForm.vue";
 import RoomList from "@/components/RoomList.vue";
 import StateList from "@/components/StateList.vue";
 import SubmissionList from "@/components/SubmissionList.vue";
+import Vue from "vue";
+
 export default {
   name: "moderate",
   components: {
@@ -74,8 +96,14 @@ export default {
       this.token = token;
     },
     refresh() {
-      this.$refs.submissionList.refresh();
-      this.$refs.roomList.refresh();
+      Vue.nextTick().then(
+        function() {
+          this.$refs.roomList.refresh();
+          if (this.$refs.submissionList) {
+            this.$refs.submissionList.refresh();
+          }
+        }.bind(this)
+      );
     }
   }
 };

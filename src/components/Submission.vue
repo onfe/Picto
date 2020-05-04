@@ -45,7 +45,7 @@ export default {
   components: {
     CanvasMessage
   },
-  props: ["token", "submission", "selectedRoom", "selectedState"],
+  props: ["token", "submission", "selectedRoomName", "selectedState"],
   data() {
     return {
       newState: this.submission.State
@@ -58,7 +58,7 @@ export default {
         "/api/?token=" +
         this.token +
         "&room_id=" +
-        this.selectedRoom +
+        this.selectedRoomName +
         "&submission_id=" +
         this.submission.ID;
 
@@ -74,14 +74,9 @@ export default {
         method: "GET"
       };
 
-      fetch(url, options)
-        .then(resp => {
-          return resp.text();
-        })
-        .then(result => {
-          console.log(result);
-          this.$emit("changeState", this.newState);
-        });
+      fetch(url, options).then(function() {
+        this.$emit("changeState", this.newState);
+      });
     }
   }
 };

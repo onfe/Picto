@@ -8,7 +8,14 @@
         v-on:click="$emit('select', state)"
         :class="{ selected: selectedState == state }"
       >
-        <a>{{ state }}</a>
+        <a
+          >{{ state }} ({{
+            {
+              submitted: selectedRoom.Unpublished,
+              published: selectedRoom.Published
+            }[state]
+          }})</a
+        >
       </li>
     </ul>
   </div>
@@ -16,7 +23,7 @@
 
 <script>
 export default {
-  props: ["selectedState"]
+  props: ["selectedRoom", "selectedState"]
 };
 </script>
 

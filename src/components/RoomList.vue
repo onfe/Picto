@@ -5,10 +5,12 @@
       <li
         v-for="(room, index) in this.rooms"
         :key="index"
-        v-on:click="$emit('select', room.Name)"
-        :class="{ selected: room.Name == selectedRoom }"
+        v-on:click="$emit('select', room)"
+        :class="{
+          selected: selectedRoom ? room.Name == selectedRoom.Name : false
+        }"
       >
-        <a>{{ room.Name }} ({{ room.Submissions }})</a>
+        <a>{{ room.Name }} ({{ room.Unpublished }})</a>
       </li>
     </ul>
   </div>

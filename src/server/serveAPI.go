@@ -258,7 +258,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Desc        string
 				Cap         int
 				Pop         int
-				Submissions int
+				Published   int
+				Unpublished int
 			}
 			roomStates := make([]roomState, len(rm.SubmissionRooms))
 			i := 0
@@ -268,10 +269,19 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 					Desc:        r.Description,
 					Cap:         r.ClientManager.MaxClients,
 					Pop:         r.ClientManager.ClientCount,
-					Submissions: r.SubmissionCache.Len,
+					Published:   r.SubmissionCache.PublishedCount,
+					Unpublished: r.SubmissionCache.Len - r.SubmissionCache.PublishedCount,
 				}
 				i++
 			}
+			sort.Slice(roomStates[:], func(i, j int) bool {
+				if roomStates[i].Unpublished != roomStates[j].Unpublished {
+					return roomStates[i].Unpublished > roomStates[j].Unpublished
+				} else {
+					return roomStates[i].Name[0] < roomStates[j].Name[0]
+				}
+			})
+
 			response, err = json.Marshal(roomStates)
 			return
 
@@ -386,7 +396,12 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			}
 
 			sort.Slice(roomStates[:], func(i, j int) bool {
-				if roomStates[i].Pop != roomStates[j].Pop {
+				//"General" always comes first
+				if roomStates[i].Name == "General" {
+					return true
+				} else if roomStates[j].Name == "General" {
+					return false
+				} else if roomStates[i].Pop != roomStates[j].Pop {
 					//Populations sorted highest first
 					return roomStates[i].Pop > roomStates[j].Pop
 				} else if roomStates[i].Cap != roomStates[j].Cap {

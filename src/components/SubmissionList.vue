@@ -8,7 +8,7 @@
       :key="submission.msg.hash"
       :token="token"
       :submission="submission"
-      :selectedRoom="selectedRoom"
+      :selectedRoomName="selectedRoomName"
       :selectedState="selectedState"
       @changeState="
         newState => {
@@ -31,7 +31,7 @@ export default {
   components: {
     Submission
   },
-  props: ["token", "selectedRoom", "selectedState"],
+  props: ["token", "selectedRoomName", "selectedState"],
   data() {
     return {
       submissions: []
@@ -47,7 +47,7 @@ export default {
         "/api/?method=get_submissions&token=" +
         this.token +
         "&room_id=" +
-        this.selectedRoom;
+        this.selectedRoomName;
       const options = {
         method: "GET"
       };
