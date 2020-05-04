@@ -59,7 +59,8 @@ Returns a list of submission rooms with their population, capacity and the numbe
         "Desc":"This is a submission room.",
 		"Cap":64,
 		"Pop":5,
-        "Submissions":34
+        "Published":10,
+        "Unpublished":34
 	}
 ]
 ```
@@ -99,6 +100,8 @@ The submissions are ordered such that the oldest submission is first.
 Sets the state of submission `SUBMISSION_ID` in `ROOM_ID` to `STATE`.
 
 Valid `STATE` values are: "submitted" and "published".
+
+If a submission's `STATE` is set to "published" and there are already `MaxPublishedSubmissions` published submissions, then the oldest one is discarded.
 
 
 
