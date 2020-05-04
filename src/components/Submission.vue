@@ -5,32 +5,32 @@
     <ul id="options">
       <li :class="{ btn: true, selected: newState == 'published' }">
         <font-awesome-icon
-          @click="newState = 'published'"
-          class="icn"
+          @click="disabled ? null : (newState = 'published')"
+          :class="{ icn: true, disabled: disabled }"
           icon="check"
           title="publish"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'submitted' }">
         <font-awesome-icon
-          @click="newState = 'submitted'"
-          class="icn"
+          @click="disabled ? null : (newState = 'submitted')"
+          :class="{ icn: true, disabled: disabled }"
           icon="hourglass"
           title="unpublish"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'deleted' }">
         <font-awesome-icon
-          @click="newState = 'deleted'"
-          class="icn"
+          @click="disabled ? null : (newState = 'deleted')"
+          :class="{ icn: true, disabled: disabled }"
           icon="times"
           title="reject"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'offensive' }">
         <font-awesome-icon
-          @click="newState = 'offensive'"
-          class="icn"
+          @click="disabled ? null : (newState = 'offensive')"
+          :class="{ icn: true, disabled: disabled }"
           icon="exclamation-triangle"
           title="ban"
         />
@@ -38,8 +38,8 @@
       <div class="sep" />
       <li id="submit" class="btn">
         <font-awesome-icon
-          @click="newState != submission.State ? submit() : null"
-          class="icn"
+          @click="!disabled && newState != submission.State ? submit() : null"
+          :class="{ icn: true, disabled: disabled }"
           icon="share"
           title="submit"
         />
@@ -55,7 +55,13 @@ export default {
   components: {
     CanvasMessage
   },
-  props: ["token", "submission", "selectedRoomName", "selectedState"],
+  props: [
+    "token",
+    "submission",
+    "selectedRoomName",
+    "selectedState",
+    "disabled"
+  ],
   data() {
     return {
       newState: this.submission.State
@@ -117,15 +123,21 @@ p {
     height: $sidebar-width/2;
     width: $sidebar-width/2;
     margin: 0 $spacer;
+
+    &.selected {
+      border: 1px dashed var(--secondary-join);
+      font-weight: bold;
+    }
   }
+
   .icn {
     width: 100%;
     height: 100%;
     padding: $spacer/2;
-  }
-  li.selected {
-    background: $grey-l;
-    font-weight: bold;
+
+    &.disabled {
+      color: $grey-l;
+    }
   }
 
   .sep {

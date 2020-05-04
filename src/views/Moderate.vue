@@ -10,6 +10,7 @@
           v-if="token"
           id="refresh"
           :class="{ active: this.refreshing }"
+          :disabled="refreshing"
           @click="refresh"
           class="icn"
           icon="redo-alt"
@@ -28,6 +29,7 @@
             :token="token"
             :rooms="rooms"
             :selectedRoom="selectedRoom"
+            :disabled="refreshing"
             @select="
               room => {
                 this.selectedRoom = room;
@@ -42,6 +44,7 @@
             v-if="selectedRoom"
             :selectedState="selectedState"
             :selectedRoom="selectedRoom"
+            :disabled="refreshing"
             @select="
               state => {
                 this.selectedState = state;
@@ -72,6 +75,7 @@
             :token="token"
             :selectedRoomName="selectedRoom.Name"
             :selectedState="selectedState"
+            :disabled="refreshing"
             @refresh="refresh"
           />
         </div>
@@ -233,6 +237,7 @@ header {
     transition: transform 0.5s;
     &.active {
       transform: rotate(360deg);
+      color: $grey-l;
     }
   }
 }
