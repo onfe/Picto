@@ -4,21 +4,60 @@
       <h1>Moderation dashboard</h1>
       <hr />
       <AuthForm v-if="token === null" @authenticated="setToken" />
-      <div v-else>Token: {{ token }}</div>
+      <div v-else id="dashboard">
+        <div id="controlPanel">
+          <RoomList
+            id="roomList"
+            :token="token"
+            :selectedRoom="selectedRoom"
+            @select="room => (selectedRoom = room)"
+          />
+          <StateList
+            id="stateList"
+            v-if="selectedRoom != null"
+            :selectedState="selectedState"
+            @select="state => (selectedState = state)"
+          />
+        </div>
+        <div id="submissions">
+          <strong v-if="selectedState"
+            >Submissions in '{{ selectedRoom }}' of state '{{
+              selectedState
+            }}':</strong
+          >
+          <strong v-else>Select a room and state</strong>
+          <hr />
+          <SubmissionList
+            id="submissionList"
+            v-if="selectedRoom != null"
+            :token="token"
+            :selectedRoom="selectedRoom"
+            :selectedState="selectedState"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 import AuthForm from "@/components/AuthForm.vue";
+import RoomList from "@/components/RoomList.vue";
+import StateList from "@/components/StateList.vue";
+import SubmissionList from "@/components/SubmissionList.vue";
 export default {
   name: "moderate",
   components: {
-    AuthForm
+    AuthForm,
+    RoomList,
+    StateList,
+    SubmissionList
   },
   data() {
     return {
-      token: null
+      token: null,
+      selectedRoom: null,
+      selectedState: null
     };
   },
   methods: {
@@ -31,7 +70,7 @@ export default {
 
 <style lang="scss" scoped>
 .moderate {
-  min-height: 100%;
+  height: 100%;
   background-color: var(--background-join);
   color: var(--primary-join);
 
@@ -45,12 +84,15 @@ export default {
 }
 
 .container {
-  max-width: 675px;
-
   padding: 0 1.5rem 1rem 3.5rem;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
 
   @media (min-width: 992px) {
     padding-left: 8rem;
+    padding-right: 6rem;
   }
 
   font-family: monospace;
@@ -59,6 +101,7 @@ export default {
 }
 
 hr {
+  margin: $spacer * 2 0;
   border: 0;
   border-bottom: 1px dashed var(--secondary-join);
 }
@@ -66,5 +109,31 @@ hr {
 p {
   margin-bottom: 1.5rem;
   line-height: 1.2;
+}
+
+#dashboard {
+  display: flex;
+  height: 0;
+  flex-grow: 1;
+}
+@media (orientation: portrait) {
+  #dashboard {
+    font-size: 75%;
+  }
+}
+#controlPanel {
+  margin-right: 4 * $spacer;
+}
+#submissions {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+#submissionList {
+  max-width: 50vw;
+  margin:0 auto;
+  overflow-y: scroll;
+  height: 0;
+  flex-grow: 1;
 }
 </style>
