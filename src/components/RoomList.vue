@@ -5,9 +5,10 @@
       <li
         v-for="(room, index) in this.rooms"
         :key="index"
-        v-on:click="$emit('select', room)"
+        v-on:click="disabled ? null : $emit('select', room)"
         :class="{
-          selected: selectedRoom ? room.Name == selectedRoom.Name : false
+          selected: selectedRoom ? room.Name == selectedRoom.Name : false,
+          disabled: disabled
         }"
       >
         <a>{{ room.Name }} ({{ room.Unpublished }}:{{ room.Published }})</a>
@@ -18,7 +19,7 @@
 
 <script>
 export default {
-  props: ["token", "rooms", "selectedRoom"]
+  props: ["token", "rooms", "selectedRoom", "disabled"]
 };
 </script>
 
@@ -39,9 +40,12 @@ li {
   white-space: nowrap;
 
   &.selected {
-    color: $grey;
     font-weight: bold;
     text-decoration: underline;
+  }
+
+  &.disabled {
+    color: $grey;
   }
 
   > * {

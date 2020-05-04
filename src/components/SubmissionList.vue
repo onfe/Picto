@@ -10,6 +10,7 @@
       :submission="submission"
       :selectedRoomName="selectedRoomName"
       :selectedState="selectedState"
+      :disabled="disabled"
       @changeState="
         newState => {
           submission.State = newState;
@@ -31,7 +32,7 @@ export default {
   components: {
     Submission
   },
-  props: ["token", "selectedRoomName", "selectedState"],
+  props: ["token", "selectedRoomName", "selectedState", "disabled"],
   data() {
     return {
       submissions: []

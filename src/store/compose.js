@@ -2,9 +2,11 @@ import { Message } from "../assets/js/message.js";
 import Vue from "vue";
 
 const state = {
-  tool: "pencil",
-  size: "small",
-  rainbow: false
+  default: { tool: "pencil", size: "small", rainbow: false },
+  //These get set to defaults above when reset() is called on mount.
+  tool: null,
+  size: null,
+  rainbow: null
 };
 
 const getters = {};
@@ -76,6 +78,9 @@ const actions = {
   },
   backspace: () => {
     window._sketch.backspace();
+  },
+  reset: ({ commit }) => {
+    commit("reset");
   }
 };
 
@@ -95,6 +100,11 @@ const mutations = {
   },
   rainbow: (state, to) => {
     state.rainbow = to;
+  },
+  reset: state => {
+    state.tool = state.default.tool;
+    state.rainbow = state.default.rainbow;
+    state.size = state.default.size;
   }
 };
 

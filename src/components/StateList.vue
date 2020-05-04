@@ -5,8 +5,8 @@
       <li
         v-for="state in ['submitted', 'published']"
         :key="state"
-        v-on:click="$emit('select', state)"
-        :class="{ selected: selectedState == state }"
+        v-on:click="disabled ? null : $emit('select', state)"
+        :class="{ selected: selectedState == state, disabled: disabled }"
       >
         <a
           >{{ { submitted: "Unpublished", published: "Published" }[state] }} ({{
@@ -23,7 +23,7 @@
 
 <script>
 export default {
-  props: ["selectedRoom", "selectedState"]
+  props: ["selectedRoom", "selectedState", "disabled"]
 };
 </script>
 
@@ -44,9 +44,12 @@ li {
   white-space: nowrap;
 
   &.selected {
-    color: $grey;
     font-weight: bold;
     text-decoration: underline;
+  }
+
+  &.disabled {
+    color: $grey;
   }
 
   > * {

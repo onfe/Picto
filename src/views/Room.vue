@@ -46,6 +46,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.dispatch("compose/reset");
     if (this.$store.state.client.room == null) {
       this.$router.replace(`/join/${this.$route.params.id}`);
       document.onvisibilitychange = function() {

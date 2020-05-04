@@ -104,7 +104,7 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 				return
 			}
 			//...otherwise, remove the IgnoredClients entry and continue.
-			delete(r.IgnoredClients, addr)
+			delete(r.IgnoredClients, addrSansPort)
 		}
 
 		//The payload field of EventWrapper is defined as interface{},
