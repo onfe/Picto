@@ -18,7 +18,7 @@ type submissionRoom struct {
 	ClientManager *clientManager `json:"ClientManager"`
 
 	SubmissionCache *submissionCache `json:"Submissions"`
-	IgnoredClients  map[string]time.Time
+	IgnoredIPs      map[string]time.Time
 
 	Closing   bool      `json:"Closing"`
 	CloseTime time.Time `json:"CloseTime"`
@@ -31,7 +31,7 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 		Description:     description,
 		ClientManager:   newClientManager(maxClients),
 		SubmissionCache: newSubmissionCache(MaxSubmissions),
-		IgnoredClients:  make(map[string]time.Time),
+		IgnoredIPs:      make(map[string]time.Time),
 		Closing:         false,
 	}
 	return &r
@@ -81,7 +81,7 @@ func (r *submissionRoom) rejectSubmission(submissionID string, offensive bool) e
 
 	if offensive {
 		ipSansPort := strings.Split(submission.SenderIP, ":")[0]
-		r.IgnoredClients[ipSansPort] = time.Now()
+		r.IgnoredIPs[ipSansPort] = time.Now()
 	}
 
 	return nil
@@ -95,7 +95,7 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 	case "message":
 		//First check if the client has been ignored...
 		ipSansPort := strings.Split(sender.IP, ":")[0]
-		ignoreTime, ignored := r.IgnoredClients[ipSansPort]
+		ignoreTime, ignored := r.IgnoredIPs[ipSansPort]
 		//If the client is ignored, check when they were ignored.
 		if ignored {
 			//If it was less than the ClientIgnoreTime, ignore the message...
@@ -103,7 +103,7 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 				return
 			}
 			//...otherwise, remove the IgnoredClients entry and continue.
-			delete(r.IgnoredClients, ipSansPort)
+			delete(r.IgnoredIPs, ipSansPort)
 		}
 
 		//The payload field of EventWrapper is defined as interface{},
