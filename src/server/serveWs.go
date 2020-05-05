@@ -24,7 +24,13 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	name, _ := r.Form["name"]
 	roomID, hasRoom := r.Form["room"]
 
-	client, err = newClient(w, r, name[0])
+	sourceIPs := r.Header["X-Forwarded-For"]
+	clientIP := r.RemoteAddr //Default to RemoteAddr so works on dev
+	if len(sourceIPs) > 0 {
+		clientIP = sourceIPs[len(sourceIPs)-1] //Client's actual IP is always the last one
+	}
+
+	client, err = newClient(w, r, name[0], clientIP)
 	if err != nil {
 		errCode = 4400
 		return

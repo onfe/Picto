@@ -14,12 +14,12 @@ const (
 )
 
 type submission struct {
-	ID      string
-	Addr    string
-	Message *eventWrapper
-	State   string
-	next    *submission // doubly  .-''-.''-.
-	prev    *submission // linked  '-..'-..-' bois
+	ID       string
+	SenderIP string
+	Message  *eventWrapper
+	State    string
+	next     *submission // doubly  .-''-.''-.
+	prev     *submission // linked  '-..'-..-' bois
 }
 
 //SubmissionCache holds submissions for a SubmissionRoom
@@ -50,11 +50,11 @@ func newSubmissionCache(capacity int) *submissionCache {
 	return &sc
 }
 
-func (sc *submissionCache) genSubmissionID(addr, state string) string {
+func (sc *submissionCache) genSubmissionID(ip, state string) string {
 	tenthminute := time.Now().Minute() / 10
 	//by default, submission IDs are submitted.
-	addrSansPort := strings.Split(addr, ":")[0]
-	id := addrSansPort + "-" + strconv.Itoa(tenthminute) + "-" + state
+	ipSansPort := strings.Split(ip, ":")[0]
+	id := ipSansPort + "-" + strconv.Itoa(tenthminute) + "-" + state
 
 	//If the state is just submitted, only one submission may exist, so we don't need to add an iterator.
 	if state == submitted {
@@ -75,7 +75,7 @@ func (sc *submissionCache) genSubmissionID(addr, state string) string {
 
 func (sc *submissionCache) add(s *submission) bool {
 	//Populate submission's ID*state fields
-	s.ID = sc.genSubmissionID(s.Addr, submitted)
+	s.ID = sc.genSubmissionID(s.SenderIP, submitted)
 	s.State = submitted
 
 	_, alreadySubmitted := sc.Submissions[s.ID]
@@ -157,7 +157,7 @@ func (sc *submissionCache) setState(ID, newState string) (string, error) {
 
 			//Update the state and ID of the submission
 			submission.State = newState
-			submission.ID = sc.genSubmissionID(submission.Addr, newState)
+			submission.ID = sc.genSubmissionID(submission.SenderIP, newState)
 
 			//Put it back into the submissions map
 			sc.Submissions[submission.ID] = submission

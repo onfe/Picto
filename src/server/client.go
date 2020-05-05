@@ -24,6 +24,7 @@ type client struct {
 	room        roomInterface
 	ID          int    `json:"ID"`
 	Name        string `json:"Name"`
+	IP          string
 	ws          *websocket.Conn
 	sendBuffer  chan []byte
 	LastMessage time.Time `json:"LastMessage"`
@@ -31,7 +32,7 @@ type client struct {
 	closed      bool
 }
 
-func newClient(w http.ResponseWriter, r *http.Request, Name string) (*client, error) {
+func newClient(w http.ResponseWriter, r *http.Request, Name string, IP string) (*client, error) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 
 	if err != nil {
@@ -41,6 +42,7 @@ func newClient(w http.ResponseWriter, r *http.Request, Name string) (*client, er
 	c := client{
 		Name:        Name,
 		ws:          ws,
+		IP:          IP,
 		sendBuffer:  make(chan []byte, 256),
 		LastMessage: time.Now(),
 		LastPong:    time.Now(),
