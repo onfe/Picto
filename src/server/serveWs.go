@@ -26,11 +26,12 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	roomID, hasRoom := r.Form["room"]
 
 	//Ascertaining the client's IP and port from the initial request...
-	sourceIPs := r.Header["X-Forwarded-For"]
+	xForwardedFor := r.Header["X-Forwarded-For"]
 	clientIP := r.RemoteAddr //Default to RemoteAddr so works on dev
-	if len(sourceIPs) > 0 {
-		port := strings.Split(clientIP, ":")[1]             //We need to keep the port
-		clientIP = sourceIPs[len(sourceIPs)-1] + ":" + port //Client's actual IP is always the last one
+	if len(xForwardedFor) > 0 {
+		sourceIPs := strings.Split(xForwardedFor[0], ",")
+		port := strings.Split(clientIP, ":")[1] //We need to keep the port
+		clientIP = sourceIPs[0] + ":" + port    //Client's actual IP is always the last one
 	}
 
 	client, err = newClient(w, r, name[0], clientIP)
