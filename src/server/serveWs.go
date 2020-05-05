@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strings"
 )
 
 //ServeWs serves a websocket to the client.
@@ -24,7 +25,15 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	name, _ := r.Form["name"]
 	roomID, hasRoom := r.Form["room"]
 
-	client, err = newClient(w, r, name[0])
+	//Ascertaining the client's IP and port from the initial request...
+	sourceIPs := r.Header["X-Forwarded-For"]
+	clientIP := r.RemoteAddr //Default to RemoteAddr so works on dev
+	if len(sourceIPs) > 0 {
+		port := strings.Split(clientIP, ":")[1]             //We need to keep the port
+		clientIP = sourceIPs[len(sourceIPs)-1] + ":" + port //Client's actual IP is always the last one
+	}
+
+	client, err = newClient(w, r, name[0], clientIP)
 	if err != nil {
 		errCode = 4400
 		return

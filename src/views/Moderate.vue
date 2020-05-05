@@ -102,7 +102,7 @@ export default {
     return {
       token: null,
       selectedRoom: null,
-      selectedState: null,
+      selectedState: "submitted",
       rooms: [],
       refreshing: false
     };
