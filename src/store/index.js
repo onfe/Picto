@@ -4,6 +4,7 @@ import client from "./client";
 import socket from "./socket";
 import messages from "./messages";
 import compose from "./compose";
+import room from "./room";
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ export default new Vuex.Store({
     client,
     socket,
     messages,
-    compose
+    compose,
+    room
   }
 });
