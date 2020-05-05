@@ -29,7 +29,7 @@ func (rm *RoomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	xForwardedFor := r.Header["X-Forwarded-For"]
 	clientIP := r.RemoteAddr //Default to RemoteAddr so works on dev
 	if len(xForwardedFor) > 0 {
-		sourceIPs := strings.Split(xForwardedFor[0], ", ")
+		sourceIPs := strings.Split(xForwardedFor[0], ",")
 		port := strings.Split(clientIP, ":")[1] //We need to keep the port
 		clientIP = sourceIPs[0] + ":" + port    //Client's actual IP is always the last one
 	}
