@@ -54,16 +54,16 @@ const actions = {
         dispatch("messages/message", pl, { root: true });
         break;
       case "init":
-        dispatch("client/init", pl, { root: true });
+        dispatch("room/join", pl, { root: true });
         break;
       case "user":
-        dispatch("client/updateUser", pl, { root: true });
+        dispatch("room/updateUsers", pl, { root: true });
         break;
       case "announcement":
         dispatch("messages/announce", pl, { root: true });
         break;
       case "rename":
-        dispatch("client/renameRoom", pl, { root: true });
+        dispatch("room/rename", pl, { root: true });
         break;
       default:
         // eslint-disable-next-line no-console

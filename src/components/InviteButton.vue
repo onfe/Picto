@@ -20,11 +20,11 @@ export default {
         navigator.share({
           title: "Picto",
           text: "Join me on Picto!",
-          url: this.$store.getters["client/inviteLink"]
+          url: this.$store.getters["room/invite"]
         });
       } else {
         navigator.clipboard
-          .writeText(this.$store.getters["client/inviteLink"])
+          .writeText(this.$store.getters["room/invite"])
           .then(() => {
             this.copied = true;
             setTimeout(() => (this.copied = false), 1000);

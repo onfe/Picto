@@ -47,7 +47,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch("compose/reset");
-    if (this.$store.state.client.room == null) {
+    if (this.$store.state.room.id == null) {
       this.$router.replace(`/join/${this.$route.params.id}`);
       document.onvisibilitychange = function() {
         this.$store.dispatch("messages/read");
@@ -63,7 +63,7 @@ export default {
       return {
         title:
           (unread > 0 ? "(" + unread + " Unread) " : "") +
-          this.$store.getters["client/roomTitle"] +
+          this.$store.getters["room/title"] +
           " - Picto"
       };
     }

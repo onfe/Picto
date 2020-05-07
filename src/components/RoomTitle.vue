@@ -1,7 +1,7 @@
 <template lang="html">
   <div class="room-title">
     <h1 class="room-title" v-show="!editable">
-      {{ $store.getters["client/roomTitle"] }}
+      {{ $store.getters["room/title"] }}
     </h1>
     <!-- Stop events here, to prevent propogation to compose element. -->
     <input
@@ -23,7 +23,7 @@ export default {
   watch: {
     edit(val) {
       if (val) {
-        this.$refs["input"].value = this.$store.getters["client/roomTitle"];
+        this.$refs["input"].value = this.$store.getters["room/title"];
       }
     }
   },
@@ -36,7 +36,7 @@ export default {
   methods: {
     handleBlur() {
       const newTitle = this.$refs["input"].value;
-      if (newTitle != this.$store.getters["client/roomTitle"]) {
+      if (newTitle != this.$store.getters["room/title"]) {
         this.$store.dispatch(
           "socket/send",
           {
@@ -52,7 +52,7 @@ export default {
       }
     },
     handleFocus() {
-      this.$refs["input"].value = this.$store.getters["client/roomTitle"];
+      this.$refs["input"].value = this.$store.getters["room/title"];
     },
     handleEnter(e) {
       e.stopPropagation();

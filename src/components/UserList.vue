@@ -2,7 +2,7 @@
   <div class="users">
     <ul>
       <li
-        v-for="(userColour, i) in $store.getters['client/userColours']"
+        v-for="(userColour, i) in $store.getters['room/colours']"
         v-bind:key="i"
         :style="`background: ${userColour[1]}`"
       >
