@@ -37,10 +37,9 @@ const actions = {
     );
   },
   leave: ({ commit }) => {
+    // supplements client/leave
     commit("leave");
     Vue.analytics.trackEvent("room", "leave");
-    // called with client/leave
-    // TODO: refactor
   },
   updateUsers: ({ commit, dispatch }, d) => {
     // triggered on user join/leave
