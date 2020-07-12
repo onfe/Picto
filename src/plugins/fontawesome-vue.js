@@ -27,7 +27,8 @@ import {
   faTimes,
   faExclamationTriangle,
   faRedoAlt,
-  faSignOutAlt
+  faSignOutAlt,
+  faPaintRoller
 } from "@fortawesome/free-solid-svg-icons";
 import { faDotCircle } from "@fortawesome/free-regular-svg-icons";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -62,7 +63,8 @@ library.add(
   faTimes,
   faExclamationTriangle,
   faRedoAlt,
-  faSignOutAlt
+  faSignOutAlt,
+  faPaintRoller
 );
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
