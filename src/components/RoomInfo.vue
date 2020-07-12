@@ -3,7 +3,7 @@
     <div class="wrap">
       <RoomTitle :edit="expand" />
       <div class="body">
-        <UserList v-if="!this.$store.state.room.public" class="userList" />
+        <UserList class="userList" />
         <ThemeButton class="themeButton" />
       </div>
     </div>
