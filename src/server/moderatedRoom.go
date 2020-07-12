@@ -113,21 +113,14 @@ func (r *moderatedRoom) recieveEvent(event *eventWrapper, sender *client) {
 		message.Sender = sender.Name
 
 		// We then need to wrap it and create a moderatedMessage...
-		sub := &moderatedMessage{
+		msg := &moderatedMessage{
 			SenderIP: sender.IP,
 			Message:  wrapEvent("message", message),
 		}
 
-		// ...add it to the moderation cache
-		alreadyMessaged := r.ModerationCache.add(sub)
-
-		//We give a different announcement depending upon if they have already sent a message or not.
-		sender.sendBuffer <- newAnnouncementEvent("Thank you for your picto!").toBytes()
-		if !alreadyMessaged {
-			sender.sendBuffer <- newAnnouncementEvent("You can overwrite your current picto by sending a new one.").toBytes()
-		} else {
-			sender.sendBuffer <- newAnnouncementEvent("Your previous picto has been overwritten.").toBytes()
-		}
+		// ...add it to the moderation cache, and distribute.
+		r.ModerationCache.add(msg)
+		r.ClientManager.distributeEvent(msg.Message, sender.ID)
 	}
 }
 
