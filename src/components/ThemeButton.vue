@@ -10,8 +10,8 @@
 export default {
   data() {
     return {
-      theme: "",
-      themes: ["", "light", "dark", "pink"]
+      theme: "system",
+      themes: ["system", "light", "dark", "pink"]
     };
   },
   computed: {
@@ -41,7 +41,7 @@ export default {
   },
   mounted() {
     //If there is a theme cookie set, we apply that theme.
-    if (this.$cookies.isKey("theme") && this.$cookies.get("theme") != "") {
+    if (this.$cookies.isKey("theme") && this.$cookies.get("theme") != "system") {
       this.setTheme(this.$cookies.get("theme"));
     }
   }
