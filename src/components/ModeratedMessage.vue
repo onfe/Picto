@@ -46,7 +46,9 @@
       <div class="sep" />
       <li id="submit" class="btn">
         <font-awesome-icon
-          @click="!disabled && newState != moderatedMessage.State ? submit() : null"
+          @click="
+            !disabled && newState != moderatedMessage.State ? submit() : null
+          "
           :class="{
             icn: true,
             disabled: disabled || newState == moderatedMessage.State
