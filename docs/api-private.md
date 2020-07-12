@@ -46,32 +46,32 @@ Returns a list of static rooms with their population and capacity as follows:
 
 
 
-## get_submission_rooms
+## get_moderated_rooms
 
-`/api/?token=API_TOKEN&method=get_submission_rooms`
+`/api/?token=API_TOKEN&method=get_moderated_rooms`
 
-Returns a list of submission rooms with their population, capacity and the number of (unpublished) submissions in that room, as follows:
+Returns a list of moderated rooms with their population, capacity and the number of (visible) messages in that room, as follows:
 
 ```json
 [
 	{
-		"Name":"SubmissionRoom",
-        "Desc":"This is a submission room.",
+		"Name":"ModeratedRoom",
+        "Desc":"This is a moderated room.",
 		"Cap":64,
 		"Pop":5,
-        "Published":10,
-        "Unpublished":34
+        "Visible":10,
+        "Invisible":34
 	}
 ]
 ```
 
 
 
-## get_submissions
+## get_moderated_messages
 
-`api/?token=API_TOKEN&method=get_submissions&room_id=ROOM_ID`
+`api/?token=API_TOKEN&method=get_moderated_messages&room_id=ROOM_ID`
 
-Returns all the submissions in the submission cache of the `ROOM_ID` specified, as follows:
+Returns all the messages in the moderationCache of the `ROOM_ID` specified, as follows:
 
 ```json
 [
@@ -89,31 +89,31 @@ Returns all the submissions in the submission cache of the `ROOM_ID` specified, 
 ]
 ```
 
-The submissions are ordered such that the oldest submission is first.
+The messages are ordered such that the oldest message is first.
 
 
 
-## set_submission_state
+## set_moderated_message_state
 
-`/api/?token=API_TOKEN&method=set_submission_state&room_id=ROOM_ID&submission_id=SUBMISSION_ID&state=STATE`
+`/api/?token=API_TOKEN&method=set_moderated_message_state&room_id=ROOM_ID&message_id=MESSAGE_ID&state=STATE`
 
-Sets the state of submission `SUBMISSION_ID` in `ROOM_ID` to `STATE`.
+Sets the state of message `MESSAGE_ID` in `ROOM_ID` to `STATE`.
 
-Valid `STATE` values are: "submitted" and "published".
+Valid `STATE` values are: "invisible" and "visible".
 
-If a submission's `STATE` is set to "published" and there are already `MaxPublishedSubmissions` published submissions, then the oldest one is discarded.
+If a message's `STATE` is set to "visible" and there are already `MaxVisibleMessages` visible messages, then the oldest one is discarded.
 
 
 
-## reject_submission
+## delete_message
 
-`/api/?token=API_TOKEN&method=reject_submission&room_id=ROOM_ID&submission_id=SUBMISSION_ID&offensive=OFFENSIVE`
+`/api/?token=API_TOKEN&method=delete_message&room_id=ROOM_ID&message_id=MESSAGE_ID&offensive=OFFENSIVE`
 
-Rejects the submission `SUBMISSION_ID` in `ROOM_ID`.
+Deletes the message `MESSAGE_ID` in `ROOM_ID`.
 
 `OFFENSIVE` must be `true` or `false` exactly (it is case sensitive).
 
-If `OFFENSIVE` is `true`, the client who sent the submission will be ignored for `ClientIgnoreTime` (set in `config.go`) from when this endpoint is called. Otherwise, the submission is simply discarded.
+If `OFFENSIVE` is `true`, the client who sent the message will be ignored for `ClientIgnoreTime` (set in `config.go`) from when this endpoint is called. Otherwise, the message is simply discarded.
 
 
 
@@ -151,11 +151,11 @@ If `ROOM_SIZE` is not supplied it defaults to the `DefaultRoomSize` set in `conf
 
 
 
-## create_submission_room
+## create_moderated_room
 
-`/api/?token=API_TOKEN&method=create_submission_room&name=ROOM_NAME&desc=DESCRIPTION&size=ROOM_SIZE`
+`/api/?token=API_TOKEN&method=create_moderated_room&name=ROOM_NAME&desc=DESCRIPTION&size=ROOM_SIZE`
 
-Creates a submission room (appears on front page, is public and moderated) with name `ROOM_NAME` and description `DESCRIPTION` that can hold `ROOM_SIZE` clients.
+Creates a moderated room (appears on front page, is public and moderated) with name `ROOM_NAME` and description `DESCRIPTION` that can hold `ROOM_SIZE` clients.
 
 Unlike `create_static_room`, a `ROOM_SIZE` must be specified.
 

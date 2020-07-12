@@ -8,8 +8,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-//SubmissionRoom is a struct that holds all the info about a singular picto SubmissionRoom.
-type submissionRoom struct {
+//ModeratedRoom is a struct that holds all the info about a singular picto ModeratedRoom.
+type moderatedRoom struct {
 	manager *RoomManager
 
 	ID          string `json:"ID"`
@@ -17,20 +17,20 @@ type submissionRoom struct {
 
 	ClientManager *clientManager `json:"ClientManager"`
 
-	SubmissionCache *submissionCache `json:"Submissions"`
+	ModerationCache *moderationCache `json:"ModerationCache"`
 	IgnoredIPs      map[string]time.Time
 
 	Closing   bool      `json:"Closing"`
 	CloseTime time.Time `json:"CloseTime"`
 }
 
-func newSubmissionRoom(manager *RoomManager, name, description string, maxClients int) *submissionRoom {
-	r := submissionRoom{
+func newModeratedRoom(manager *RoomManager, name, description string, maxClients int) *moderatedRoom {
+	r := moderatedRoom{
 		manager:         manager,
 		ID:              name,
 		Description:     description,
 		ClientManager:   newClientManager(maxClients),
-		SubmissionCache: newSubmissionCache(MaxSubmissions),
+		ModerationCache: newModerationCache(MaxMessages),
 		IgnoredIPs:      make(map[string]time.Time),
 		Closing:         false,
 	}
@@ -39,48 +39,39 @@ func newSubmissionRoom(manager *RoomManager, name, description string, maxClient
 
 //------------------------------ Utils ------------------------------
 
-func (r *submissionRoom) setSubmissionState(submissionID string, newState string) error {
-	//update its state in the submissions cache
-	newID, err := r.SubmissionCache.setState(submissionID, newState) //should never return an error.
+func (r *moderatedRoom) setMessageState(messageID string, newState string) error {
+	//update its state in the messages cache
+	newID, err := r.ModerationCache.setState(messageID, newState) //should never return an error.
 	if err != nil {
 		return err
 	}
 
-	//If it's being published...
-	if newState == published {
-		//...get the submission from the cache...
-		submission, submissionExists := r.SubmissionCache.Submissions[newID] //~should~ never return an error
-		if !submissionExists {
-			return errors.New("could not find submission with id: " + newID)
+	//If it's being made visible...
+	if newState == visible {
+		//...get the message from the cache...
+		moderatedMessage, moderatedMessageExists := r.ModerationCache.Messages[newID] //~should~ never return an error
+		if !moderatedMessageExists {
+			return errors.New("could not find moderatedMessage with id: " + newID)
 		}
 
 		//...update its Time field to now...
-		submission.Message.Time = time.Now().UnixNano() / int64(time.Millisecond)
+		moderatedMessage.Message.Time = time.Now().UnixNano() / int64(time.Millisecond)
 
-		//...distribute it...
-		r.ClientManager.distributeEvent(submission.Message, -1)
-
-		//...and, if they're still connected, congratulate the client.
-		client, err := r.ClientManager.getClientByIP(submission.SenderIP)
-		if err != nil {
-			//returns an err if client can't be found
-			return nil
-		}
-		client.sendBuffer <- newAnnouncementEvent("Your submission just got published!").toBytes()
-		client.sendBuffer <- newAnnouncementEvent("You can now make a new submission.").toBytes()
+		//...and distribute it.
+		r.ClientManager.distributeEvent(moderatedMessage.Message, -1)
 	}
 
 	return nil
 }
 
-func (r *submissionRoom) rejectSubmission(submissionID string, offensive bool) error {
-	submission, err := r.SubmissionCache.remove(submissionID)
+func (r *moderatedRoom) deleteMessage(messageID string, offensive bool) error {
+	moderatedMessage, err := r.ModerationCache.remove(messageID)
 	if err != nil {
 		return err
 	}
 
 	if offensive {
-		ipSansPort := strings.Split(submission.SenderIP, ":")[0]
+		ipSansPort := strings.Split(moderatedMessage.SenderIP, ":")[0]
 		r.IgnoredIPs[ipSansPort] = time.Now()
 	}
 
@@ -90,7 +81,7 @@ func (r *submissionRoom) rejectSubmission(submissionID string, offensive bool) e
 //------------------------------ Implementing RoomInterface ------------------------------
 
 //The significant differences between rooms should lie in how they handle client events (in recieveEvents).
-func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
+func (r *moderatedRoom) recieveEvent(event *eventWrapper, sender *client) {
 	switch event.Event {
 	case "message":
 		//First check if the client has been ignored...
@@ -121,34 +112,34 @@ func (r *submissionRoom) recieveEvent(event *eventWrapper, sender *client) {
 		message.ColourIndex = sender.ID
 		message.Sender = sender.Name
 
-		// We then need to wrap it and create a submission...
-		sub := &submission{
+		// We then need to wrap it and create a moderatedMessage...
+		sub := &moderatedMessage{
 			SenderIP: sender.IP,
 			Message:  wrapEvent("message", message),
 		}
 
-		// ...and add it to the submission cache
-		alreadySubmitted := r.SubmissionCache.add(sub)
+		// ...add it to the moderation cache
+		alreadyMessaged := r.ModerationCache.add(sub)
 
-		//We give a different announcement depending upon if they have already made a submission or not.
-		sender.sendBuffer <- newAnnouncementEvent("Thank you for your submission!").toBytes()
-		if !alreadySubmitted {
-			sender.sendBuffer <- newAnnouncementEvent("You can overwrite your submission by sending a new one.").toBytes()
+		//We give a different announcement depending upon if they have already sent a message or not.
+		sender.sendBuffer <- newAnnouncementEvent("Thank you for your picto!").toBytes()
+		if !alreadyMessaged {
+			sender.sendBuffer <- newAnnouncementEvent("You can overwrite your current picto by sending a new one.").toBytes()
 		} else {
-			sender.sendBuffer <- newAnnouncementEvent("Your previous submission has been overwritten.").toBytes()
+			sender.sendBuffer <- newAnnouncementEvent("Your previous picto has been overwritten.").toBytes()
 		}
 	}
 }
 
-func (r *submissionRoom) getID() string {
+func (r *moderatedRoom) getID() string {
 	return r.ID
 }
 
-func (r *submissionRoom) getType() string {
-	return "submission"
+func (r *moderatedRoom) getType() string {
+	return "moderated"
 }
 
-func (r *submissionRoom) addClient(c *client) error {
+func (r *moderatedRoom) addClient(c *client) error {
 	err := r.ClientManager.addClient(c)
 	if err != nil {
 		return err
@@ -167,10 +158,10 @@ func (r *submissionRoom) addClient(c *client) error {
 	//Updating the new client as to the room state with an init event.
 	c.sendBuffer <- newInitEvent(r.ID, r.ID, true, c.ID, clientNames).toBytes()
 
-	//Updating the new client with all the published messages from the message cache.
-	for _, s := range r.SubmissionCache.getAll() {
+	//Updating the new client with all the visible messages from the message cache.
+	for _, s := range r.ModerationCache.getAll() {
 		if s != nil {
-			if s.State == published {
+			if s.State == visible {
 				c.sendBuffer <- s.Message.toBytes()
 			}
 		}
@@ -178,28 +169,28 @@ func (r *submissionRoom) addClient(c *client) error {
 
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
 
-	_, submissionExists := r.SubmissionCache.Submissions[r.SubmissionCache.genSubmissionID(c.IP, submitted)]
+	_, moderatedMessageExists := r.ModerationCache.Messages[r.ModerationCache.genMessageID(c.IP)]
 
-	if submissionExists {
-		c.sendBuffer <- newAnnouncementEvent("You've already made a submission today, but you can overwrite it by sending another.").toBytes()
+	if moderatedMessageExists {
+		c.sendBuffer <- newAnnouncementEvent("You've already sent a picto to this room recently, but you can overwrite it by sending another.").toBytes()
 	}
 
 	return nil
 }
 
-func (r *submissionRoom) removeClient(clientID int) error {
+func (r *moderatedRoom) removeClient(clientID int) error {
 	return r.ClientManager.removeClient(clientID)
 }
 
-func (r *submissionRoom) pruneClients() {
+func (r *moderatedRoom) pruneClients() {
 	r.ClientManager.pruneClients(ClientMessageTimeout)
 }
 
-func (r *submissionRoom) announce(message string) {
+func (r *moderatedRoom) announce(message string) {
 	r.ClientManager.distributeEvent(newAnnouncementEvent(message), -1)
 }
 
-func (r *submissionRoom) closeable() bool {
+func (r *moderatedRoom) closeable() bool {
 	switch true {
 	case r.Closing:
 		return time.Now().After(r.CloseTime)
@@ -208,11 +199,11 @@ func (r *submissionRoom) closeable() bool {
 	}
 }
 
-func (r *submissionRoom) setCloseTime(closeTime time.Time) {
+func (r *moderatedRoom) setCloseTime(closeTime time.Time) {
 	r.CloseTime = closeTime
 	r.Closing = true
 }
 
-func (r *submissionRoom) close() {
+func (r *moderatedRoom) close() {
 	r.ClientManager.closeClients()
 }

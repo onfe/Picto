@@ -54,23 +54,19 @@
           />
         </div>
 
-        <div id="submissions">
+        <div id="moderatedMessages">
           <strong v-if="selectedState && selectedRoom">
-            {{
-              { submitted: "Unpublished", published: "Published" }[
-                selectedState
-              ]
-            }}
-            submissions in room '{{ selectedRoom.Name }}':
+            {{ { invisible: "Invisible", visible: "Visible" }[selectedState] }}
+            Moderated messages in room '{{ selectedRoom.Name }}':
           </strong>
           <strong v-else-if="!selectedRoom">Select a room.</strong>
           <strong v-else-if="!selectedState">Select a state.</strong>
 
           <hr />
 
-          <SubmissionList
-            id="submissionList"
-            ref="submissionList"
+          <ModeratedMessageList
+            id="moderatedMessageList"
+            ref="moderatedMessageList"
             v-if="selectedRoom && selectedState"
             :token="token"
             :selectedRoomName="selectedRoom.Name"
@@ -88,7 +84,7 @@
 import AuthForm from "@/components/AuthForm.vue";
 import RoomList from "@/components/RoomList.vue";
 import StateList from "@/components/StateList.vue";
-import SubmissionList from "@/components/SubmissionList.vue";
+import ModeratedMessageList from "@/components/ModeratedMessageList.vue";
 
 export default {
   name: "moderate",
@@ -96,13 +92,13 @@ export default {
     AuthForm,
     RoomList,
     StateList,
-    SubmissionList
+    ModeratedMessageList
   },
   data() {
     return {
       token: null,
       selectedRoom: null,
-      selectedState: "submitted",
+      selectedState: "visible",
       rooms: [],
       refreshing: false
     };
@@ -131,7 +127,7 @@ export default {
 
       const url =
         window.location.origin +
-        "/api/?method=get_submission_rooms&token=" +
+        "/api/?method=get_moderated_rooms&token=" +
         this.token;
       const options = {
         method: "GET"
@@ -144,9 +140,9 @@ export default {
         .then(result => {
           this.rooms = JSON.parse(result) || [];
 
-          //If the submission list exists we need to refresh that too.
-          if (this.$refs.submissionList) {
-            this.$nextTick().then(this.$refs.submissionList.refresh);
+          //If the moderated message list exists we need to refresh that too.
+          if (this.$refs.moderatedMessageList) {
+            this.$nextTick().then(this.$refs.moderatedMessageList.refresh);
           }
 
           //If a room is selected we need to update it with potentially new details
@@ -250,12 +246,12 @@ header {
 #controlPanel {
   margin-right: 4 * $spacer;
 }
-#submissions {
+#moderatedMessages {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 }
-#submissionList {
+#moderatedMessageList {
   overflow-y: scroll;
   height: 0;
   flex-grow: 1;

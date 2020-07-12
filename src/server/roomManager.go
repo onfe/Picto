@@ -12,25 +12,25 @@ import (
 
 //RoomManager is a struct that keeps track of all the picto rooms.
 type RoomManager struct {
-	Rooms           map[string]roomInterface `json:"Rooms"`
-	MaxRooms        int                      `json:"MaxRooms"`
-	apiToken        string
-	Mode            string
-	wordsList       []string
-	StaticRooms     map[string]*staticRoom
-	SubmissionRooms map[string]*submissionRoom
+	Rooms          map[string]roomInterface `json:"Rooms"`
+	MaxRooms       int                      `json:"MaxRooms"`
+	apiToken       string
+	Mode           string
+	wordsList      []string
+	StaticRooms    map[string]*staticRoom
+	ModeratedRooms map[string]*moderatedRoom
 }
 
 //NewRoomManager creates a new room manager.
 func NewRoomManager(MaxRooms int, apiToken string, Mode string, wordsList []string) RoomManager {
 	rm := RoomManager{
-		Rooms:           make(map[string]roomInterface, MaxRooms),
-		MaxRooms:        MaxRooms,
-		apiToken:        apiToken,
-		Mode:            Mode,
-		wordsList:       wordsList,
-		StaticRooms:     make(map[string]*staticRoom, MaxRooms),
-		SubmissionRooms: make(map[string]*submissionRoom, MaxRooms),
+		Rooms:          make(map[string]roomInterface, MaxRooms),
+		MaxRooms:       MaxRooms,
+		apiToken:       apiToken,
+		Mode:           Mode,
+		wordsList:      wordsList,
+		StaticRooms:    make(map[string]*staticRoom, MaxRooms),
+		ModeratedRooms: make(map[string]*moderatedRoom, MaxRooms),
 	}
 	go rm.roomMonitorLoop()
 	return rm
@@ -67,20 +67,20 @@ func (rm *RoomManager) LoadStaticRoomConfig(varname string) error {
 	return nil
 }
 
-/*LoadSubmissionRoomConfig loads a room config env var of static rooms.*/
-func (rm *RoomManager) LoadSubmissionRoomConfig(varname string) error {
+/*LoadModeratedRoomConfig loads a room config env var of static rooms.*/
+func (rm *RoomManager) LoadModeratedRoomConfig(varname string) error {
 	config, configured := os.LookupEnv(varname)
 	if !configured {
 		return errors.New("couldn't find config var: " + varname)
 	}
 
-	type submissionRoomConfig struct {
+	type modeatedRoomConfig struct {
 		Name        string
 		Description string
 		Cap         int
 	}
 
-	var roomConfigs []submissionRoomConfig
+	var roomConfigs []modeatedRoomConfig
 	configBytes := []byte(config)
 
 	err := json.Unmarshal(configBytes, &roomConfigs)
@@ -89,7 +89,7 @@ func (rm *RoomManager) LoadSubmissionRoomConfig(varname string) error {
 	}
 
 	for _, r := range roomConfigs {
-		newRoom := newSubmissionRoom(rm, r.Name, r.Description, r.Cap)
+		newRoom := newModeratedRoom(rm, r.Name, r.Description, r.Cap)
 		err = rm.addRoom(newRoom)
 		if err != nil {
 			return err
@@ -155,8 +155,8 @@ func (rm *RoomManager) addRoom(newRoom roomInterface) error {
 	switch newRoom.getType() {
 	case "static":
 		rm.StaticRooms[newRoom.getID()] = newRoom.(*staticRoom)
-	case "submission":
-		rm.SubmissionRooms[newRoom.getID()] = newRoom.(*submissionRoom)
+	case "moderated":
+		rm.ModeratedRooms[newRoom.getID()] = newRoom.(*moderatedRoom)
 	}
 
 	log.Println("[ROOM CREATED] - Created room ID \""+newRoom.getID()+"\" | There are now", len(rm.Rooms), "active rooms.")

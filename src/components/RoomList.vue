@@ -11,7 +11,7 @@
           disabled: disabled
         }"
       >
-        <a>{{ room.Name }} ({{ room.Unpublished }}:{{ room.Published }})</a>
+        <a>{{ room.Name }} ({{ room.Visible }}:{{ room.Invisible }})</a>
       </li>
     </ul>
   </div>

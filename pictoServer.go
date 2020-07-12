@@ -54,9 +54,9 @@ func main() {
 		log.Println("Error loading STATIC_ROOMS:", err.Error())
 	}
 
-	err = roomManager.LoadSubmissionRoomConfig("SUBMISSION_ROOMS")
+	err = roomManager.LoadModeratedRoomConfig("MODERATED_ROOMS")
 	if err != nil {
-		log.Println("Error loading SUBMISSION_ROOMS:", err.Error())
+		log.Println("Error loading MODERATED_ROOMS:", err.Error())
 	}
 
 	//Seeing random number generator

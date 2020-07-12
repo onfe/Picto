@@ -7,10 +7,10 @@ const (
 	MaxRooms = 1024
 	//MaxClientsPerRoom = max number of clients in a single room.
 	MaxClientsPerRoom = 64
-	//MaxSubmissions = the maximum number of submissions to a SubmissionRoom before they overwrite themselves.
-	MaxSubmissions = 1024
-	//MaxPublishedSubmissions = the maximum number of published submissions in a SubmissionRoom before they get discarded.
-	MaxPublishedSubmissions = 64
+	//MaxMessages = the maximum number of messages to a ModeratedRoom before they overwrite themselves.
+	MaxMessages = 1024
+	//MaxVisibleMessages = the maximum number of visible messages in a ModeratedRoom before they get discarded.
+	MaxVisibleMessages = 64
 
 	//MaxRoomNameLength = the max length of a room name.
 	MaxRoomNameLength = 32
@@ -26,7 +26,7 @@ const (
 	RoomGracePeriod = 60 * time.Second
 	//ClientMessageTimeout = maximum amount of time a client may be in a room without sending any messages before being disconnected
 	ClientMessageTimeout = 300 * time.Second
-	//ClientIgnoreTime = amount of time a client is ignored after their submission is moderated
+	//ClientIgnoreTime = amount of time a client is ignored after their message is moderated as offensive
 	ClientIgnoreTime = 7 * 24 * time.Hour //1 week
 
 	//ClientSendTimeout is the time allotted for a message to be sent.
