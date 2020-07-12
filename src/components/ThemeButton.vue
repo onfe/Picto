@@ -36,7 +36,12 @@ export default {
     setTheme(theme) {
       this.theme = theme;
       document.getElementsByTagName("html")[0].setAttribute("class", theme);
-      this.$cookies.set("theme", this.theme);
+      if (window.matchMedia("(prefers-color-scheme: dark)").matches && theme == "dark"
+      || !window.matchMedia("(prefers-color-scheme: dark)").matches && theme == "light") {
+        this.$cookies.remove("theme")
+      } else {
+        this.$cookies.set("theme", this.theme);
+      }
     }
   },
   mounted() {
