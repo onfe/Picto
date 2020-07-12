@@ -169,12 +169,6 @@ func (r *moderatedRoom) addClient(c *client) error {
 
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
 
-	_, moderatedMessageExists := r.ModerationCache.Messages[r.ModerationCache.genMessageID(c.IP)]
-
-	if moderatedMessageExists {
-		c.sendBuffer <- newAnnouncementEvent("You've already sent a picto to this room recently, but you can overwrite it by sending another.").toBytes()
-	}
-
 	return nil
 }
 
