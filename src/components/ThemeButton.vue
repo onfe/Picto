@@ -10,8 +10,8 @@
 export default {
   data() {
     return {
-      theme: "light",
-      themes: ["light", "dark", "pink"]
+      theme: "system",
+      themes: ["system", "dark", "pink", "light"]
     };
   },
   computed: {
@@ -29,7 +29,7 @@ export default {
         case "pink":
           return "ice-cream";
       }
-      return "sun";
+      return "paint-roller";
     }
   },
   methods: {
@@ -40,15 +40,12 @@ export default {
     }
   },
   mounted() {
-    //If there is a theme cookie set it takes priority.
-    if (this.$cookies.isKey("theme")) {
+    //If there is a theme cookie set, we apply that theme.
+    if (
+      this.$cookies.isKey("theme") &&
+      this.$cookies.get("theme") != "system"
+    ) {
       this.setTheme(this.$cookies.get("theme"));
-    } else {
-      //Otherwise we default to prefers-color-scheme and don't set a cookie.
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        this.theme = "dark";
-        document.getElementsByTagName("html")[0].setAttribute("class", "dark");
-      } //Don't need to check prefers-color-scheme:light as light theme is default.
     }
   }
 };

@@ -3,7 +3,7 @@
     <div class="wrap">
       <RoomTitle :edit="expand" />
       <div class="body">
-        <UserList v-if="!this.$store.state.client.public" class="userList" />
+        <UserList class="userList" />
         <ThemeButton class="themeButton" />
       </div>
     </div>
@@ -22,7 +22,7 @@ export default {
   },
   computed: {
     expand() {
-      return this.$store.state.client.showInfo;
+      return this.$store.state.room.showInfo;
     }
   }
 };

@@ -4,7 +4,7 @@
       <Message
         id="compose"
         :colour="this.$store.state.client.colour"
-        :author="this.$store.getters['client/username']"
+        :author="this.$store.state.client.username"
       >
         <canvas id="sketchpad"></canvas>
       </Message>

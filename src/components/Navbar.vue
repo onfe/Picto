@@ -37,12 +37,12 @@ export default {
   },
   computed: {
     showInfo() {
-      return this.$store.state.client.showInfo;
+      return this.$store.state.room.showInfo;
     }
   },
   methods: {
     toggleInfo() {
-      this.$store.dispatch("client/toggleInfo");
+      this.$store.dispatch("room/toggleInfo");
     },
     link() {
       return;

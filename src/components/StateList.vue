@@ -3,16 +3,16 @@
     <strong>States:</strong>
     <ul>
       <li
-        v-for="state in ['submitted', 'published']"
+        v-for="state in ['visible', 'invisible']"
         :key="state"
         v-on:click="disabled ? null : $emit('select', state)"
         :class="{ selected: selectedState == state, disabled: disabled }"
       >
         <a
-          >{{ { submitted: "Unpublished", published: "Published" }[state] }} ({{
+          >{{ { visible: "Visible", invisible: "Invisible" }[state] }} ({{
             {
-              submitted: selectedRoom.Unpublished,
-              published: selectedRoom.Published
+              visible: selectedRoom.Visible,
+              invisible: selectedRoom.Invisible
             }[state]
           }})</a
         >

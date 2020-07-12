@@ -12,7 +12,7 @@ const state = {
 const getters = {};
 
 const actions = {
-  send: ({ dispatch, rootState, rootGetters }) => {
+  send: ({ dispatch, rootState }) => {
     const raw = window._sketch.getBakedImageData();
     if (raw == null) {
       // Don't send empty messages.
@@ -22,7 +22,7 @@ const actions = {
     const msg = new Message(
       raw.data,
       raw.span,
-      rootGetters["client/username"],
+      rootState.client.username,
       rootState.client.colour
     );
 

@@ -1,30 +1,30 @@
 <template>
   <li>
-    <p>Author: '{{ submission.Message.Payload.Sender }}'</p>
-    <CanvasMessage :msg="submission.msg" />
+    <p>Author: '{{ moderatedMessage.Message.Payload.Sender }}'</p>
+    <CanvasMessage :msg="moderatedMessage.msg" />
     <ul id="options">
-      <li :class="{ btn: true, selected: newState == 'published' }">
+      <li :class="{ btn: true, selected: newState == 'visible' }">
         <font-awesome-icon
-          @click="disabled ? null : (newState = 'published')"
+          @click="disabled ? null : (newState = 'visible')"
           :class="{
             icn: true,
             disabled: disabled,
-            active: submission.State == 'published'
+            active: moderatedMessage.State == 'visible'
           }"
-          icon="check"
-          title="publish"
+          icon="eye"
+          title="make visible"
         />
       </li>
-      <li :class="{ btn: true, selected: newState == 'submitted' }">
+      <li :class="{ btn: true, selected: newState == 'invisible' }">
         <font-awesome-icon
-          @click="disabled ? null : (newState = 'submitted')"
+          @click="disabled ? null : (newState = 'invisible')"
           :class="{
             icn: true,
             disabled: disabled,
-            active: submission.State == 'submitted'
+            active: moderatedMessage.State == 'invisible'
           }"
-          icon="hourglass"
-          title="unpublish"
+          icon="eye-slash"
+          title="make invisible"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'deleted' }">
@@ -32,7 +32,7 @@
           @click="disabled ? null : (newState = 'deleted')"
           :class="{ icn: true, disabled: disabled }"
           icon="times"
-          title="reject"
+          title="delete"
         />
       </li>
       <li :class="{ btn: true, selected: newState == 'offensive' }">
@@ -46,10 +46,12 @@
       <div class="sep" />
       <li id="submit" class="btn">
         <font-awesome-icon
-          @click="!disabled && newState != submission.State ? submit() : null"
+          @click="
+            !disabled && newState != moderatedMessage.State ? submit() : null
+          "
           :class="{
             icn: true,
-            disabled: disabled || newState == submission.State
+            disabled: disabled || newState == moderatedMessage.State
           }"
           icon="share"
           title="submit"
@@ -68,14 +70,14 @@ export default {
   },
   props: [
     "token",
-    "submission",
+    "moderatedMessage",
     "selectedRoomName",
     "selectedState",
     "disabled"
   ],
   data() {
     return {
-      newState: this.submission.State
+      newState: this.moderatedMessage.State
     };
   },
   methods: {
@@ -86,15 +88,14 @@ export default {
         this.token +
         "&room_id=" +
         this.selectedRoomName +
-        "&submission_id=" +
-        this.submission.ID;
+        "&message_id=" +
+        this.moderatedMessage.ID;
 
-      if (this.newState == "submitted" || this.newState == "published") {
-        url += "&method=set_submission_state&state=" + this.newState;
+      if (this.newState == "invisible" || this.newState == "visible") {
+        url += "&method=set_moderated_message_state&state=" + this.newState;
       } else if (this.newState == "deleted" || this.newState == "offensive") {
         url +=
-          "&method=reject_submission&offensive=" +
-          (this.newState == "offensive");
+          "&method=delete_message&offensive=" + (this.newState == "offensive");
       }
 
       const options = {

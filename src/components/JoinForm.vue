@@ -105,7 +105,6 @@ export default {
           return resp.text();
         })
         .then(result => {
-          this.loading = false;
           if (result != "true") {
             // room doesn't exist anymore! redirect.
             this.$router.push("/");

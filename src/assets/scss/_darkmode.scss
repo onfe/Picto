@@ -1,6 +1,6 @@
 @import 'colours';
 
-:root {
+@mixin light {
   --background: #{$background-light};
   --subtle: #{$subtle-light};
   --button: #{$button-light};
@@ -14,7 +14,7 @@
 }
 
 //More themes could be added in the future :)
-:root.dark {
+@mixin dark {
   --background: #{$background-dark};
   --subtle: #{$subtle-dark};
   --button: #{$button-dark};
@@ -27,7 +27,7 @@
   --secondary-join: #{$grey};
 }
 
-:root.pink {
+@mixin pink {
   --background: #{$background-pink};
   --subtle: #{$subtle-pink};
   --button: #{$button-pink};
@@ -36,6 +36,17 @@
   --primary: #{$primary-pink};
   --message-background: #{$message-background-pink};
 }
+
+//Handling prefers-color-scheme
+:root { @include light }
+@media (prefers-color-scheme: dark) {
+  :root { @include dark }
+}
+//Handling classes added via cookie based on user preference
+:root.light { @include light }
+:root.dark { @include dark }
+:root.pink { @include pink }
+
 
 html {
   color: var(--primary);

@@ -1,20 +1,20 @@
 <template>
   <ul>
-    <li v-if="filteredSubmissions.length == 0">
+    <li v-if="filteredModeratedMessages.length == 0">
       <p>There's nothing here!</p>
     </li>
-    <Submission
-      class="submission"
-      v-for="submission in filteredSubmissions"
-      :key="submission.msg.hash"
+    <ModeratedMessage
+      class="moderatedMessage"
+      v-for="moderatedMessage in filteredModeratedMessages"
+      :key="moderatedMessage.msg.hash"
       :token="token"
-      :submission="submission"
+      :moderatedMessage="moderatedMessage"
       :selectedRoomName="selectedRoomName"
       :selectedState="selectedState"
       :disabled="disabled"
       @changeState="
         newState => {
-          submission.State = newState;
+          moderatedMessage.State = newState;
           $emit('refresh');
         }
       "
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Submission from "@/components/Submission.vue";
+import ModeratedMessage from "@/components/ModeratedMessage.vue";
 
 import RunlengthEncoder from "../assets/js/runlengthEncoder.js";
 import { Message } from "../assets/js/message.js";
@@ -31,21 +31,21 @@ import colour from "../assets/js/colours.js";
 
 export default {
   components: {
-    Submission
+    ModeratedMessage
   },
   props: ["token", "selectedRoomName", "selectedState", "disabled"],
   data() {
     return {
-      submissions: []
+      moderatedMessages: []
     };
   },
   mounted() {
     this.refresh();
   },
   computed: {
-    filteredSubmissions() {
-      return this.submissions.filter(
-        submission => submission.State == this.selectedState
+    filteredModeratedMessages() {
+      return this.moderatedMessages.filter(
+        moderatedMessage => moderatedMessage.State == this.selectedState
       );
     }
   },
@@ -53,7 +53,7 @@ export default {
     refresh() {
       const url =
         window.location.origin +
-        "/api/?method=get_submissions&token=" +
+        "/api/?method=get_moderated_messages&token=" +
         this.token +
         "&room_id=" +
         this.selectedRoomName;
@@ -66,15 +66,15 @@ export default {
           return resp.text();
         })
         .then(result => {
-          this.submissions = JSON.parse(result) || [];
-          this.submissions.map(
-            submission =>
-              (submission.msg = new Message(
-                RunlengthEncoder.decode(submission.Message.Payload.Data),
-                submission.Message.Payload.Span,
+          this.moderatedMessages = JSON.parse(result) || [];
+          this.moderatedMessages.map(
+            moderatedMessage =>
+              (moderatedMessage.msg = new Message(
+                RunlengthEncoder.decode(moderatedMessage.Message.Payload.Data),
+                moderatedMessage.Message.Payload.Span,
                 null,
-                colour(submission.Message.Payload.ColourIndex),
-                submission.Message.Time
+                colour(moderatedMessage.Message.Payload.ColourIndex),
+                moderatedMessage.Message.Time
               ))
           );
         });
@@ -94,7 +94,7 @@ ul {
   }
 }
 
-.submission {
+.moderatedMessage {
   max-width: 60vw;
   margin: 0 auto;
 

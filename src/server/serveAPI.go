@@ -165,7 +165,7 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal("new static room created with `id` '" + newRoom.getID() + "'")
 			return
 
-		case "create_submission_room":
+		case "create_moderated_room":
 			err = checkArgsPresent(r.Form, []string{"name", "desc", "size"})
 			if err != nil {
 				return
@@ -184,13 +184,13 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			newRoom := newSubmissionRoom(rm, r.Form["name"][0], r.Form["desc"][0], maxClients)
+			newRoom := newModeratedRoom(rm, r.Form["name"][0], r.Form["desc"][0], maxClients)
 			err = rm.addRoom(newRoom)
 			if err != nil {
 				return
 			}
 
-			response, err = json.Marshal("new submission room created with `id` '" + newRoom.getID() + "'")
+			response, err = json.Marshal("new moderated room created with `id` '" + newRoom.getID() + "'")
 			return
 
 		case "close_room":
@@ -252,35 +252,35 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(roomStates)
 			return
 
-		case "get_submission_rooms":
+		case "get_moderated_rooms":
 			type roomState struct {
-				Name        string
-				Desc        string
-				Cap         int
-				Pop         int
-				Published   int
-				Unpublished int
+				Name      string
+				Desc      string
+				Cap       int
+				Pop       int
+				Visible   int
+				Invisible int
 			}
-			roomStates := make([]roomState, len(rm.SubmissionRooms))
+			roomStates := make([]roomState, len(rm.ModeratedRooms))
 			i := 0
-			for _, r := range rm.SubmissionRooms {
+			for _, r := range rm.ModeratedRooms {
 				roomStates[i] = roomState{
-					Name:        r.ID,
-					Desc:        r.Description,
-					Cap:         r.ClientManager.MaxClients,
-					Pop:         r.ClientManager.ClientCount,
-					Published:   r.SubmissionCache.PublishedCount,
-					Unpublished: r.SubmissionCache.Len - r.SubmissionCache.PublishedCount,
+					Name:      r.ID,
+					Desc:      r.Description,
+					Cap:       r.ClientManager.MaxClients,
+					Pop:       r.ClientManager.ClientCount,
+					Visible:   r.ModerationCache.VisibleCount,
+					Invisible: r.ModerationCache.Len - r.ModerationCache.VisibleCount,
 				}
 				i++
 			}
 			sort.Slice(roomStates[:], func(i, j int) bool {
-				if roomStates[i].Unpublished != roomStates[j].Unpublished {
-					//First sort by most unpublished...
-					return roomStates[i].Unpublished > roomStates[j].Unpublished
-				} else if roomStates[i].Published != roomStates[j].Published {
-					//Then by most published...
-					return roomStates[i].Published > roomStates[j].Published
+				if roomStates[i].Invisible != roomStates[j].Invisible {
+					//First sort by most invisible...
+					return roomStates[i].Invisible > roomStates[j].Invisible
+				} else if roomStates[i].Visible != roomStates[j].Visible {
+					//Then by most visible...
+					return roomStates[i].Visible > roomStates[j].Visible
 				} else {
 					//Then by name A-Z
 					return roomStates[i].Name[0] < roomStates[j].Name[0]
@@ -290,49 +290,49 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 			response, err = json.Marshal(roomStates)
 			return
 
-		case "get_submissions":
+		case "get_moderated_messages":
 			roomID, roomIDSupplied := r.Form["room_id"]
 			if !roomIDSupplied {
 				err = errors.New("no `room_id` supplied")
 				return
 			}
 
-			room, roomExists := rm.SubmissionRooms[roomID[0]]
+			room, roomExists := rm.ModeratedRooms[roomID[0]]
 			if !roomExists {
 				err = errors.New("a room with that `id` does not exist")
 				return
 			}
 
-			response, err = json.Marshal(room.SubmissionCache.getAll())
+			response, err = json.Marshal(room.ModerationCache.getAll())
 			return
 
-		case "set_submission_state":
-			err = checkArgsPresent(r.Form, []string{"room_id", "submission_id", "state"})
+		case "set_moderated_message_state":
+			err = checkArgsPresent(r.Form, []string{"room_id", "message_id", "state"})
 			if err != nil {
 				return
 			}
 
-			room, roomExists := rm.SubmissionRooms[r.Form["room_id"][0]]
+			room, roomExists := rm.ModeratedRooms[r.Form["room_id"][0]]
 			if !roomExists {
 				err = errors.New("a room with that `room_id` does not exist")
 				return
 			}
 
-			err = room.setSubmissionState(r.Form["submission_id"][0], r.Form["state"][0])
+			err = room.setMessageState(r.Form["message_id"][0], r.Form["state"][0])
 			if err != nil {
 				return
 			}
 
-			response, err = json.Marshal("successfully updated submission state")
+			response, err = json.Marshal("successfully updated message state")
 			return
 
-		case "reject_submission":
-			err = checkArgsPresent(r.Form, []string{"room_id", "submission_id", "offensive"})
+		case "delete_message":
+			err = checkArgsPresent(r.Form, []string{"room_id", "message_id", "offensive"})
 			if err != nil {
 				return
 			}
 
-			room, roomExists := rm.SubmissionRooms[r.Form["room_id"][0]]
+			room, roomExists := rm.ModeratedRooms[r.Form["room_id"][0]]
 			if !roomExists {
 				err = errors.New("a room with that `room_id` does not exist")
 				return
@@ -349,15 +349,15 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			err = room.rejectSubmission(r.Form["submission_id"][0], offensive)
+			err = room.deleteMessage(r.Form["message_id"][0], offensive)
 			if err != nil {
 				return
 			}
 
 			if offensive {
-				response, err = json.Marshal("successfully rejected submission. client will be ignored for " + ClientIgnoreTime.String())
+				response, err = json.Marshal("successfully rejected message. client will be ignored for " + ClientIgnoreTime.String())
 			} else {
-				response, err = json.Marshal("successfully rejected submission.")
+				response, err = json.Marshal("successfully rejected message.")
 			}
 			return
 
@@ -387,7 +387,8 @@ func (rm *RoomManager) ServeAPI(w http.ResponseWriter, r *http.Request) {
 				Pop  int
 			}
 			var roomStates []roomState
-			for _, r := range rm.SubmissionRooms {
+			log.Println(rm.ModeratedRooms)
+			for _, r := range rm.ModeratedRooms {
 				if !r.Closing {
 					roomStates = append(
 						roomStates,
