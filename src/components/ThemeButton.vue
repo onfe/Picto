@@ -11,7 +11,7 @@ export default {
   data() {
     return {
       theme: "system",
-      themes: ["system", "light", "dark", "pink"]
+      themes: ["system", "dark", "pink", "light"]
     };
   },
   computed: {
