@@ -8,6 +8,7 @@ const state = {
   name: null,
   showInfo: false,
   public: false,
+  joinTime: -1,
   users: []
 };
 
@@ -41,7 +42,8 @@ const actions = {
     commit("leave");
     Vue.analytics.trackEvent("room", "leave");
   },
-  updateUsers: ({ commit, dispatch }, d) => {
+  updateUsers: ({ commit, dispatch, state }, d) => {
+    console.log("User trigger");
     // triggered on user join/leave
     const pl = d.Payload;
     const update = {
@@ -55,6 +57,8 @@ const actions = {
     } else {
       dispatch("messages/leave", update, { root: true });
     }
+
+    console.log(state);
 
     // If the update is current (after we joined), mutate the user list.
     if (d.Time > state.joinTime) {
@@ -88,6 +92,7 @@ const mutations = {
     state.name = pl.Name;
     state.public = pl.Public;
     state.showInfo = false;
+    state.joinTime = Date.now();
   },
   leave: state => {
     state.id = null;
@@ -95,6 +100,7 @@ const mutations = {
     state.users = [];
     state.public = false;
     state.showInfo = false;
+    state.joinTime = -1;
   },
   updateUsers: (state, pl) => {
     state.users = pl.Users;
