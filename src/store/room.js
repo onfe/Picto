@@ -8,6 +8,7 @@ const state = {
   name: null,
   showInfo: false,
   public: false,
+  joinTime: -1,
   users: []
 };
 
@@ -41,7 +42,7 @@ const actions = {
     commit("leave");
     Vue.analytics.trackEvent("room", "leave");
   },
-  updateUsers: ({ commit, dispatch }, d) => {
+  updateUsers: ({ commit, dispatch, state }, d) => {
     // triggered on user join/leave
     const pl = d.Payload;
     const update = {
@@ -88,6 +89,7 @@ const mutations = {
     state.name = pl.Name;
     state.public = pl.Public;
     state.showInfo = false;
+    state.joinTime = Date.now();
   },
   leave: state => {
     state.id = null;
@@ -95,6 +97,7 @@ const mutations = {
     state.users = [];
     state.public = false;
     state.showInfo = false;
+    state.joinTime = -1;
   },
   updateUsers: (state, pl) => {
     state.users = pl.Users;
