@@ -49,10 +49,10 @@ export default {
     this.$store.dispatch("compose/reset");
     if (this.$store.state.room.id == null) {
       this.$router.replace(`/join/${this.$route.params.id}`);
-      document.onvisibilitychange = function() {
-        this.$store.dispatch("messages/read");
-      }.bind(this);
     }
+    document.onvisibilitychange = function() {
+      this.$store.dispatch("messages/read");
+    }.bind(this);
   },
   beforeDestroy() {
     this.$store.dispatch("client/leave");
@@ -62,7 +62,7 @@ export default {
       var unread = this.$store.state.messages.unread;
       return {
         title:
-          (unread > 0 ? "(" + unread + " Unread) " : "") +
+          (unread > 0 ? `(${unread}) ` : "") +
           this.$store.getters["room/title"] +
           " - Picto"
       };
