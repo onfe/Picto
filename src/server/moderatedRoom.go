@@ -144,12 +144,8 @@ func (r *moderatedRoom) addClient(c *client) error {
 	*/
 	c.LastMessage = c.LastMessage.Add(-2 * MinMessageInterval)
 
-	//Creating a fake users list with only the joining user in it...
-	clientNames := make([]string, r.ClientManager.MaxClients)
-	clientNames[c.ID] = c.Name
-
 	//Updating the new client as to the room state with an init event.
-	c.sendBuffer <- newInitEvent(r.ID, r.ID, true, c.ID, clientNames).toBytes()
+	c.sendBuffer <- newInitEvent(r.ID, r.ID, true, c.ID, r.ClientManager.getClientNames()).toBytes()
 
 	//Updating the new client with all the visible messages from the message cache.
 	for _, s := range r.ModerationCache.getAll() {
