@@ -160,13 +160,26 @@ func (r *moderatedRoom) addClient(c *client) error {
 		}
 	}
 
+	//Provide the client with the room description as an announcement.
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
+
+	//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
+	r.ClientManager.distributeEvent(newUserEvent(c.ID, c.Name, clientNames), -1)
 
 	return nil
 }
 
 func (r *moderatedRoom) removeClient(clientID int) error {
-	return r.ClientManager.removeClient(clientID)
+	client := r.ClientManager.Clients[clientID]
+
+	err := r.ClientManager.removeClient(clientID)
+	if err != nil {
+		return err
+	}
+
+	r.ClientManager.distributeEvent(newUserEvent(clientID, client.Name, r.ClientManager.getClientNames()), -1)
+
+	return nil
 }
 
 func (r *moderatedRoom) pruneClients() {
