@@ -37,15 +37,19 @@ const actions = {
     }
   },
   init: () => {
+    // eslint-disable-next-line no-console
     console.error("replaced by room/join");
   },
   updateUser: () => {
+    // eslint-disable-next-line no-console
     console.error("replaced by rooom/updateUsers");
   },
   toggleInfo: () => {
+    // eslint-disable-next-line no-console
     console.error("replaced by room/info");
   },
   renameRoom: () => {
+    // eslint-disable-next-line no-console
     console.error("replaced by room/rename");
   },
   error: ({ commit }, error) => {
