@@ -164,7 +164,7 @@ func (r *moderatedRoom) addClient(c *client) error {
 	c.sendBuffer <- newAnnouncementEvent(r.Description).toBytes()
 
 	//Now the new client is up to date and in the clients map of the room, all the clients are notified of their presence.
-	r.ClientManager.distributeEvent(newUserEvent(c.ID, c.Name, clientNames), -1)
+	r.ClientManager.distributeEvent(newUserEvent(c.ID, c.Name, r.ClientManager.getClientNames()), -1)
 
 	return nil
 }
