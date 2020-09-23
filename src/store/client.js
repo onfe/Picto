@@ -36,22 +36,6 @@ const actions = {
       router.replace(`/join/${router.currentRoute.params.id}`);
     }
   },
-  init: () => {
-    // eslint-disable-next-line no-console
-    console.error("replaced by room/join");
-  },
-  updateUser: () => {
-    // eslint-disable-next-line no-console
-    console.error("replaced by rooom/updateUsers");
-  },
-  toggleInfo: () => {
-    // eslint-disable-next-line no-console
-    console.error("replaced by room/info");
-  },
-  renameRoom: () => {
-    // eslint-disable-next-line no-console
-    console.error("replaced by room/rename");
-  },
   error: ({ commit }, error) => {
     Vue.analytics.trackEvent("room", "join", "error", error.code);
     commit("updateError", error.reason);

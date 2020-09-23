@@ -53,6 +53,15 @@ ul {
     flex-shrink: 0;
   }
 }
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.dark):not(.light):not(.pink) {
+    a.Announcement-pip {
+      border: $spacer / 4 solid var(--secondary);
+    }
+  }
+}
+
 :root.dark {
   a.Announcement-pip {
     border: $spacer / 4 solid var(--secondary);

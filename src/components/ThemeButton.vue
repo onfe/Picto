@@ -41,7 +41,10 @@ export default {
   },
   mounted() {
     //If there is a theme cookie set, we apply that theme.
-    if (this.$cookies.isKey("theme") && this.$cookies.get("theme") != "system") {
+    if (
+      this.$cookies.isKey("theme") &&
+      this.$cookies.get("theme") != "system"
+    ) {
       this.setTheme(this.$cookies.get("theme"));
     }
   }

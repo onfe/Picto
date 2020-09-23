@@ -39,6 +39,20 @@ class Sketchpad {
       this.resetMousePos.bind(this);
     });
 
+    /** Disable scrolling on canvas */
+    this.notepad.canvas.addEventListener("touchstart", function(event) {
+      event.preventDefault();
+    });
+    this.notepad.canvas.addEventListener("touchmove", function(event) {
+      event.preventDefault();
+    });
+    this.notepad.canvas.addEventListener("touchend", function(event) {
+      event.preventDefault();
+    });
+    this.notepad.canvas.addEventListener("touchcancel", function(event) {
+      event.preventDefault();
+    });
+
     /**imageData is all the drawn pixels and baked text */
     this.imageData = {
       span: this.width,
