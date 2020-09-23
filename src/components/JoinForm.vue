@@ -179,6 +179,8 @@ button {
   svg {
     fill: $almost-white;
     height: 25px;
+    width: 21px;
+    flex-shrink: 0;
     transition: transform 400ms ease-in-out;
   }
 

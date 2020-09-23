@@ -6,7 +6,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"strconv"
+	"time"
 
 	"github.com/onfe/Picto/src/server"
 )
@@ -60,16 +60,7 @@ func main() {
 	}
 
 	//Seeing random number generator
-	seedString, seeded := os.LookupEnv("RAND_SEED")
-	if seeded {
-		seed, err := strconv.ParseInt(seedString, 10, 64)
-		if err != nil {
-			log.Println("[ENV VAR] - RAND_SEED set incorrectly (should be int64)")
-		}
-		if err == nil {
-			rand.Seed(seed)
-		}
-	}
+	rand.Seed(time.Now().UnixNano() / int64(time.Millisecond))
 
 	//Setting up routing
 	fs := getFileHandler(http.FileServer(http.Dir("dist")))
