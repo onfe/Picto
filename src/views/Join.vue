@@ -79,8 +79,9 @@ export default {
   color: var(--primary-join);
 
   background-image: url("/img/stripe.svg");
-  background-repeat: repeat-y;
   background-position-x: 0.8rem;
+  background-repeat: no-repeat;
+  background-size: 30px 100%;
 
   display: flex;
   flex-direction: column;

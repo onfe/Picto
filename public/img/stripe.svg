@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="30" height="10" viewBox="0 0 30 10">
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="10" viewBox="0 0 30 10" preserveAspectRatio="none">
   <g fill="none" fill-rule="evenodd">
     <rect width="10" height="10" fill="#008DAB" />
     <rect width="10" height="10" x="10" fill="#FFC694"/>

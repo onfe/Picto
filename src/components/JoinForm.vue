@@ -3,7 +3,7 @@
     <p v-if="$route.params.id">
       You're joining room: <br /><strong>{{ $route.params.id }}</strong>
     </p>
-    <p v-else>Enter a nickname to create a room....</p>
+    <p v-else>Enter a nickname to create a room...</p>
 
     <div class="joinbox font-pixel" :class="{ error: error }">
       <form @submit.prevent="join">
