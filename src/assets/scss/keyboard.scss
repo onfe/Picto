@@ -9,7 +9,7 @@
   font-family: "pixel 5x7";
   font-size: 1.5em;
   background: var(--background);
-  padding: $spacer / 2;
+  padding: calc($spacer / 2);
 
   span {
     pointer-events: none;
@@ -20,7 +20,7 @@
     flex: 1 0 0;
     padding: 0.25em;
     border-radius: $spacer;
-    border: $spacer / 2 solid var(--background);
+    border: calc($spacer / 2) solid var(--background);
     background: var(--subtle);
     cursor: pointer;
     display: flex;

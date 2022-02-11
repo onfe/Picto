@@ -49,7 +49,7 @@ ul {
     height: $spacer;
     border-radius: $spacer;
     background: #000;
-    margin-top: $spacer / 2;
+    margin-top: calc($spacer / 2);
     flex-shrink: 0;
   }
 }
@@ -57,14 +57,14 @@ ul {
 @media (prefers-color-scheme: dark) {
   :root:not(.dark):not(.light):not(.pink) {
     a.Announcement-pip {
-      border: $spacer / 4 solid var(--secondary);
+      border: calc($spacer / 4) solid var(--secondary);
     }
   }
 }
 
 :root.dark {
   a.Announcement-pip {
-    border: $spacer / 4 solid var(--secondary);
+    border: calc($spacer / 4) solid var(--secondary);
   }
 }
 </style>

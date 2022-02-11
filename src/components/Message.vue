@@ -87,7 +87,7 @@ $perc-spacer: 1%;
   width: 100%;
   height: 100%;
   border-radius: $spacer;
-  border: $spacer / 2 solid desaturate(darken(#e97777, 20%), 20%);
+  border: calc($spacer / 2) solid desaturate(darken(#e97777, 20%), 20%);
   overflow: hidden;
 }
 
@@ -112,8 +112,8 @@ $perc-spacer: 1%;
   font-size: $size-pixel;
   line-height: 0.625;
   background: #e97777;
-  border-bottom: $spacer / 2 solid transparent;
-  border-right: $spacer / 2 solid transparent;
+  border-bottom: calc($spacer / 2) solid transparent;
+  border-right: calc($spacer / 2) solid transparent;
   border-color: inherit;
   border-bottom-right-radius: $spacer;
   color: #fff;
@@ -134,7 +134,7 @@ $perc-spacer: 1%;
     .icn {
       display: block;
       margin-left: $spacer;
-      padding: $spacer / 4;
+      padding: calc($spacer / 4);
       width: 3 * $spacer;
       height: 3 * $spacer;
     }
