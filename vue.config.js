@@ -16,8 +16,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        // @/ is an alias to src/
-        // so this assumes you have a file named `src/variables.scss`
+        // Imports this into every single component.
         prependData: `@import "~@/assets/scss/mixins";`
       }
     }
