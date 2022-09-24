@@ -86,7 +86,7 @@ canvas {
   image-rendering: pixelated;
   touch-action: none;
   background-image: linear-gradient(
-    rgba(0, 0, 0, 0.1) #{$spacer / 4},
+    rgba(0, 0, 0, 0.1) calc($spacer / 4),
     transparent 0
   );
   background-size: 100% 19%;
