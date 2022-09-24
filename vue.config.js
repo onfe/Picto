@@ -1,6 +1,9 @@
+const { defineConfig } = require('@vue/cli-service')
+
 process.env.VUE_APP_VERSION = require("./package.json").version;
 
-module.exports = {
+module.exports = defineConfig({
+  transpileDependencies: true,
   devServer: {
     proxy: {
       "/ws": {
@@ -16,9 +19,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        // @/ is an alias to src/
-        // so this assumes you have a file named `src/variables.scss`
-        prependData: `@import "~@/assets/scss/mixins";`
+        additionalData: `@import "~@/assets/scss/mixins";`
       }
     }
   },
@@ -38,4 +39,4 @@ module.exports = {
       maskIcon: "img/icons/favicon.svg"
     }
   }
-};
+})
