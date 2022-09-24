@@ -14,7 +14,19 @@ module.exports = defineConfig({
         target: "http://localhost:8080"
       }
     },
-    port: 8090
+    port: 8090,
+
+    // webpack uses /ws for it's hot reload socket by default, but that's what we
+    // use for our endpoints, so override this.
+    client: {
+      webSocketURL: "ws://localhost:8090/wp-ws"
+    },
+    webSocketServer: {
+      type: "ws",
+      options: {
+        path: "/wp-ws"
+      }
+    }
   },
   css: {
     loaderOptions: {
