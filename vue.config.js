@@ -1,6 +1,9 @@
+const { defineConfig } = require('@vue/cli-service')
+
 process.env.VUE_APP_VERSION = require("./package.json").version;
 
-module.exports = {
+module.exports = defineConfig({
+  transpileDependencies: true,
   devServer: {
     proxy: {
       "/ws": {
@@ -11,13 +14,24 @@ module.exports = {
         target: "http://localhost:8080"
       }
     },
-    port: 8090
+    port: 8090,
+
+    // webpack uses /ws for it's hot reload socket by default, but that's what we
+    // use for our endpoints, so override this.
+    client: {
+      webSocketURL: "ws://localhost:8090/wp-ws"
+    },
+    webSocketServer: {
+      type: "ws",
+      options: {
+        path: "/wp-ws"
+      }
+    }
   },
   css: {
     loaderOptions: {
       sass: {
-        // Imports this into every single component.
-        prependData: `@import "~@/assets/scss/mixins";`
+        additionalData: `@import "~@/assets/scss/mixins";`
       }
     }
   },
@@ -37,4 +51,4 @@ module.exports = {
       maskIcon: "img/icons/favicon.svg"
     }
   }
-};
+})

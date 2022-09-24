@@ -132,8 +132,8 @@ p {
   li {
     text-align: center;
     display: inline-block;
-    height: $sidebar-width/2;
-    width: $sidebar-width/2;
+    height: calc($sidebar-width / 2);
+    width: calc($sidebar-width / 2);
     margin: 0 $spacer;
 
     &.selected {
@@ -145,7 +145,7 @@ p {
   .icn {
     width: 100%;
     height: 100%;
-    padding: $spacer/2;
+    padding: calc($spacer / 2);
 
     &.active,
     &.disabled {

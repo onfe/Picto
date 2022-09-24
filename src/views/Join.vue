@@ -78,7 +78,7 @@ export default {
   background-color: var(--background-join);
   color: var(--primary-join);
 
-  background-image: url("/img/stripe.svg");
+  background-image: url("../../public/img/stripe.svg");
   background-position-x: 0.8rem;
   background-repeat: no-repeat;
   background-size: 30px 100%;

@@ -20,6 +20,12 @@ html {
   box-sizing: inherit;
 }
 
+// override font-awesome content-box preference, it's dumb.
+svg {
+  box-sizing: inherit !important;
+}
+
+
 @font-face {
     font-family: 'pixel 5x7';
     src: url('../font/generic-pixel-font-5x7-neue.woff2') format('woff2'),
