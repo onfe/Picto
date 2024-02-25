@@ -37,7 +37,7 @@ If you want to help [fix an issue](https://github.com/onfe/Picto/labels/good%20f
 Picto is developed and maintained by:
 
 - Edward (onfe) - https://onfe.uk/
-- Josh (TheTeaCat) - https://joshuarainbow.co.uk/
+- Josh (TheTeaCat) - https://rainosullivan.com/
 - Freddy - https://freddyheppell.com/
 
 Thanks to all our friends and families who dealt with the late nights, tested Picto, shared it around and provided support and enthusiasm.
