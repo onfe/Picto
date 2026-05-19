@@ -44,7 +44,7 @@ class Notepad {
       case 3:
         return "rgba(170,170,170,1)";
       default:
-        /**This is my (Josh's) nice way of generating rainbows.
+        /**This is my (Raina's) nice way of generating rainbows.
          * No touchy. >:c
          * It goes
          * ___      ___      ___      ___      ___

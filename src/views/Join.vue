@@ -32,7 +32,7 @@
       </div>
       <div class="item">
         Made with <font-awesome-icon class="icn" icon="heart" /> by
-        <a href="https://joshuarainbow.co.uk/">Josh</a>,
+        <a href="https://rainaosullivan.com/">Raina</a>,
         <a href="https://onfe.uk/">Eddie</a> &amp;
         <a href="https://freddyheppell.com/">Freddy</a>
       </div>

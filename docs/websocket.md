@@ -52,7 +52,7 @@ The server will be in charge of dating events as it receives them.
   "RoomName": "default",
   "Public": true,
   "UserIndex": 1,
-  "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
+  "Users": ["Eddie", null, "Raina", null, null, "Martin", "Elle", null],
 }
 ```
 `Users` has length equal to the max number of users in a room. Colours are assigned using the index of the user. You have the index `UserIndex` in the array. The `RoomID` is the value for `/room/RoomID` and serves as the link for inviting friends to the room.
@@ -66,7 +66,7 @@ User join:
 {
   "UserIndex": 1,
   "UserName":"Jordie",
-  "Users": ["Eddie", "Jordie", "Josho", null, null, "Martin", "Elle", null],
+  "Users": ["Eddie", "Jordie", "Raina", null, null, "Martin", "Elle", null],
 }
 ```
 
@@ -75,7 +75,7 @@ User leave:
 {
   "UserIndex": 1,
   "UserName":"Jordie",
-  "Users": ["Eddie", null, "Josho", null, null, "Martin", "Elle", null],
+  "Users": ["Eddie", null, "Raina", null, null, "Martin", "Elle", null],
 }
 ```
 
@@ -99,7 +99,7 @@ Server -> Client:
 ```JSON
 {
   "ColourIndex": 2,
-  "Sender": "Josh",
+  "Sender": "Raina",
   "Data": "///...",
   "Span": 192
 }
