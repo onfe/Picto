@@ -1,5 +1,5 @@
 <template lang="html">
-  <section :class="{ firefox: isFirefox() }">
+  <section>
     <div class="history">
       <div
         class="message"
@@ -32,10 +32,6 @@ export default {
   methods: {
     getID(msg) {
       return "msg-" + msg.hash;
-    },
-    isFirefox() {
-      // Browser detection of firefox
-      return typeof InstallTrigger !== "undefined";
     }
   }
 };
@@ -53,17 +49,6 @@ export default {
 
 .message {
   margin-top: $spacer;
-}
-
-.firefox {
-  .history {
-    flex-direction: column !important;
-  }
-
-  .history,
-  .message {
-    transform: scaleY(-1);
-  }
 }
 
 .text {
